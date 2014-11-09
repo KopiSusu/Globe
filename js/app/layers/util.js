@@ -1,3 +1,4 @@
+// common utilities for converting coordinates into vertices
 define(['three'], function(THREE) {
 
     return {

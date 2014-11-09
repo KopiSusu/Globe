@@ -1,3 +1,4 @@
+// describe particles that represent cities
 define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
     
     var particles = new THREE.Geometry(),

@@ -1,3 +1,4 @@
+// describes particle cloud for base sphere
 define(['./util', 'three'], function(convert, THREE) {
 
     var particles = new THREE.Geometry(),

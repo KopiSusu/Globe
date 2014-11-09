@@ -1,3 +1,5 @@
+// prototype for new layer
+
 define(['three'], function(THREE) {
 
     return {

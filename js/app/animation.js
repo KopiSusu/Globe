@@ -1,6 +1,6 @@
-/* To add a new layer to the animation
-** + create a new file in app/layers
-** + edit app/layers/config.js to include your new file
+/* To add a new layer to the animation:
+** 1. create a new file in app/layers
+** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
 define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
@@ -24,6 +24,7 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                                   NEAR,
                                   FAR  );
 
+    // see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
     window.requestAnimFrame = (function(){
             return  window.requestAnimationFrame       ||
                     window.webkitRequestAnimationFrame ||
@@ -39,6 +40,7 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
       scene.add(layer);  // add the layer to the main Scene object
     }
 
+    /** object definition **/
     /* everything inside return{} is available to outside 
         e.g. animation.scene, animation.create, etc */
     return {

@@ -1,3 +1,4 @@
+// describes particles that form the coastline layer
 define(['./util', './data/continents', 'three'], function(convert, continents, THREE) {
 
   var particles = new THREE.Geometry(),
