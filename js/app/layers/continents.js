@@ -6,7 +6,7 @@ define(['./util', './data/continents', 'three'], function(convert, continents, T
       material  = new THREE.PointCloudMaterial({
                         color:        0x111111,
                         size:         5,
-                        map:          THREE.ImageUtils.loadTexture("../../../../images/dust.png"),
+                        //map:          THREE.ImageUtils.loadTexture("../../../../images/dust.png"),
                         blending:     THREE.AdditiveBlending,
                         // transparent:  true
                       });
