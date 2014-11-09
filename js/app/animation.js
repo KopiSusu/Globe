@@ -1,3 +1,8 @@
+/* To add a new layer to the animation
+** + create a new file in app/layers
+** + edit app/layers/config.js to include your new file
+** New layer should be added automatically to the animation */
+
 define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
     // set the scene size
