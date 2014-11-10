@@ -78,15 +78,34 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                   var system = scene.children[i];
 
                   // add some rotation to the system
-                  system.rotation.y += 0.003;
-                  system.rotation.x = 0.25;
-                  // system.rotation.z += 0.003
+                  // system.rotation.y += 0.002;
+                  // system.rotation.x = 0.25;
 
                   /* flag to the particle system that we've
                       changed its vertices. This is the
                       dirty little secret. */
                   system.geometry.__dirtyVertices = true;
                 }
+                // yellow inner
+                scene.children[4].rotation.y += 0.0005;
+                scene.children[4].rotation.x = 0.25;
+
+                // red inner
+                scene.children[3].rotation.y += 0.0005;
+                scene.children[3].rotation.x = 0.25;
+
+                // cities
+                scene.children[2].rotation.y += 0.002;
+                scene.children[2].rotation.x = 0.25;
+
+                // continents
+                scene.children[1].rotation.y += 0.002;
+                scene.children[1].rotation.x = 0.25;
+
+                // outer rain
+                scene.children[0].rotation.y += 0.00009;
+                scene.children[0].rotation.x += 0.0003;
+                scene.children[0].rotation.z += 0.0001;
 
                 // render updated scene
                 renderer.render( scene, camera );
