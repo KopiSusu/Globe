@@ -40,8 +40,6 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
       scene.add(layer);  // add the layer to the main Scene object
     }
 
-    console.log(layers.continents.init());
-
     /** object definition **/
     /* everything inside return{} is available to outside 
         e.g. animation.scene, animation.create, etc */
