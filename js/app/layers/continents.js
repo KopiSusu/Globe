@@ -5,8 +5,8 @@ define(['./util', './data/continents', 'three'], function(convert, continents, T
       system,
       material  = new THREE.PointCloudMaterial({
                         color:        0x111111,
-                        size:         5,
-                        //map:          THREE.ImageUtils.loadTexture("../../../../images/dust.png"),
+                        size:         6,
+                        map:          THREE.ImageUtils.loadTexture("../../../../images/dust.png"),
                         blending:     THREE.AdditiveBlending,
                         // transparent:  true
                       });
@@ -18,7 +18,7 @@ define(['./util', './data/continents', 'three'], function(convert, continents, T
           for (var i = 0; i < coordinates.length; i++) {
             var longitude = coordinates[i][0];
             var latitude = coordinates[i][1];
-            var height = 1;
+            var height = 1.01;
             var particle = convert.toParticle(convert.geoToCartesian([latitude, longitude, height]));
             return particle;
           }

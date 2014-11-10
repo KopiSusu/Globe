@@ -1,68 +1,124 @@
 body {
   margin: 0px;
   padding: 0px;
+  background: #fafafa;
 }
 
-#rside {
-  z-index: 1;
-  position: fixed;
-  top: 5%;
-  left: 1%;
-  width: 21%;
-  height: 90%;
-  color: #111111;
-  border-right: 1px solid;
-  opacity: 0.8;
+h2 {
+  margin: 0px;
 }
+
+#lside {
+z-index: 1;
+position: absolute;
+top: 0%;
+left: 0%;
+width: 200px;
+height: 705px;
+color: #7f8c8d;
+background-color: #fafafa;
+/* border-right: 1px solid #555; */
+/* opacity: 0.9; */
+
+}
+
 
 #bottom{
-  position: fixed;
-  bottom: 30%;
-  border-bottom: 1px solid;
-  width: 22%;
-  left: 0;
-  color: #111111;
+position: absolute;
+bottom: 3%;
+width: 80%;
+text-align: left;
+left: 17px;
+color: #B5B5B5;
+opacity: 0.2;
+  transition: all 0.5s ease;
 }
+
+#bottom:hover {
+  opacity: 1;
+    transition: all 0.5s ease;
+}
+
+
 
 #title{
-  position: fixed;
-  left: 11%;
-  bottom: 18%;
-  border: 1px solid #111111;
-  border-radius: 50%;
-  font-size: 14px;
+position: absolute;
+color: #2194CE;
+opacity: 0.8;
+bottom: -5px;
+left: 10%;
+font-size: 25px;
+font-family: 'Inconsolata';
 }
 
-#title2{
-  position: fixed;
-  bottom: -6%;
-  left: 7%;
-  font-size: 70px;
+#coffee{
+position: absolute;
+width: 62%;
+height: 100%;
+bottom: 13.7%;
+left: 100%;
 }
 
 #search {
-  position: fixed;
-  left: 3%;
-  top: 5%;
-  height: 5%;
-  width: 15%;
-  background: none;
-  color: #111111;
-  border: none;
-  border-bottom: 1px solid;
-  font-size: 28px;
-  padding-left: 4%;
-  padding-bottom: 0.3%;
-  font-family: 'Julius Sans One', sans-serif;
-
+position: absolute;
+left: 16%;
+top: 3%;
+height: 5.5%;
+width: 52%;
+background: none;
+padding-top: 2%;
+color: #555;
+border: 1px solid;
+border-radius: 10px;
+font-size: 28px;
+text-align: center;
+font-size: 30px;
+font-family: 'Inconsolata';
+cursor: pointer;
+opacity: 0.8;
 }
 
-::-webkit-input-placeholder { /* WebKit browsers */
-    color:    #111111;
+
+#rside {
+  position: absolute;
+right: 5%;
+border-left: 2px solid #555;
+height: 600px;
+top: 50px;
+opacity: 0.8;
 }
-/*#111111*/
+
+#rtopbar{
+  position: absolute;
+width: 50px;
+border-bottom: 2px solid;
+left: -26px;
+opacity: 0.8;
+}
+
+#rbottombar {
+  position: absolute;
+width: 50px;
+border-bottom: 2px solid;
+left: -26px;
+bottom:0px;
+opacity: 0.8;
+}
+
+#zoom {
+  position: absolute;
+width: 40px;
+height: 5px;
+background-color: #62A07B;
+left: -21px;
+bottom: 1%;
+margin-bottom: 1%;
+margin-top: 1%;
+}
+
 #container {
-  background: #fff;
-  width: 400px;
-  height: 300px;
+  position:absolute;
+  background: #fafafa;
+  width: 100%;
+  height: 100%;
 }

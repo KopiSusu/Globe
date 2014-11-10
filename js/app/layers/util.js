@@ -38,8 +38,8 @@ define(['three'], function(THREE) {
           var size      = 200,
               particle  = new THREE.Vector3(
                             coords[0] * size, 
-                            coords[1] * size,
-                            coords[2] * size
+                            coords[2] * size,
+                            coords[1] * size
                           );
           return particle;
         }

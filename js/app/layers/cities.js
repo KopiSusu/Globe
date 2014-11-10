@@ -4,9 +4,9 @@ define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
     var particles = new THREE.Geometry(),
         system,
         material  = new THREE.PointCloudMaterial({
-                        color:        0xff0000,
-                        size:         40,
-                        //map:          THREE.ImageUtils.loadTexture("../../../../images/dust.png"),
+                        color:        0x62A07B,
+                        size:         15,
+                        // map:          THREE.ImageUtils.loadTexture("../../../images/dust.png"),
                         blending:     THREE.AdditiveBlending,
                         //transparent:  true
                       });
