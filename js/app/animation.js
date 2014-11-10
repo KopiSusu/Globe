@@ -103,9 +103,9 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                 scene.children[1].rotation.x = 0.25;
 
                 // outer rain
-                scene.children[0].rotation.y += 0.00009;
-                scene.children[0].rotation.x += 0.0003;
-                scene.children[0].rotation.z += 0.0001;
+                scene.children[0].rotation.y += 0.00001;
+                scene.children[0].rotation.x += 0.00004;
+                // scene.children[0].rotation.z += 0.0001;
 
                 // render updated scene
                 renderer.render( scene, camera );

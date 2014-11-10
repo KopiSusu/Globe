@@ -5,7 +5,7 @@ define(['./util', './data/continents', 'three'], function(convert, continents, T
       system,
       material  = new THREE.PointCloudMaterial({
                         color:        0x2194CE,
-                        size:         4,
+                        size:         3,
                         map:          THREE.ImageUtils.loadTexture('images/particle.png'),
                         blending:     THREE.AdditiveBlending,
                         // debugger
@@ -30,7 +30,7 @@ define(['./util', './data/continents', 'three'], function(convert, continents, T
         getParticle(features[i]['geometry']['coordinates']);
       }
 
-      system = new THREE.PointCloud(particles, material);
+      system = new THREE.Line(particles, material);
       return system;
     }
 
