@@ -36,9 +36,11 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
     // add all layers to scene
     for (var i in layers) {
-      layer = layers[i].init();  // returns a THREE.PointCloud object
+      layer = layers[i].init();  // returns a THREE.Object3D object
       scene.add(layer);  // add the layer to the main Scene object
     }
+
+    console.log(layers.continents.init());
 
     /** object definition **/
     /* everything inside return{} is available to outside 
@@ -84,7 +86,13 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                   /* flag to the particle system that we've
                       changed its vertices. This is the
                       dirty little secret. */
-                  system.geometry.__dirtyVertices = true;
+                    if (system.geometry) {
+                        system.geometry.__dirtyVertices = true;
+                    }
+                    // else if ... 
+                    /* FIX: system.continents has no geometry; it has child
+                        THREE.Line that has geometry*/
+
                 }
                 // yellow inner
                 scene.children[4].rotation.y += 0.0005;
