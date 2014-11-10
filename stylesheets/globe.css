@@ -17,9 +17,6 @@ width: 200px;
 height: 705px;
 color: #7f8c8d;
 background-color: #fafafa;
-/* border-right: 1px solid #555; */
-/* opacity: 0.9; */
-
 }
 
 
@@ -30,7 +27,9 @@ width: 80%;
 text-align: left;
 left: 17px;
 color: #B5B5B5;
-opacity: 0.2;
+opacity: 0.5;
+height: 5%;
+padding-bottom: 0%;
   transition: all 0.5s ease;
 }
 
@@ -114,6 +113,15 @@ left: -21px;
 bottom: 1%;
 margin-bottom: 1%;
 margin-top: 1%;
+}
+
+#about{
+position: absolute;
+right: -5px;
+bottom: -36px;
+font-size: 30px;
+color: #2194CE;
+opacity: 1;
 }
 
 #container {

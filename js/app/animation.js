@@ -79,7 +79,8 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
                   // add some rotation to the system
                   system.rotation.y += 0.003;
-                  system.rotation.x = 0.2;
+                  system.rotation.x = 0.25;
+                  // system.rotation.z += 0.003
 
                   /* flag to the particle system that we've
                       changed its vertices. This is the

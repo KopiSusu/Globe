@@ -4,9 +4,9 @@ define(['./util', 'three'], function(convert, THREE) {
     var particles = new THREE.Geometry(),
         system,
         material  = new THREE.PointCloudMaterial({
-                    color:        0x111111,
-                    size:         2,
-                    map:          THREE.ImageUtils.loadTexture("../../../../images/dust.png"),
+                    color:        0x333333,
+                    size:         1,
+                    map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                     blending:     THREE.AdditiveBlending,
                     // transparent:  false
                   });
@@ -14,7 +14,7 @@ define(['./util', 'three'], function(convert, THREE) {
 
       init: function() {
           var p, q, limit, theta, phi, rho, particle,
-              density = parseFloat(100);  // total number of particles in each 'ring'
+              density = parseFloat(160);  // total number of particles in each 'ring'
 
           for (q = -density; q < density; q++ ) {
             limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;
@@ -25,8 +25,8 @@ define(['./util', 'three'], function(convert, THREE) {
               rho   = 1;
               
               // // Add randomness to make the globe fuzzy
-              theta += Math.random()/density;
-              rho += Math.random()/500;
+              // theta += Math.random()/density;
+              rho -= Math.random()/300;
               
               particle = convert.toParticle(convert.toCartesian([theta, phi, rho]));
               particles.vertices.push(particle);
