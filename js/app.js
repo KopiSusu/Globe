@@ -8,7 +8,7 @@ requirejs.config({
     paths: {
         app: '../app',
         jquery: 'jquery',
-        three: 'three'
+        three: 'three',
     }
 });
 

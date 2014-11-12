@@ -3,8 +3,8 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-define(function() { 
-var THREE = { REVISION: '69' };
+define(['threejs/orbitcontrols'], function(orbitcontrols) { 
+var THREE = { REVISION: '69', OrbitControls: require('threejs/orbitcontrols') };
 
 // browserify support
 
