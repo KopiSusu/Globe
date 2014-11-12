@@ -9,6 +9,7 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
     var WIDTH = window.innerWidth,
         HEIGHT = window.innerHeight,
 
+
     // set some camera attributes
         VIEW_ANGLE = 35,
         ASPECT = WIDTH / HEIGHT,
@@ -17,12 +18,16 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
     // set basic attributes
         layers = layers,
-        renderer = new THREE.WebGLRenderer(),
+        renderer = new THREE.WebGLRenderer({antialias:true}),
         scene = new THREE.Scene(),
         camera = new THREE.PerspectiveCamera(  VIEW_ANGLE,
                                   ASPECT,
                                   NEAR,
-                                  FAR  );
+                                  FAR  ),
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+
+
 
     // see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
     window.requestAnimFrame = (function(){
@@ -49,6 +54,7 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
         camera: camera,
         renderer: renderer,
 
+
         // attach renderer to DOM container 
         create: function() {
 
@@ -64,8 +70,13 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
             renderer.setClearColor(new THREE.Color(0xfafafa));
             renderer.setSize(WIDTH, HEIGHT);
 
+           
+
+
             // attach the render-supplied DOM element
             container.append(renderer.domElement);
+
+
 
             return this;
         },
@@ -92,26 +103,33 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                         THREE.Line that has geometry*/
 
                 }
+                // crust
+                // scene.children[5].rotation.y += 0.002;
+                scene.children[5].rotation.x = 0.25;
+
                 // yellow inner
                 scene.children[4].rotation.y += 0.0005;
+                scene.children[4].rotation.z += 0.0005;
                 scene.children[4].rotation.x = 0.25;
 
                 // red inner
-                scene.children[3].rotation.y += 0.0005;
+                scene.children[3].rotation.z += 0.0005;
+                scene.children[3].rotation.z += 0.0005;
                 scene.children[3].rotation.x = 0.25;
 
                 // cities
-                scene.children[2].rotation.y += 0.002;
+                // scene.children[2].rotation.y += 0.002;
                 scene.children[2].rotation.x = 0.25;
 
                 // continents
-                scene.children[1].rotation.y += 0.002;
+                // scene.children[1].rotation.y += 0.002;
                 scene.children[1].rotation.x = 0.25;
 
                 // outer rain
-                scene.children[0].rotation.y += 0.00001;
-                scene.children[0].rotation.x += 0.00004;
-                // scene.children[0].rotation.z += 0.0001;
+                scene.children[0].rotation.y += 0.00003;
+                // scene.children[0].rotation.x += 0.00001;
+
+                controls.update();
 
                 // render updated scene
                 renderer.render( scene, camera );

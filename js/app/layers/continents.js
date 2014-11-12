@@ -11,7 +11,7 @@ define(['./util', './data/continents', 'three'], function(convert, continents, T
           }),
         lineMaterial = new THREE.LineBasicMaterial({
           color: 0x333333,
-          linewidth: 1.5,
+          linewidth: 1,
           fog: true
         }),
         layer = new THREE.Object3D();
@@ -48,7 +48,7 @@ define(['./util', './data/continents', 'three'], function(convert, continents, T
         layer.add(buildLine(features[i]['geometry']['coordinates']));
       }
       return layer;
-    }
+    },
 
   }
 

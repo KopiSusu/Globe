@@ -14,7 +14,7 @@ define(['./util', 'three'], function(convert, THREE) {
 
       init: function() {
           var p, q, limit, theta, phi, rho, particle,
-              density = parseFloat(160);  // total number of particles in each 'ring'
+              density = parseFloat(100);  // total number of particles in each 'ring'
 
           for (q = -density; q < density; q++ ) {
             limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;
@@ -22,10 +22,10 @@ define(['./util', 'three'], function(convert, THREE) {
             for(var p = -limit; p < limit; p++) {
               theta = q/density * Math.PI;
               phi   = p/limit * Math.PI;
-              rho   = 0.5;
+              rho   = 0.1875;
               
               // // Add randomness to make the globe fuzzy
-              // theta += Math.random()/density;
+              theta += Math.random()/density;
               rho -= Math.random()/300;
               
               particle = convert.toParticle(convert.toCartesian([theta, phi, rho]));

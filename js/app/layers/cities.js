@@ -18,7 +18,7 @@ define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
         for ( var i in cities ) {
           coords = cities[i];
           particle = convert.toParticle(convert.geoToCartesian(coords));
-          particle.color = new THREE.Color(0xBE4C39);
+          // particle.color = new THREE.Color(0xfafafa);
           particles.vertices.push(particle);
          }
         system = new THREE.PointCloud(particles, material);

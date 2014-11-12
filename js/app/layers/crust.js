@@ -5,16 +5,16 @@ define(['./util', 'three'], function(convert, THREE) {
         system,
         material  = new THREE.PointCloudMaterial({
                     color:        0x555555,
-                    size:         0.8,
-                    // map:          THREE.ImageUtils.loadTexture("images/dust.png"),
+                    size:         1,
+                    map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                     blending:     THREE.AdditiveBlending,
-                    // transparent:  false
+                    // transparent:  true,
                   });
   return {
 
       init: function() {
           var p, q, limit, theta, phi, rho, particle,
-              density = parseFloat(100);  // total number of particles in each 'ring'
+              density = parseFloat(160);  // total number of particles in each 'ring'
 
           for (q = -density; q < density; q++ ) {
             limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;
@@ -25,10 +25,12 @@ define(['./util', 'three'], function(convert, THREE) {
               rho   = 1;
               
               // // Add randomness to make the globe fuzzy
-              theta += Math.random();
-              rho += Math.random()+2;
+              // theta += Math.random()/density;
+              rho -= Math.random()/300;
               
+
               particle = convert.toParticle(convert.toCartesian([theta, phi, rho]));
+
               particles.vertices.push(particle);
             }
           }
@@ -39,3 +41,23 @@ define(['./util', 'three'], function(convert, THREE) {
   }
 
 });
+
+
+// int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
+// {
+//   int i, j, c = 0;
+//   for (i = 0, j = nvert-1; i < nvert; j = i++) {
+//     if ( ((verty[i]>testy) != (verty[j]>testy)) &&
+//      (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+//        c = !c;
+//   }
+//   return c;
+// }
+
+
+
+
+
+
+
+
