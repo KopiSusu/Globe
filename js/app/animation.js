@@ -93,8 +93,8 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
                 }
                 // yellow inner
-                scene.children[4].rotation.y += 0.0005;
-                scene.children[4].rotation.x = 0.25;
+                //scene.children[4].rotation.y += 0.0005;
+                //scene.children[4].rotation.x = 0.25;
 
                 // red inner
                 scene.children[3].rotation.y += 0.0005;

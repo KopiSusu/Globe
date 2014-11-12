@@ -22,7 +22,7 @@ define(
           sphere: sphere,
           continents: continents,
           cities: cities,
-          inner: inner,
+          //inner: inner,
           inneryellow: inneryellow
         }
     }
