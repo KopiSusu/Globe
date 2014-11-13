@@ -2,6 +2,7 @@ Current Project:
 =============
 
 Multiplayer risk made using Three.js and Node.
+Worlds coastlines maped using long, lat coords. Conversion to spherical/cartesian coords to map particles to sphere.
 
 Click on the globe and drag to rotate globe.
 
