@@ -118,11 +118,11 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                 scene.children[3].rotation.x = 0.25;
 
                 // cities
-                // scene.children[2].rotation.y += 0.002;
+                // scene.children[2].rotation.y += 0.0009;
                 scene.children[2].rotation.x = 0.25;
 
                 // continents
-                // scene.children[1].rotation.y += 0.002;
+                // scene.children[1].rotation.y += 0.0009;
                 scene.children[1].rotation.x = 0.25;
 
                 // outer rain

@@ -14,7 +14,7 @@ define(['./util', 'three'], function(convert, THREE) {
 
       init: function() {
           var p, q, limit, theta, phi, rho, particle,
-              density = parseFloat(100);  // total number of particles in each 'ring'
+              density = parseFloat(0);  // total number of particles in each 'ring'
 
           for (q = -density; q < density; q++ ) {
             limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;

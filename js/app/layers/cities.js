@@ -5,7 +5,7 @@ define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
         system,
         material  = new THREE.PointCloudMaterial({
                         color:        0xBE4C39,
-                        size:         50,
+                        size:         10,
                         map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                         blending:     THREE.AdditiveBlending,
                         // transparent:  true
