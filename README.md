@@ -1,5 +1,8 @@
 Current Project:
+=============
+
 Multiplayer risk made using Three.js and Node.
+Click on the globe and drag to rotate globe.
 
 
 =============
