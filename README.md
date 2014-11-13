@@ -1,3 +1,6 @@
-Project made using Three.js and Node.
+Current Project:
+Multiplayer risk made using Three.js and Node.
 
-Multiplayer risk.
+
+=============
+Go to http://kopisusu.github.io/Globe/ to check it out!
