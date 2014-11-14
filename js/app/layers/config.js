@@ -15,11 +15,10 @@
 */
 
 define(
-    ['./sphere','./continents','./cities','./inner','./inneryellow','./crust'], 
+    ['./continents','./cities','./inner','./inneryellow','./crust'], 
 
-    function(sphere, continents, cities, inner, inneryellow, crust){
+    function(continents, cities, inner, inneryellow, crust){
         return {
-          sphere: sphere,
           continents: continents,
           cities: cities,
           inner: inner,

@@ -5,16 +5,17 @@ define(['./util', 'three'], function(convert, THREE) {
         system,
         material  = new THREE.PointCloudMaterial({
                     color:        0x555555,
-                    size:         1,
+                    size:         3,
                     map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                     blending:     THREE.AdditiveBlending,
+                    // fog: false,
                     // transparent:  true,
                   });
   return {
 
       init: function() {
           var p, q, limit, theta, phi, rho, particle,
-              density = parseFloat(160);  // total number of particles in each 'ring'
+              density = parseFloat(0);  // total number of particles in each 'ring'
 
           for (q = -density; q < density; q++ ) {
             limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;

@@ -1,5 +1,10 @@
 things to do!
 
+!!!! IMPORTANT !!!!!
+FIX LOADING ISSUE!!!
+  wait for all content to load prior to loading orbitcontrol?
+  takes several refresh to start up globe?!?
+
 map:
   continents:
     seperate the continents by country

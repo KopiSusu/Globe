@@ -8,6 +8,7 @@ define(['./util', 'three'], function(convert, THREE) {
                     size:         1,
                     map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                     blending:     THREE.AdditiveBlending,
+                    // fog: false,
                     // transparent:  false
                   });
   return {

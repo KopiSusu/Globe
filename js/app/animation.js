@@ -27,6 +27,9 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
         controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
+        scene.fog = new THREE.Fog( 0xfafafa, 10, 2000 );
+
+
 
 
     // see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -35,7 +38,7 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                     window.webkitRequestAnimationFrame ||
                     window.mozRequestAnimationFrame    ||
                     function( callback ){
-                      window.setTimeout(callback, 1000 / 60);
+                      window.seTimeout(callback, 1000 / 60);
                     };
           })();
 
@@ -44,6 +47,11 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
       layer = layers[i].init();  // returns a THREE.Object3D object
       scene.add(layer);  // add the layer to the main Scene object
     }
+
+    var russia = layers.continents.getGeometryByName("Russia");
+
+
+    russia.material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
 
     /** object definition **/
     /* everything inside return{} is available to outside 
@@ -103,31 +111,17 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                         THREE.Line that has geometry*/
 
                 }
-                // crust
-                // scene.children[5].rotation.y += 0.002;
-                scene.children[5].rotation.x = 0.25;
+
 
                 // yellow inner
-                scene.children[4].rotation.y += 0.0005;
-                scene.children[4].rotation.z += 0.0005;
-                scene.children[4].rotation.x = 0.25;
-
-                // red inner
-                scene.children[3].rotation.z += 0.0005;
-                scene.children[3].rotation.z += 0.0005;
+                scene.children[3].rotation.y += 0.0009;
+                // scene.children[3].rotation.z += 0.0005;
                 scene.children[3].rotation.x = 0.25;
 
-                // cities
-                // scene.children[2].rotation.y += 0.0009;
+                // red inner
+                scene.children[2].rotation.y += 0.0009;
                 scene.children[2].rotation.x = 0.25;
 
-                // continents
-                // scene.children[1].rotation.y += 0.0009;
-                scene.children[1].rotation.x = 0.25;
-
-                // outer rain
-                scene.children[0].rotation.y += 0.00003;
-                // scene.children[0].rotation.x += 0.00001;
 
                 controls.update();
 
