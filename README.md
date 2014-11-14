@@ -1,24 +1,16 @@
+<<<<<<< HEAD
 things to do!
 
-map:
-  continents:
-    seperate the continents by country
-    check to see if particle is inside country(check to see if point is inside complex polygon)
-    
+Current Project:
+=============
 
-basic controls:
-  globe controls: 
-    zooming in function
-    spin globe function
+3D real-time Risk! made using Three.js and Node.
 
-  particle controls:
-    on zoom out:
-      show agregate of particles
-      disable movable particles 
+We grabbed geodesic coordinates for the world's coastlines and did some math to convert them to cartesian coordinates, which we then mapped onto a sphere (generated with Three.js and more math).
 
-    on zoom in:
-      clickable particles
-      enable movable particles
+Click on the globe and drag to rotate globe.
 
-game logic:
-  
+Globe takes a second to load
+
+=============
+Go to http://kopisusu.github.io/Globe/ to check it out!
