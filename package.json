@@ -1,0 +1,10 @@
+{
+  "name": "kopi",
+  "version": "0.0.1",
+  "description": "3D real-time team-based Risk!",
+  "dependencies": {
+    "express": "^4.10.2",
+    "path": "^0.4.9",
+    "socket.io": "^1.2.0"
+  }
+}
