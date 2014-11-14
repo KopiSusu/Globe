@@ -1,16 +1,16 @@
 // describes particle cloud for base sphere
 define(['./util', 'three'], function(convert, THREE) {
 
-    var particles = new THREE.Geometry(),
+    var particles = new THREE.SphereGeometry(200, 100, 100),
         system,
-        material  = new THREE.PointCloudMaterial({
-                    color:        0x555555,
-                    size:         3,
-                    map:          THREE.ImageUtils.loadTexture("images/dust.png"),
-                    blending:     THREE.AdditiveBlending,
-                    // fog: false,
-                    // transparent:  true,
-                  });
+        material  = new THREE.MeshPhongMaterial({ 
+          // wireframe: true,
+          // map         : THREE.ImageUtils.loadTexture("images/original.jpg"),
+          side        : THREE.DoubleSide,
+          opacity     : 0.1,
+          transparent : true,
+          depthWrite  : false,
+        });
   return {
 
       init: function() {
@@ -23,7 +23,7 @@ define(['./util', 'three'], function(convert, THREE) {
             for(var p = -limit; p < limit; p++) {
               theta = q/density * Math.PI;
               phi   = p/limit * Math.PI;
-              rho   = 1;
+              rho   = 1.01;
               
               // // Add randomness to make the globe fuzzy
               // theta += Math.random()/density;
@@ -35,7 +35,8 @@ define(['./util', 'three'], function(convert, THREE) {
               particles.vertices.push(particle);
             }
           }
-          system = new THREE.PointCloud(particles, material);
+          system = new THREE.Mesh();
+          // system = new THREE.Mesh(particles, material);
           return system;
       } 
 

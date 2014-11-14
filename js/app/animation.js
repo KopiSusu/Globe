@@ -11,7 +11,7 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
 
     // set some camera attributes
-        VIEW_ANGLE = 35,
+        VIEW_ANGLE = 45,
         ASPECT = WIDTH / HEIGHT,
         NEAR = 0.1,
         FAR = 10000,
@@ -27,9 +27,15 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
         controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
-        scene.fog = new THREE.Fog( 0xfafafa, 10, 2000 );
+        scene.fog = new THREE.Fog( 0xfafafa, 40, 2000 );
 
-
+        var light   = new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ); 
+        scene.add( light )
+        // var light = new THREE.DirectionalLight( 0xFFFFFF, 1 );
+        // light.position.set( -0.65, 1, 0.48 ).normalize();
+        // light.position = camera.position
+        // light.target.position.set( 0, 0, 0 );
+        // scene.add( light );
 
 
     // see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -48,10 +54,9 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
       scene.add(layer);  // add the layer to the main Scene object
     }
 
-    var russia = layers.continents.getGeometryByName("Russia");
-
-
-    russia.material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+    // lets fuck with australia
+    var australia = layers.continents.getGeometryByName("Australia");
+    australia.material = new THREE.MeshPhongMaterial({color: 0xff0000, wireframe: true});
 
     /** object definition **/
     /* everything inside return{} is available to outside 
@@ -114,18 +119,19 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
 
                 // yellow inner
-                scene.children[3].rotation.y += 0.0009;
+                // scene.children[3].rotation.y += 0.0009;
                 // scene.children[3].rotation.z += 0.0005;
-                scene.children[3].rotation.x = 0.25;
+                // scene.children[3].rotation.x = 0.25;
 
                 // red inner
-                scene.children[2].rotation.y += 0.0009;
-                scene.children[2].rotation.x = 0.25;
+                // scene.children[2].rotation.y += 0.0009;
+                // scene.children[2].rotation.x = 0.25;
 
 
                 controls.update();
 
                 // render updated scene
+                renderer.clear();
                 renderer.render( scene, camera );
                 requestAnimFrame( render ); // set up the next call
             }

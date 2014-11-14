@@ -10,10 +10,14 @@ function(convert, countries, THREE, Map3DGeometry) {
     var polygons = Object.keys(countries).map(function(name)
     {
       var country = countries[name];
-      var geometry = new Map3DGeometry(country, 0.99);
+      var geometry = new Map3DGeometry(country, 0.98);
       geometry.name = name;
-      var material = new THREE.MeshBasicMaterial({ 
-        color: Math.random() * 0x333333, 
+      var colour = Math.random() * 0xffffff
+      var material = new THREE.MeshPhongMaterial({ 
+        // wireframe: true,
+        wrapAround: true,
+        color: colour, 
+        specularity: 0x111111,
         opacity: 1 
       });
       var mesh;
