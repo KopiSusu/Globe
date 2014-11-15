@@ -3,7 +3,7 @@
 ** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
-define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEEN, layers) {
+define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, TweenMax, layers) {
 
     // set the scene size
     var WIDTH = window.innerWidth,
@@ -26,25 +26,18 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
                                   FAR  ),
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.minDistance = 250,
-        controls.maxDistance = 750,
+        controls.maxDistance = 650,
         controls.zoomSpeed = 0.3,
         controls.zoomDampingFactor = 0.3,
         controls.momentumDampingFactor = 0.5,
         controls.rotateSpeed = 0.6;
 
-    //     this.minDistance = 0;
-    // this.maxDistance = Infinity;
+
 
         scene.fog = new THREE.Fog( 0xfafafa, 40, 2000 );
 
         var light   = new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ); 
         scene.add( light )
-        // var light = new THREE.DirectionalLight( 0xFFFFFF, 1 );
-        // light.position.set( -0.65, 1, 0.48 ).normalize();
-        // light.position = camera.position
-        // light.target.position.set( 0, 0, 0 );
-        // scene.add( light );
-
 
     // see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
     window.requestAnimFrame = (function(){
@@ -56,13 +49,18 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
                     };
           })();
 
+
+
+
     // add all layers to scene
     for (var i in layers) {
       layer = layers[i].init();  // returns a THREE.Object3D object
       scene.add(layer);  // add the layer to the main Scene object
     }
 
-    // lets fuck with australia
+
+
+    // Click event listener
     document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
     var projector = new THREE.Projector(),
@@ -78,26 +76,33 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
         }
 
     var activeCountry = null;
-    // debugger
-    // var Tween = new TWEEN();
 
     var clickedOnContinent = function(){
         return intersects.length > 0;
     }
 
     var updateContinentScale = function(country, scale) {
-        // country.scale.x = scale;
-        // country.scale.y = scale;
-        // country.scale.z = scale;
-        Tween.to(country.scale, 0.5, { x : scale, y : scale, z : scale });
+        TweenMax.to(country.scale, 0.7, { x : scale, y : scale, z : scale });
     }
 
+    var show = false
 
-
+    for (var i = 0; i < continents.length; i++) {
+                TweenMax.to(continents[i].scale, 0.5, { x : 10.0, y : 10.0, z : 10.0 });
+    }
 
     function onDocumentMouseDown( event ) {
 
         event.preventDefault();
+        // debugger
+        if (show === false){
+            for (var i = 0; i < continents.length; i++) {
+                // TweenMax.to(continents[i].material, 1, { opacity: 1});
+                var time = Math.random()+1+Math.random();
+                TweenMax.to(continents[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+                show = true
+            }
+        }
 
         var vector = new THREE.Vector3();
         vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
@@ -110,23 +115,20 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
         if (intersects[ 0 ]) {
             if (activeCountry) {
                 // reset country scale
+                // TweenMax.to(activeCountry.material, 0.7, { opacity: 1});
                 updateContinentScale(activeCountry, 1.0);
             }
         }
 
         if (intersects[ 0 ]) {
             var continent = intersects[ 0 ].object;
-
+            // TweenMax.to(continent.material, 0.7, { opacity: 0.9});
             updateContinentScale(continent, 1.05);
             activeCountry = continent; 
         }         
     }
 
-
-    
-    // var australia = layers.continents.getGeometryByName("Australia");
-    // australia.material = new THREE.MeshPhongMaterial({color: 0xff0000, wireframe: true});
-
+    // timer
     var counter = 60;
     function countDown() {
         if (counter >= 0){
@@ -142,6 +144,8 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
             countDown();
         }
     }
+
+    // // timer number 2!
     // $(document).ready(function(){
     //     $('#color').addClass('newWidth');
     //     $("#color").bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
@@ -150,6 +154,7 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
 
     // })
 
+    // start the damn timer
     countDown();
 
     /** object definition **/
@@ -170,7 +175,7 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
             var container = $('#container');
 
             // the camera starts at 0,0,0 so pull it back
-            camera.position.z = 850;
+            camera.position.z = 650;
 
             // start the renderer - set the clear colour
             // to a full black
@@ -196,8 +201,8 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
                   var system = scene.children[i];
 
                   // add some rotation to the system
-                  system.rotation.y += 0.002;
-                  system.rotation.x = 0.25;
+                  // system.rotation.y = 3.5;
+                  // system.rotation.x = ;
 
                   /* flag to the particle system that we've
                       changed its vertices. This is the
@@ -212,12 +217,13 @@ define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEE
                 }
 
                 scene.children[0].rotation.y += 0.002;
-                // scene.children[6].rotation.y += 0.002;
+                scene.children[1].rotation.y = 3.5;
                 scene.children[4].rotation.y += 0.002;
                 scene.children[3].rotation.y += 0.002;
 
 
                 controls.update();
+                TWEEN.update();
 
                 // render updated scene
                 renderer.clear();

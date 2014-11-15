@@ -203,10 +203,15 @@ var requirejs, require, define;
                 //will run faster if there is no default.
                 waitSeconds: 7,
                 baseUrl: './',
-                paths: {},
+                paths: {
+                    tween: './threejs/TweenMax'
+                },
                 bundles: {},
                 pkgs: {},
-                shim: {},
+                shim: {        
+                    tween: {
+                        exports: 'TweenMax'
+                    }},
                 config: {}
             },
             registry = {},

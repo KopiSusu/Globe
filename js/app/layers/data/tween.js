@@ -761,5 +761,4 @@ if(typeof module !== 'undefined' && module.exports) {
   module.exports = TWEEN;
 }
 
-  return TWEEN;
 });

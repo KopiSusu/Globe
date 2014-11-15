@@ -15,10 +15,11 @@ function(convert, countries, THREE, Map3DGeometry) {
       var colour = Math.random() * 0xffffff
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
+        transparent: true,
         wrapAround: true,
         color: colour, 
         specularity: 0x111111,
-        opacity: 1 
+        opacity: 1
       });
       var mesh;
       layer.add(mesh = new THREE.Mesh(geometry, material))
