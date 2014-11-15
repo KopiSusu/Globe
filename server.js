@@ -12,8 +12,16 @@ app.get('/', function(req, res){
   res.sendFile('index.html');
 });
 
+
 io.on('connection', function(socket) {
   console.log("a user connected");
+
+  // var newPlayer = new Player();
+  // players.push(newPlayer);
+
+  // socket.player = client;
+
+  // console.log(players);
 
   // socket.on('chat message', function(msg) {
   //   io.emit('chat message', msg);
@@ -23,6 +31,13 @@ io.on('connection', function(socket) {
   // });
 });
 
-http.listen(3000, function() {
-  console.log('listening on *:3000');
-})
+var start = function() {
+  http.listen(3000, function() {
+    console.log('listening on *:3000');
+  })
+};
+
+start();
+
+exports.start = start;
+

@@ -1,0 +1,21 @@
+{
+  "players" : [
+    
+    {
+      "id" : "1", //Int
+      "team_id" : "1", //Int
+
+      "territories" : [
+        {
+          "territory_id" : "", //Int
+          "num_troops" : "1" // Int
+        },
+
+      ] // end array of territories
+    } 
+
+
+  ] // end array of players
+
+}
+
