@@ -3,7 +3,7 @@
 ** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
-define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
+define(['three', 'jquery', 'tween', './layers/config'], function (THREE, $, TWEEN, layers) {
 
     // set the scene size
     var WIDTH = window.innerWidth,
@@ -25,7 +25,15 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                                   NEAR,
                                   FAR  ),
         controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.minDistance = 250,
+        controls.maxDistance = 750,
+        controls.zoomSpeed = 0.3,
+        controls.zoomDampingFactor = 0.3,
+        controls.momentumDampingFactor = 0.5,
+        controls.rotateSpeed = 0.6;
 
+    //     this.minDistance = 0;
+    // this.maxDistance = Infinity;
 
         scene.fog = new THREE.Fog( 0xfafafa, 40, 2000 );
 
@@ -55,8 +63,94 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
     }
 
     // lets fuck with australia
-    var australia = layers.continents.getGeometryByName("Australia");
-    australia.material = new THREE.MeshPhongMaterial({color: 0xff0000, wireframe: true});
+    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+    var projector = new THREE.Projector(),
+        raycaster = new THREE.Raycaster(),
+        continents = []
+
+        // debugger
+        seperate();
+        function seperate () {
+            for (var i = 0; i < 242; i++) {
+                continents.push(layers.continents.getGeometryByIndex(i))
+            }
+        }
+
+    var activeCountry = null;
+    // debugger
+    // var Tween = new TWEEN();
+
+    var clickedOnContinent = function(){
+        return intersects.length > 0;
+    }
+
+    var updateContinentScale = function(country, scale) {
+        // country.scale.x = scale;
+        // country.scale.y = scale;
+        // country.scale.z = scale;
+        Tween.to(country.scale, 0.5, { x : scale, y : scale, z : scale });
+    }
+
+
+
+
+    function onDocumentMouseDown( event ) {
+
+        event.preventDefault();
+
+        var vector = new THREE.Vector3();
+        vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+        vector.unproject( camera );
+
+        raycaster.ray.set( camera.position, vector.sub( camera.position ).normalize() );
+
+        var intersects = raycaster.intersectObjects( continents );
+
+        if (intersects[ 0 ]) {
+            if (activeCountry) {
+                // reset country scale
+                updateContinentScale(activeCountry, 1.0);
+            }
+        }
+
+        if (intersects[ 0 ]) {
+            var continent = intersects[ 0 ].object;
+
+            updateContinentScale(continent, 1.05);
+            activeCountry = continent; 
+        }         
+    }
+
+
+    
+    // var australia = layers.continents.getGeometryByName("Australia");
+    // australia.material = new THREE.MeshPhongMaterial({color: 0xff0000, wireframe: true});
+
+    var counter = 60;
+    function countDown() {
+        if (counter >= 0){
+            setTimeout(function(){
+                $('#timer').text(counter);
+                counter--;
+                countDown();
+            }, 1000);
+        } else {
+            //request new game state 
+            // on succesful request run countDown again!
+            counter = 60;
+            countDown();
+        }
+    }
+    // $(document).ready(function(){
+    //     $('#color').addClass('newWidth');
+    //     $("#color").bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
+    //         $('#color').toggleClass('newWidth');
+    //     });
+
+    // })
+
+    countDown();
 
     /** object definition **/
     /* everything inside return{} is available to outside 
@@ -102,8 +196,8 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
                   var system = scene.children[i];
 
                   // add some rotation to the system
-                  // system.rotation.y += 0.002;
-                  // system.rotation.x = 0.25;
+                  system.rotation.y += 0.002;
+                  system.rotation.x = 0.25;
 
                   /* flag to the particle system that we've
                       changed its vertices. This is the
@@ -117,15 +211,10 @@ define(['three', 'jquery', './layers/config'], function (THREE, $, layers) {
 
                 }
 
-
-                // yellow inner
-                // scene.children[3].rotation.y += 0.0009;
-                // scene.children[3].rotation.z += 0.0005;
-                // scene.children[3].rotation.x = 0.25;
-
-                // red inner
-                // scene.children[2].rotation.y += 0.0009;
-                // scene.children[2].rotation.x = 0.25;
+                scene.children[0].rotation.y += 0.002;
+                // scene.children[6].rotation.y += 0.002;
+                scene.children[4].rotation.y += 0.002;
+                scene.children[3].rotation.y += 0.002;
 
 
                 controls.update();

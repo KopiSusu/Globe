@@ -1,13 +1,16 @@
 // describes particle cloud for base sphere
 define(['./util', 'three'], function(convert, THREE) {
 
-    var particles = new THREE.SphereGeometry(200, 100, 100),
+    var particles = new THREE.SphereGeometry(204, 32, 32),
         system,
         material  = new THREE.MeshPhongMaterial({ 
+          color: 0x1C6BA0,
           // wireframe: true,
           // map         : THREE.ImageUtils.loadTexture("images/original.jpg"),
+          wrapAround: true,
           side        : THREE.DoubleSide,
           opacity     : 0.1,
+          specularity: 0x111111,
           transparent : true,
           depthWrite  : false,
         });
@@ -15,7 +18,7 @@ define(['./util', 'three'], function(convert, THREE) {
 
       init: function() {
           var p, q, limit, theta, phi, rho, particle,
-              density = parseFloat(0);  // total number of particles in each 'ring'
+              density = parseFloat(100);  // total number of particles in each 'ring'
 
           for (q = -density; q < density; q++ ) {
             limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;

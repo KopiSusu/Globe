@@ -10,7 +10,7 @@ function(convert, countries, THREE, Map3DGeometry) {
     var polygons = Object.keys(countries).map(function(name)
     {
       var country = countries[name];
-      var geometry = new Map3DGeometry(country, 0.98);
+      var geometry = new Map3DGeometry(country, 0.99);
       geometry.name = name;
       var colour = Math.random() * 0xffffff
       var material = new THREE.MeshPhongMaterial({ 
@@ -33,6 +33,11 @@ function(convert, countries, THREE, Map3DGeometry) {
     getGeometryByName: function getGeometryByName(name)
     {
       return polygons[Object.keys(countries).indexOf(name)];
+    },
+    getGeometryByIndex: function getGeometryByIndex(index)
+    {
+      return polygons[index]
     }
   };
 });
+

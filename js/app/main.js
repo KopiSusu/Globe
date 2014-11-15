@@ -16,4 +16,7 @@ define(function (require) {
     // Main application code goes here:
     animation.run();
 
+    // some simple jquery timer
+    // lets make it look like defcon
+
 });
