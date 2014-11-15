@@ -9,7 +9,7 @@ requirejs.config({
         app: '../app',
         jquery: 'jquery',
         three: 'three',
-        socketio: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min',
+        socketio: 'socketio',
     },
     shim: {
       'socketio' : {

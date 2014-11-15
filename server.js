@@ -4,6 +4,8 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var game = require('./game');
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -15,6 +17,7 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket) {
   console.log("a user connected");
+  game.addNewPlayers(1);
 
   // var newPlayer = new Player();
   // players.push(newPlayer);

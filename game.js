@@ -6,14 +6,24 @@ var players = [];
 
 
 var territories = [
-  { id: 'Canada', belongsTo: '1' },
-  { id: 'Australia', belongsTo: '1' },
-  { id: 'Korea', belongsTo: '2' },
-  { id: 'Germany', belongsTo: '2' }
+  { id: 'Canada' },
+  { id: 'Australia' },
+  { id: 'Korea' },
+  { id: 'Germany' }
 ];
 
 
-var friendlyTerritories = function(player) {
+function addNewPlayers(x) {
+  while (x--) {
+    newPlayer = new Player();
+    initTroops(newPlayer);
+    players.push(newPlayer);
+  };
+  console.dir(players);
+}
+ 
+// use if trying to implement teams
+function friendlyTerritories(player) {
   var friendly = [];
   var l = territories.length;
   while (l--) {
@@ -24,10 +34,51 @@ var friendlyTerritories = function(player) {
   return friendly;
 }
 
+// returns x number of empty territories
+function emptyTerritories(x) {
+  var results = [];
+  var l = territories.length;
+
+  if (!x) {
+    var x = l;
+  }
+
+  while (l-- && results.length < x) {
+    var t = territories[l];
+    var empty = true;
+
+    var i = players.length;
+    while (i-- && empty) {
+      if (players[i].troops[t.id] > 0) {
+        empty = false;
+      }
+    }
+
+    if (empty) {
+      results.push(t);
+    }
+  }
+  return results;
+}
+
+function playersIn(territory) {
+  var i = players.length;
+  var warring = [];
+  while (i--) {
+    if (players[i].troops[territory] > 0) {
+      warring.push(players[i])
+    }
+  }
+  return warring
+}
+
+
+// call when making new player. gives new player troops in 2 empty territories
 function initTroops(player) {
-  var ft = friendlyTerritories(player);
-  for (var i = 0; i < ft.length; i++) {
-    player.troops[String(ft[i])] = STARTING_TROOPS/ft.length;
+  var terrs = emptyTerritories(2);
+  console.dir(emptyTerritories());
+  for (var i = 0; i < terrs.length; i++) {
+    player.troops[String(terrs[i].id)] = STARTING_TROOPS/terrs.length;
   }
 }
 
@@ -64,36 +115,62 @@ function getWinningTeams() {
     winner = max_index(tally);
     winners[t] = winner
   }
-
-
-  console.dir(winners);
+  return winners;
 }
 
+function evaluateTurn() {
 
-for (var i = 0; i < 6; i++) {
-  newPlayer = new Player();
-  initTroops(newPlayer);
-  players.push(newPlayer);
-};
+  var i = territories.length;
+  while (i--) {
+    // each territory
+    var territory = territories[i].id;
 
-console.log('BEFORE MOVING');
-console.dir(players);
+    var playersAtWar = playersIn(territory);
 
-p1 = players[0];
-p2 = players[1];
-p3 = players[2];
-p4 = players[3];
-p5 = players[4];
-p6 = players[5];
-
-p1.moveTroops(15, 'Canada', 'Germany');
-p4.moveTroops(15, 'Canada', 'Germany');
-p5.moveTroops(15, 'Canada', 'Germany');
-
-console.log('SOME MOVES MADE (all Canadian troops to Germany)');
-
-console.dir(players);
+    if (playersAtWar.length > 1) {
+     lastOneStanding(playersAtWar, territory); // destroys troops until only 1 player has troops
+    }
+  }// end each territory
 
 
-getWinningTeams();
+}
+
+// each player loses troops until only 1 player has troops left
+function lastOneStanding(warriors, territory) {
+  var i = warriors.length;
+
+  while (warriors.length > 1) {
+    var i = warriors.length;
+    while (i--) {
+      warriors[i].troops[territory]--;
+    }
+
+    warriors = playersIn(territory);
+  }
+
+}
+////test
+// for (var i = 0; i < 6; i++) {
+//   newPlayer = new Player();
+//   initTroops(newPlayer);
+//   players.push(newPlayer);
+// };
+
+// console.log('BEFORE MOVING');
+// console.dir(players);
+
+// p1 = players[0];
+// p2 = players[1];
+// p3 = players[2];
+// p4 = players[3];
+// p5 = players[4];
+// p6 = players[5];
+
+// p1.moveTroops(15, 'Korea', 'Australia');
+// p1.moveTroops(5, 'Germany', 'Australia');
+
+
+module.exports = {
+  addNewPlayers : addNewPlayers
+}
 
