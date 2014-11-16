@@ -84,21 +84,21 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
         TweenMax.to(country.scale, 0.7, { x : scale, y : scale, z : scale });
     }
 
-    // var PI2 = Math.PI * 2;
+    var PI2 = Math.PI * 2;
 
-    // var particleMaterial = new THREE.SpriteMaterial( {
+    var particleMaterial = new THREE.SpriteMaterial( {
 
-    //                 transparent: false,
-    //                 color: 0x111111,
-    //                 program: function ( context ) {
+                    transparent: false,
+                    color: 0x111111,
+                    program: function ( context ) {
 
-    //                     context.beginPath();
-    //                     context.arc( 0, 0, 0.5, 0, PI2, true );
-    //                     context.fill();
+                        context.beginPath();
+                        context.arc( 0, 0, 0.5, 0, PI2, true );
+                        context.fill();
 
-    //                 }
+                    }
 
-    //             } );
+                } );
 
     var show = false
 
@@ -137,19 +137,18 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
             var continent = intersects[ 0 ].object;
             updateContinentScale(continent, 1.1);
             activeCountry = continent; 
-            // var particle = new THREE.Particle( particleMaterial );
-            // particle.position = intersects[ 0 ].point;
-            // particle.scale.x = particle.scale.y = 8;
-            // scene.add( particle );
-            var wrapper = new THREE.PointCloudMaterial({
-                color: 0x111111,
-                size: 200,
-                transparent: false
-            });
-            var particle = new THREE.Particle(wrapper);
-            particle.position.set(intersects[ 0 ].point.x ,intersects[ 0 ].point.y ,intersects[ 0 ].point.z);
-            scene.add(particle);
-                debugger
+            var particle = new THREE.Particle( particleMaterial );
+            particle.position = intersects[ 0 ].point;
+            particle.scale.x = particle.scale.y = 8;
+            scene.add( particle );
+            // var wrapper = new THREE.PointCloudMaterial({
+            //     color: 0x111111,
+            //     size: 200,
+            //     transparent: false
+            // });
+            // var particle = new THREE.Particle(wrapper);
+            // particle.position.set(intersects[ 0 ].point.x ,intersects[ 0 ].point.y ,intersects[ 0 ].point.z);
+            // scene.add(particle);
         }         
     }
 
@@ -170,15 +169,6 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
             countDown();
         }
     }
-
-    // // timer number 2!
-    // $(document).ready(function(){
-    //     $('#color').addClass('newWidth');
-    //     $("#color").bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
-    //         $('#color').toggleClass('newWidth');
-    //     });
-
-    // })
 
     // start the damn timer
     countDown();
