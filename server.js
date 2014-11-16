@@ -15,7 +15,7 @@ app.get('/', function(req, res){
 
 var game = require('./game');
 
-var TURN_LENGTH = 2; // turn length in seconds
+var TURN_LENGTH = 5; // turn length in seconds
 var PAUSE = true;
 var newPlayers = [];
 
