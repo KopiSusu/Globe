@@ -1,5 +1,5 @@
 // describes particles that form the coastline layer
-define(['./util', 'three', 'THREEx.text'],
+define(['./util', 'three'],
 function(convert, THREE) {
     
     var layer = new THREE.Object3D();
