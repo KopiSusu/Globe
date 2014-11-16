@@ -18,7 +18,6 @@ define(function (require) {
     // Main application code goes here:
     animation.run();
 
-
     io.socket = io.connect(window.SOCKET);
 
     io.socket.on('connect', function() {
@@ -26,7 +25,6 @@ define(function (require) {
         console.log("I'm connected");
 
     });
-
 
     io.socket.on('game state', function(data) {
         console.log(data); 
@@ -37,6 +35,9 @@ define(function (require) {
             //  {"id":3,"team_id":2,"troops":{}},
             //  {"id":4,"team_id":1,"troops":{}}
             // ] 
+
+        //animation.renderGame(data);
+
     });
 
 
