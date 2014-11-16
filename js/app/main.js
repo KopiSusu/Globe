@@ -12,7 +12,7 @@ define(function (require) {
     var $     = require('jquery');
     var THREE = require('three');
     var font = require('font');
-    // var OrbitControls = require('OrbitControls');
+    var OrbitControls = require('orbitcontrols');
 
     // Main application code goes here:
     animation.run();

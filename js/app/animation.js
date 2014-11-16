@@ -3,7 +3,7 @@
 ** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
-define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, TweenMax, layers) {
+define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], function (THREE, $, TweenMax, layers, OrbitControls) {
 
     // set the scene size
     var WIDTH = window.innerWidth,
