@@ -11,9 +11,13 @@ define(function (require) {
     // full IDs, like:
     var $     = require('jquery');
     var THREE = require('three');
+    var font = require('font');
     // var OrbitControls = require('OrbitControls');
 
     // Main application code goes here:
     animation.run();
+
+    // some simple jquery timer
+    // lets make it look like defcon
 
 });

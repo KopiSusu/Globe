@@ -9,6 +9,7 @@ requirejs.config({
         app: '../app',
         jquery: 'jquery',
         three: 'three',
+        font: 'threejs/helvetiker_regular.typeface'
     }
 });
 

@@ -14,7 +14,7 @@ define(['./util', 'three'], function(convert, THREE) {
 
       init: function() {
           var p, q, limit, theta, phi, rho, particle,
-              density = parseFloat(90);  // total number of particles in each 'ring'
+              density = parseFloat(100);  // total number of particles in each 'ring'
 
           for (q = -density; q < density; q++ ) {
             limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;
@@ -26,13 +26,15 @@ define(['./util', 'three'], function(convert, THREE) {
               
               // // Add randomness to make the globe fuzzy
               theta += Math.random()/density;
-              rho -= Math.random()/300;
+              // rho += Math.random()-0.35;
+              rho += Math.random()/300;
               
               particle = convert.toParticle(convert.toCartesian([theta, phi, rho]));
               particles.vertices.push(particle);
             }
           }
-          system = new THREE.PointCloud(particles, material);
+          // system = new THREE.PointCloud(particles, material);
+                    system = new THREE.Mesh();
           return system;
       } 
 
