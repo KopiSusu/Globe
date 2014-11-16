@@ -12,3 +12,24 @@ Globe takes a second to load
 =============
 Go to http://kopisusu.github.io/Globe/ to check it out!
 click on the screen to start
+
+
+============
+Timer logic
+
+x = length of turn in seconds
+Server:
+Send game state
+  Set timer for x+1
+  Accept moves
+  Timer ends, stop accepting moves
+    Evaluate game state
+      Send game state
+
+Client:
+Receive game state
+  Render game state
+    Start timer for x
+    Accept moves
+    Timer ends, stop accepting moves
+    PAUSE and wait for next game state

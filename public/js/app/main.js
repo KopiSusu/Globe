@@ -4,7 +4,7 @@ define(function (require) {
     // with a relative require call,
     // like:
     var animation = require('./animation').create();
-        //layers = require('./layers/config');
+    var game = require('./game');
 
 
     // Load library/vendor modules using
