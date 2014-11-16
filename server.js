@@ -28,8 +28,8 @@ io.on('connection', function(socket) {
       game.removePlayer(socket.player);
   });
 
-  socket.on('msg', function(msg) {
-
+  socket.on('move', function(move) {
+    console.log(move);
   });
 
 
