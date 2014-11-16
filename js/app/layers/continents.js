@@ -21,8 +21,11 @@ function(convert, countries, THREE, Map3DGeometry) {
         specularity: 0x111111,
         opacity: 1
       });
-      var mesh;
-      layer.add(mesh = new THREE.Mesh(geometry, material))
+      var mesh = new THREE.Mesh(geometry, material);
+      mesh.scale.x = 20
+      mesh.scale.y = 20
+      mesh.scale.z = 20 
+      layer.add( mesh )
       return mesh;
     });
 

@@ -15,15 +15,16 @@
 */
 
 define(
-    ['./continents','./cities','./inner','./inneryellow','./crust'], 
+    ['./continents','./cities','./inner','./inneryellow','./crust','./text'], 
 
-    function(continents, cities, inner, inneryellow, crust){
+    function(continents, cities, inner, inneryellow, crust, text){
         return {
           continents: continents,
           cities: cities,
           inner: inner,
           inneryellow: inneryellow,
-          crust: crust
+          crust: crust,
+          text: text
         }
     }
 

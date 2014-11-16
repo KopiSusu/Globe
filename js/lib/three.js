@@ -3,8 +3,8 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-define(['threejs/orbitcontrols', 'threejs/tween'], function(orbitcontrols, tween) { 
-var THREE = { REVISION: '69', OrbitControls: require('threejs/orbitcontrols'), Tween: require('threejs/tween') };
+define(['threejs/orbitcontrols'], function(orbitcontrols) { 
+var THREE = { REVISION: '69', OrbitControls: require('threejs/orbitcontrols')};
 
 // browserify support
 

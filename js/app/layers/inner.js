@@ -5,7 +5,7 @@ define(['./util', 'three'], function(convert, THREE) {
         system,
         material  = new THREE.PointCloudMaterial({
                     color:        0xDD423E,
-                    size:         1,
+                    size:         2,
                     map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                     blending:     THREE.AdditiveBlending,
                     // fog: false,
@@ -27,7 +27,7 @@ define(['./util', 'three'], function(convert, THREE) {
               
               // // Add randomness to make the globe fuzzy
               theta += Math.random()/density;
-              rho -= Math.random()/300;
+              rho -= Math.random()-0.3;
               
               particle = convert.toParticle(convert.toCartesian([theta, phi, rho]));
               particles.vertices.push(particle);

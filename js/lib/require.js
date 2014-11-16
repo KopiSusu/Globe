@@ -205,13 +205,18 @@ var requirejs, require, define;
                 baseUrl: './',
                 paths: {
                     tween: './threejs/TweenMax'
+                    // Threex: './threejs/threex.text'
                 },
                 bundles: {},
                 pkgs: {},
                 shim: {        
                     tween: {
                         exports: 'TweenMax'
-                    }},
+                    }
+                    // Threex: {
+                    //     exports: 'THREEx.text'
+                    // }
+                },
                 config: {}
             },
             registry = {},

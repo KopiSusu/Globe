@@ -33,8 +33,8 @@ define(['./util', 'three'], function(convert, THREE) {
               particles.vertices.push(particle);
             }
           }
-          system = new THREE.PointCloud(particles, material);
-                    // system = new THREE.Mesh();
+          // system = new THREE.PointCloud(particles, material);
+                    system = new THREE.Mesh();
           return system;
       } 
 

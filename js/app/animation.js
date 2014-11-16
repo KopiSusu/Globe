@@ -67,13 +67,12 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
         raycaster = new THREE.Raycaster(),
         continents = []
 
-        // debugger
-        seperate();
-        function seperate () {
-            for (var i = 0; i < 242; i++) {
-                continents.push(layers.continents.getGeometryByIndex(i))
-            }
+    seperate();
+    function seperate () {
+        for (var i = 0; i < 242; i++) {
+            continents.push(layers.continents.getGeometryByIndex(i))
         }
+    }
 
     var activeCountry = null;
 
@@ -85,19 +84,34 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
         TweenMax.to(country.scale, 0.7, { x : scale, y : scale, z : scale });
     }
 
-    var show = false
+    // var PI2 = Math.PI * 2;
 
-    for (var i = 0; i < continents.length; i++) {
-                TweenMax.to(continents[i].scale, 0.5, { x : 10.0, y : 10.0, z : 10.0 });
-    }
+    // var particleMaterial = new THREE.SpriteMaterial( {
+
+    //                 transparent: false,
+    //                 color: 0x111111,
+    //                 program: function ( context ) {
+
+    //                     context.beginPath();
+    //                     context.arc( 0, 0, 0.5, 0, PI2, true );
+    //                     context.fill();
+
+    //                 }
+
+    //             } );
+
+    var show = false
 
     function onDocumentMouseDown( event ) {
 
         event.preventDefault();
         // debugger
         if (show === false){
+            TweenMax.to(scene.children[6].children[0].position, 10, { y: 2000});
+            TweenMax.to(scene.children[6].children[1].position, 10, { y: -2000});
             for (var i = 0; i < continents.length; i++) {
                 // TweenMax.to(continents[i].material, 1, { opacity: 1});
+                // TweenMax.to(continents[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
                 var time = Math.random()+1+Math.random();
                 TweenMax.to(continents[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
                 show = true
@@ -115,18 +129,30 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
         if (intersects[ 0 ]) {
             if (activeCountry) {
                 // reset country scale
-                // TweenMax.to(activeCountry.material, 0.7, { opacity: 1});
                 updateContinentScale(activeCountry, 1.0);
             }
         }
 
         if (intersects[ 0 ]) {
             var continent = intersects[ 0 ].object;
-            // TweenMax.to(continent.material, 0.7, { opacity: 0.9});
-            updateContinentScale(continent, 1.05);
+            updateContinentScale(continent, 1.1);
             activeCountry = continent; 
+            // var particle = new THREE.Particle( particleMaterial );
+            // particle.position = intersects[ 0 ].point;
+            // particle.scale.x = particle.scale.y = 8;
+            // scene.add( particle );
+            var wrapper = new THREE.PointCloudMaterial({
+                color: 0x111111,
+                size: 200,
+                transparent: false
+            });
+            var particle = new THREE.Particle(wrapper);
+            particle.position.set(intersects[ 0 ].point.x ,intersects[ 0 ].point.y ,intersects[ 0 ].point.z);
+            scene.add(particle);
+                debugger
         }         
     }
+
 
     // timer
     var counter = 60;
@@ -220,10 +246,11 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
                 scene.children[1].rotation.y = 3.5;
                 scene.children[4].rotation.y += 0.002;
                 scene.children[3].rotation.y += 0.002;
+                scene.children[6].rotation.y += 0.001;
 
 
                 controls.update();
-                TWEEN.update();
+                // TWEEN.update();
 
                 // render updated scene
                 renderer.clear();
