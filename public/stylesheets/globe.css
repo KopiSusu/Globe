@@ -57,7 +57,7 @@ bottom: 13.7%;
 left: 100%;
 }
 
-#search {
+#timer {
 position: absolute;
 left: 16%;
 top: 3%;
@@ -72,7 +72,6 @@ font-size: 28px;
 text-align: center;
 font-size: 30px;
 font-family: 'Inconsolata';
-cursor: pointer;
 opacity: 0.8;
 }
 

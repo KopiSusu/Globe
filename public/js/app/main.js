@@ -12,9 +12,12 @@ define(function (require) {
     var $     = require('jquery');
     var THREE = require('three');
     var io = require('socketio');
+    var font = require('font');
+
 
     // Main application code goes here:
     animation.run();
+
 
     io.socket = io.connect(window.SOCKET);
 

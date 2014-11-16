@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-things to do!
-
 Current Project:
 =============
 
@@ -14,3 +11,4 @@ Globe takes a second to load
 
 =============
 Go to http://kopisusu.github.io/Globe/ to check it out!
+click on the screen to start

@@ -4,7 +4,7 @@
  * @author mrdoob / http://mrdoob.com/
  */
 define(['threejs/orbitcontrols'], function(orbitcontrols) { 
-var THREE = { REVISION: '69', OrbitControls: require('threejs/orbitcontrols') };
+var THREE = { REVISION: '69', OrbitControls: require('threejs/orbitcontrols')};
 
 // browserify support
 

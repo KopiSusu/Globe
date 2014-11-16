@@ -10,11 +10,12 @@ requirejs.config({
         jquery: 'jquery',
         three: 'three',
         socketio: 'socketio',
+        font: 'threejs/helvetiker_regular.typeface'
     },
     shim: {
       'socketio' : {
         exports: 'io'
-      }
+      }        
     }
 });
 
