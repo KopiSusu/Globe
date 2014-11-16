@@ -11,7 +11,7 @@ Globe takes a second to load
 
 =============
 Go to http://kopisusu.github.io/Globe/ to check it out!
-click on the screen to start
+As we are currently using gh-pages, game is currently static
 
 
 ============
