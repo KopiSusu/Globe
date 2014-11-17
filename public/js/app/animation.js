@@ -3,7 +3,7 @@
 ** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
-define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, TweenMax, layers) {
+define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], function (THREE, $, TweenMax, layers, OrbitControls) {
 
     // set the scene size
     var WIDTH = window.innerWidth,
@@ -135,12 +135,13 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
 
         if (intersects[ 0 ]) {
             var continent = intersects[ 0 ].object;
-            updateContinentScale(continent, 1.1);
+            updateContinentScale(continent, 1.05);
             activeCountry = continent; 
             var particle = new THREE.Particle( particleMaterial );
             particle.position = intersects[ 0 ].point;
             particle.scale.x = particle.scale.y = 8;
             scene.add( particle );
+            debugger
             // var wrapper = new THREE.PointCloudMaterial({
             //     color: 0x111111,
             //     size: 200,
@@ -152,7 +153,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
         }         
     }
 
-
+    debugger
     // timer
     var counter = 60;
     function countDown() {

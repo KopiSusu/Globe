@@ -9,6 +9,7 @@ requirejs.config({
         app: '../app',
         jquery: 'jquery',
         three: 'three',
+        orbitcontrols: 'threejs/orbitcontrols',
         socketio: 'socketio',
         font: 'threejs/helvetiker_regular.typeface'
     },
