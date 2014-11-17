@@ -9,9 +9,6 @@ function(convert, THREE) {
         height: 4,
         curveSegments: 0,
         font: 'helvetiker',
-        bevelThickness: 2,
-        bevelSize: 3,
-        bevelEnabled: true,
         material: 0,
         extrudeMaterial: 1,
         opacity: 0.5
@@ -22,9 +19,6 @@ function(convert, THREE) {
         height: 4,
         curveSegments: 0,
         font: 'helvetiker',
-        bevelThickness: 2,
-        bevelSize: 3,
-        bevelEnabled: true,
         material: 0,
         extrudeMaterial: 1,
         opacity: 0.5
