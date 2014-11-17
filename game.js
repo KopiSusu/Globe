@@ -117,6 +117,17 @@ function removePlayer(player) {
     }
   }
 }
+
+function moveTroops(id, num, from, to) {
+  var i = players.length;
+  var done = false;
+  while (i-- && !done) {
+    if ( players[i].id == id ) {
+      players[i].moveTroops(num, from, to);
+      done = true;
+    }
+  }
+}
 // //test
 // for (var i = 0; i < 6; i++) {
 //   newPlayer = new Player();
@@ -145,6 +156,7 @@ module.exports = {
   addNewPlayer : addNewPlayer,
   evaluateState : evaluateState,
   state : players,
+  moveTroops : moveTroops,
   end : GAME_OVER
 }
 
