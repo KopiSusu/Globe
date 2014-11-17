@@ -23,9 +23,6 @@ define([], function() {
           done = true;
         }
       }
-
-    console.log("inside movetroops");
-    console.log(this.state);
     }
     
   }

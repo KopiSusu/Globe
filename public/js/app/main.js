@@ -1,5 +1,7 @@
 define(function (require) {
 
+    var TURN_LENGTH = 5;
+
     // Load any app-specific modules
     // with a relative require call,
     // like:
@@ -16,22 +18,36 @@ define(function (require) {
 
 
     // Main application code goes here:
-    //animation.run();
 
+    animation.run();
+
+
+    // connect to server with socket
     io.socket = io.connect(window.SOCKET);
 
-    io.socket.on('connect', function() {
 
-        console.log("I'm connected");
+    // do stuff when connected
+    io.socket.on('connect', function() {
 
     });
 
+
+    // receive welcome info from server when first connected
+    io.socket.on('welcome', function(data) {
+        json = JSON.parse(data);
+
+        // set socket playerid
+        io.socket.playerid = json.playerid;
+    })
+
+
+    // receive game state from server
     io.socket.on('game state', function(data) {
 
         game.updateState(data);
 
         // ALSO MAKE THIS PLZ
-        // animation.startTimer();
+        // animation.startTimer(TURN_LENGTH);
 
 
         // MAKE THIS PLZZ! D:
@@ -39,19 +55,19 @@ define(function (require) {
 
             // game.state is an array of players with their troops
             // [
-            //  {"id":1,"team_id":1,"troops":{"Germany":15,"Korea":15}},
-            //  {"id":2,"team_id":2,"troops":{"Australia":15,"Canada":15}},
-            //  {"id":3,"team_id":2,"troops":{}},
-            //  {"id":4,"team_id":1,"troops":{}}
+            //  {"id":1, troops":{"Germany":15,"Korea":15}},
+            //  {"id":2, "troops":{"Australia":15,"Canada":15}},
+            //  {"id":3, "troops":{}},
+            //  {"id":4, "troops":{}}
             // ] 
 
     });
 
+    // receive other players' moves from server
     io.socket.on('move', function(data) {
        var json = JSON.parse(data);
        game.moveTroops(json.playerid, json.num, json.from, json.to);
 
-       // idea for next step?? Ko?
        /* at this point,`game.state` will be updated with the move, so
           we could use `animation.renderTroops(game.state)`. but I have a 
           feeling it will be better performance to just remove and add
@@ -61,5 +77,25 @@ define(function (require) {
 
     });
 
+
+    // use this function to move own troops
+    // e.g. makeMove(5, 'Canada', 'Korea')
+    function makeMove(num, from, to) {
+
+        // check if I am assigned a player
+        if (io.socket.playerid) {
+
+            // update my local game with my move immediately
+            game.moveTroops(io.socket.playerid, num, from, to);
+            
+            // send my move to the server
+            io.socket.emit('move', {
+                playerid : io.socket.playerid, 
+                num : num, 
+                from : from, 
+                to : to
+            });
+        }
+    }
 
 });

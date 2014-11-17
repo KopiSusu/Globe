@@ -26,15 +26,14 @@ var myMove = {
   to: 'Korea'
 }
 
+
+// socket connection starts
 io.on('connection', function(socket) {
 
   /* this adds the socket to a queue of new players.
    queue is added to the game at start of each turn.*/
   newPlayers.push(socket);
 
-  setTimeout(function() {
-    socket.emit('move', JSON.stringify(myMove));
-  }, 7000)
 
   /* this removes the player instantly on disconnect.
      no further moves can be made.
@@ -44,21 +43,36 @@ io.on('connection', function(socket) {
       game.removePlayer(socket.player);
   });
 
+
   // this watches for a 'move' message from the socket
   socket.on('move', function(move) {
     if (!PAUSE) {
-      //evaluate move, emit to everyone else
+
+      //move troops in server copy of the game
+      game.moveTroops(move.playerid, move.num, move.from, move.to);
+
+      //send move to everyone except sender
+      io.broadcast.emit('move', JSON.stringify({
+                                  playerid: move.playerid, 
+                                  num: move.num, 
+                                  from: move.from, 
+                                  to: move.to
+                                }));
     }
 
   });
 
-});
+}); // socket connection ends
 
 function start() {
   http.listen(3000, function() {
+
+    // commence!
     startTurn();
+
   })
 };
+
 
 function startTurn() {
 
@@ -71,6 +85,7 @@ function startTurn() {
   // this triggers end of turn
   setTimeout(endOfTurn, (TURN_LENGTH + 1)*1000);
 }
+
 
 function endOfTurn() {
 
@@ -86,6 +101,9 @@ function endOfTurn() {
   while (newPlayers.length > 0) {
     var socket = newPlayers.pop();
     socket.player = game.addNewPlayer();
+    socket.emit('welcome', JSON.stringify({
+                              playerid : socket.player.id 
+                            }));
   }
 
   startTurn();
