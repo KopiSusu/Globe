@@ -24,6 +24,8 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
                                   ASPECT,
                                   NEAR,
                                   FAR  ),
+
+    // here we are fucking with the controls, if you want to change some aspect of controls take a quick peek at the ORbit controls file, it lays out pretty well what you can change.
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.minDistance = 250,
         controls.maxDistance = 650,
@@ -63,10 +65,12 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
     // Click event listener
     document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
+    // generating required variables for the click function
     var projector = new THREE.Projector(),
         raycaster = new THREE.Raycaster(),
         continents = []
 
+    // seperate the countinents, this is solely used for the introduction animation
     seperate();
     function seperate () {
         for (var i = 0; i < 242; i++) {
@@ -74,36 +78,37 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
         }
     }
 
+    // think of this as active user, active country changes depending on what country you are clicking on
     var activeCountry = null;
 
+    // to be honest i forgot what this is doing specifically, but its essential...
     var clickedOnContinent = function(){
         return intersects.length > 0;
     }
 
+    // this is the function for raising the countinent up when its selected
     var updateContinentScale = function(country, scale) {
         TweenMax.to(country.scale, 0.7, { x : scale, y : scale, z : scale });
     }
 
-
-
     var show = false
 
+    // the actual mousedown function
     function onDocumentMouseDown( event ) {
 
         event.preventDefault();
-        // debugger
+        // this is for the starting animation, so the title and the continents coming together to form the planet
         if (show === false){
             TweenMax.to(scene.children[6].children[0].position, 10, { y: 2000});
             TweenMax.to(scene.children[6].children[1].position, 10, { y: -2000});
             for (var i = 0; i < continents.length; i++) {
-                // TweenMax.to(continents[i].material, 1, { opacity: 1});
-                // TweenMax.to(continents[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
                 var time = Math.random()+1+Math.random();
                 TweenMax.to(continents[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
                 show = true
             }
         }
 
+        // this is setting up the ray cast, so how this works is it sends a invisible beam out from the camera to where you are clicking, and stores any object it encounters in INTERSCECTS
         var vector = new THREE.Vector3();
         vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 );
         vector.unproject( camera );
@@ -112,6 +117,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
 
         var intersects = raycaster.intersectObjects( continents );
 
+        // this is for the animation, not sure if we are going to use it
         if (intersects[ 0 ]) {
             if (activeCountry) {
                 // reset country scale
@@ -119,10 +125,13 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
             }
         }
 
+        // this is performing some operations on the actual clicked object, so we are changing the activeCountry to the currently selected country, and we are also adding a particle to the country
         if (intersects[ 0 ]) {
             var continent = intersects[ 0 ].object;
             // updateContinentScale(continent, 1.05);
             activeCountry = continent; 
+
+            // this is creating the particle
             geometry = new THREE.Geometry();
 
             sprite = THREE.ImageUtils.loadTexture( "images/particle.png" );
@@ -132,7 +141,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
                 var vertex = new THREE.Vector3();
                 vertex.x = intersects[ 0 ].point.x;
                 vertex.y = intersects[ 0 ].point.y;
-                vertex.z = intersects[ 0 ].point.z;
+                vertex.z = (intersects[ 0 ].point.z) + 0.5;
 
                 geometry.vertices.push( vertex );
 
@@ -231,6 +240,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
 
                 }
 
+                // adding some rotation 
                 scene.children[0].rotation.y += 0.002;
                 scene.children[1].rotation.y = 3.5;
                 scene.children[4].rotation.y += 0.002;
