@@ -8,10 +8,10 @@ function Player() {
   COUNTER++;
   this.id = COUNTER;
 
-  // assign player to team with fewest players
-  teams.sortAscendingSize();
-  this.team_id = teams[0].id;
-  teams[0].num_players += 1;
+  // // assign player to team with fewest players
+  // teams.sortAscendingSize();
+  // this.team_id = teams[0].id;
+  // teams[0].num_players += 1;
 
 
   this.troops = {}; // 'Canada' : 5 (Int)
