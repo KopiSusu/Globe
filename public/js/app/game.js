@@ -1,5 +1,7 @@
 define([], function() {
 
+  /* instantiates empty game
+      changes here are not reflected */
   var state = [];
 
   return {
@@ -10,9 +12,22 @@ define([], function() {
       this.state = data;
     },
 
-    renderState : function(data) {
-      // pass data to animation somehow
+    moveTroops : function(playerid, num, from, to) {
+      var l = this.state.length;
+      var done = false;
+      while (l-- && !done) {
+        var p = this.state[l];
+        if (p.id == playerid) {
+          p.troops[from] -= num;
+          p.troops[to] += num;
+          done = true;
+        }
+      }
+
+    console.log("inside movetroops");
+    console.log(this.state);
     }
+    
   }
 
 });

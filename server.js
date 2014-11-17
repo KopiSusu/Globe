@@ -19,11 +19,22 @@ var TURN_LENGTH = 5; // turn length in seconds
 var PAUSE = true;
 var newPlayers = [];
 
+var myMove = {
+  playerid : 1,
+  num : 5,
+  from: 'Canada',
+  to: 'Korea'
+}
+
 io.on('connection', function(socket) {
 
   /* this adds the socket to a queue of new players.
    queue is added to the game at start of each turn.*/
   newPlayers.push(socket);
+
+  setTimeout(function() {
+    socket.emit('move', JSON.stringify(myMove));
+  }, 7000)
 
   /* this removes the player instantly on disconnect.
      no further moves can be made.

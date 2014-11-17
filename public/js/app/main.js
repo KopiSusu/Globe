@@ -16,7 +16,7 @@ define(function (require) {
 
 
     // Main application code goes here:
-    animation.run();
+    //animation.run();
 
     io.socket = io.connect(window.SOCKET);
 
@@ -48,7 +48,17 @@ define(function (require) {
     });
 
     io.socket.on('move', function(data) {
-        // Xianny will fill this in eventually
+       var json = JSON.parse(data);
+       game.moveTroops(json.playerid, json.num, json.from, json.to);
+
+       // idea for next step?? Ko?
+       /* at this point,`game.state` will be updated with the move, so
+          we could use `animation.renderTroops(game.state)`. but I have a 
+          feeling it will be better performance to just remove and add
+          what is needed */
+       // animation.removeTroops(json.playerid, json.num, json.from);
+       // animation.addTroops(json.playerid, json.num, json.to); 
+
     });
 
 
