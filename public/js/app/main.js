@@ -30,6 +30,10 @@ define(function (require) {
 
         game.updateState(data);
 
+        // ALSO MAKE THIS PLZ
+        // animation.startTimer();
+
+
         // MAKE THIS PLZZ! D:
         // animation.renderTroops(game.state);
 
@@ -44,7 +48,7 @@ define(function (require) {
     });
 
     io.socket.on('move', function(data) {
-
+        // Xianny will fill this in eventually
     });
 
 
