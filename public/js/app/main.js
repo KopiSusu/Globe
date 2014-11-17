@@ -4,7 +4,7 @@ define(function (require) {
     // with a relative require call,
     // like:
     var animation = require('./animation').create();
-        //layers = require('./layers/config');
+    var game = require('./game');
 
 
     // Load library/vendor modules using
@@ -28,8 +28,17 @@ define(function (require) {
     });
 
     io.socket.on('game state', function(data) {
-        console.log(data); 
-            // game state is an array of players with their troops
+
+        game.updateState(data);
+
+        // ALSO MAKE THIS PLZ
+        // animation.startTimer();
+
+
+        // MAKE THIS PLZZ! D:
+        // animation.renderTroops(game.state);
+
+            // game.state is an array of players with their troops
             // [
             //  {"id":1,"team_id":1,"troops":{"Germany":15,"Korea":15}},
             //  {"id":2,"team_id":2,"troops":{"Australia":15,"Canada":15}},
@@ -37,8 +46,10 @@ define(function (require) {
             //  {"id":4,"team_id":1,"troops":{}}
             // ] 
 
-        //animation.renderGame(data);
+    });
 
+    io.socket.on('move', function(data) {
+        // Xianny will fill this in eventually
     });
 
 
