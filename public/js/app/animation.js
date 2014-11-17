@@ -141,7 +141,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
                 var vertex = new THREE.Vector3();
                 vertex.x = intersects[ 0 ].point.x;
                 vertex.y = intersects[ 0 ].point.y;
-                vertex.z = (intersects[ 0 ].point.z) + 0.5;
+                vertex.z = (intersects[ 0 ].point.z) + 1;
 
                 geometry.vertices.push( vertex );
 
