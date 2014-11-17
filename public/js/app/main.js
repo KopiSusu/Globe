@@ -15,6 +15,7 @@ define(function (require) {
     var THREE = require('three');
     var io = require('socketio');
     var font = require('font');
+    var OrbitControls = require('orbitcontrols');
 
 
     // Main application code goes here:

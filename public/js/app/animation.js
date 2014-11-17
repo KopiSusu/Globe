@@ -3,7 +3,7 @@
 ** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
-define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, TweenMax, layers) {
+define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], function (THREE, $, TweenMax, layers, OrbitControls) {
 
     // set the scene size
     var WIDTH = window.innerWidth,
@@ -84,21 +84,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
         TweenMax.to(country.scale, 0.7, { x : scale, y : scale, z : scale });
     }
 
-    // var PI2 = Math.PI * 2;
 
-    // var particleMaterial = new THREE.SpriteMaterial( {
-
-    //                 transparent: false,
-    //                 color: 0x111111,
-    //                 program: function ( context ) {
-
-    //                     context.beginPath();
-    //                     context.arc( 0, 0, 0.5, 0, PI2, true );
-    //                     context.fill();
-
-    //                 }
-
-    //             } );
 
     var show = false
 
@@ -129,30 +115,42 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
         if (intersects[ 0 ]) {
             if (activeCountry) {
                 // reset country scale
-                updateContinentScale(activeCountry, 1.0);
+                // updateContinentScale(activeCountry, 1.0);
             }
         }
 
         if (intersects[ 0 ]) {
             var continent = intersects[ 0 ].object;
-            updateContinentScale(continent, 1.1);
+            // updateContinentScale(continent, 1.05);
             activeCountry = continent; 
-            // var particle = new THREE.Particle( particleMaterial );
-            // particle.position = intersects[ 0 ].point;
-            // particle.scale.x = particle.scale.y = 8;
-            // scene.add( particle );
-            var wrapper = new THREE.PointCloudMaterial({
-                color: 0x111111,
-                size: 200,
-                transparent: false
+            geometry = new THREE.Geometry();
+
+            sprite = THREE.ImageUtils.loadTexture( "images/particle.png" );
+
+            for ( i = 0; i < 1; i ++ ) {
+
+                var vertex = new THREE.Vector3();
+                vertex.x = intersects[ 0 ].point.x;
+                vertex.y = intersects[ 0 ].point.y;
+                vertex.z = intersects[ 0 ].point.z;
+
+                geometry.vertices.push( vertex );
+
+            }
+
+            material = new THREE.PointCloudMaterial( { 
+                size: 5, 
+                sizeAttenuation: false, 
+                color: Math.random() * 0x555555, 
+                transparent: true 
             });
-            var particle = new THREE.Particle(wrapper);
-            particle.position.set(intersects[ 0 ].point.x ,intersects[ 0 ].point.y ,intersects[ 0 ].point.z);
-            scene.add(particle);
-                debugger
+
+            particles = new THREE.PointCloud( geometry, material );
+            particles.sortParticles = true;
+            scene.add( particles );
+            // updateContinentScale(continent, 1.05);
         }         
     }
-
 
     // timer
     var counter = 60;
@@ -170,15 +168,6 @@ define(['three', 'jquery', 'TweenMax', './layers/config'], function (THREE, $, T
             countDown();
         }
     }
-
-    // // timer number 2!
-    // $(document).ready(function(){
-    //     $('#color').addClass('newWidth');
-    //     $("#color").bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
-    //         $('#color').toggleClass('newWidth');
-    //     });
-
-    // })
 
     // start the damn timer
     countDown();
