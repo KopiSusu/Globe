@@ -91,22 +91,22 @@ Sim.App.prototype.init = function(param)
   param = param || {};  
   var container = param.container;
   var canvas = param.canvas;
-  
+
     // Create the Three.js renderer, add it to our div
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setClearColor(new THREE.Color(0x111111));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color(0x000000));
     container.append( renderer.domElement );
 
     // Create a new Three.js scene
     var scene = new THREE.Scene();
-    // scene.add( new THREE.AmbientLight( 0x505050 ) );
-    scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
+    //scene.add( new THREE.AmbientLight( 0x505050 ) );
     scene.data = this;
+    scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
+
 
     // Put in a camera at a good default location
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 10000 );
-    //camera.position.set( 0, 0, 300);
     camera.position.z = 650;
 
     scene.add(camera);
@@ -117,6 +117,15 @@ Sim.App.prototype.init = function(param)
     
     // Create a projector to handle picking
     var projector = new THREE.Projector();
+
+    // here we are fucking with the controls, if you want to change some aspect of controls take a quick peek at the ORbit controls file, it lays out pretty well what you can change.
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.minDistance = 250,
+    controls.maxDistance = 650,
+    controls.zoomSpeed = 0.3,
+    controls.zoomDampingFactor = 0.3,
+    controls.momentumDampingFactor = 0.5,
+    controls.rotateSpeed = 0.6;
     
     // Save away a few things
     this.container = container;
@@ -125,11 +134,14 @@ Sim.App.prototype.init = function(param)
     this.camera = camera;
     this.projector = projector;
     this.root = root;
-    
+    this.controls = controls;
+
+
     // // Set up event handlers
     // this.initMouse();
     // this.initKeyboard();
     // this.addDomHandlers();
+
 }
 
 //Core run loop
@@ -137,7 +149,6 @@ Sim.App.prototype.run = function()
 {
   this.update();
   this.renderer.render( this.scene, this.camera );
-  debugger;
   var that = this;
   requestAnimationFrame(function() { that.run(); });  
 }

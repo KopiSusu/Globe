@@ -5,16 +5,13 @@ var Game = (function() {
   var timer = '';
   var animation = new Sim.App();
   animation.init({container: $('#container')});
-  animation.run();
 
   // add territories to the main animation
   var territories = new Sim.Object();
   territories.object3D = Animator.convertCountriesTo3D();
   animation.addObject(territories);
 
-
-  animation.scene.children.push(sphere.init());
-
+  animation.run();
 
 
   var updateState = function(data) {

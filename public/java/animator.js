@@ -13,7 +13,7 @@ var Animator = (function() {
       var geometry = new THREE.Geometry();
       var geometry = new Map3DGeometry(country, 0.99);
       geometry.name = name;
-      var colour = Math.random() * 0xF3F2F2
+      var colour = Math.random() * 0xF3F2F2;
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
         transparent: true,
@@ -22,10 +22,7 @@ var Animator = (function() {
         specularity: 0x000000,
         opacity: 1
       });
-      var mesh = new THREE.Mesh(geometry, material);
-      mesh.scale.x = 20
-      mesh.scale.y = 20
-      mesh.scale.z = 20 
+      var mesh = new THREE.Mesh(geometry, material); 
       obj.add( mesh )
       return mesh;
     });
