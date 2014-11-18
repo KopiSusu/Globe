@@ -190,6 +190,274 @@ Sim.App.prototype.removeObject = function(obj)
   }
 }
 
+// Event handling
+Sim.App.prototype.initMouse = function()
+{
+  var dom = this.renderer.domElement;
+  
+  var that = this;
+  dom.addEventListener( 'mousemove', 
+      function(e) { that.onDocumentMouseMove(e); }, false );
+  dom.addEventListener( 'mousedown', 
+      function(e) { that.onDocumentMouseDown(e); }, false );
+  dom.addEventListener( 'mouseup', 
+      function(e) { that.onDocumentMouseUp(e); }, false );
+  
+  // $(dom).mousewheel(
+  //         function(e, delta) {
+  //             that.onDocumentMouseScroll(e, delta);
+  //         }
+  //     );
+  
+  this.overObject = null;
+  this.clickedObject = null;
+}
+
+Sim.App.prototype.initKeyboard = function()
+{
+  var dom = this.renderer.domElement;
+  
+  var that = this;
+  dom.addEventListener( 'keydown', 
+      function(e) { that.onKeyDown(e); }, false );
+  dom.addEventListener( 'keyup', 
+      function(e) { that.onKeyUp(e); }, false );
+  dom.addEventListener( 'keypress', 
+      function(e) { that.onKeyPress(e); }, false );
+
+  // so it can take focus
+  dom.setAttribute("tabindex", 1);
+    dom.style.outline='none';
+}
+
+Sim.App.prototype.addDomHandlers = function()
+{
+  var that = this;
+  window.addEventListener( 'resize', function(event) { that.onWindowResize(event); }, false );
+}
+
+Sim.App.prototype.onDocumentMouseMove = function(event)
+{
+    event.preventDefault();
+    
+    if (this.clickedObject && this.clickedObject.handleMouseMove)
+    {
+      var hitpoint = null, hitnormal = null;
+      var intersected = this.objectFromMouse(event.pageX, event.pageY);
+      if (intersected.object == this.clickedObject)
+      {
+        hitpoint = intersected.point;
+        hitnormal = intersected.normal;
+      }
+    this.clickedObject.handleMouseMove(event.pageX, event.pageY, hitpoint, hitnormal);
+    }
+    else
+    {
+      var handled = false;
+      
+      var oldObj = this.overObject;
+      var intersected = this.objectFromMouse(event.pageX, event.pageY);
+      this.overObject = intersected.object;
+  
+      if (this.overObject != oldObj)
+      {
+          if (oldObj)
+          {
+            this.container.style.cursor = 'auto';
+            
+            if (oldObj.handleMouseOut)
+            {
+              oldObj.handleMouseOut(event.pageX, event.pageY);
+            }
+          }
+  
+          if (this.overObject)
+          {
+            if (this.overObject.overCursor)
+            {
+              this.container.style.cursor = this.overObject.overCursor;
+            }
+            
+            if (this.overObject.handleMouseOver)
+            {
+              this.overObject.handleMouseOver(event.pageX, event.pageY);
+            }
+          }
+          
+          handled = true;
+      }
+  
+      if (!handled && this.handleMouseMove)
+      {
+        this.handleMouseMove(event.pageX, event.pageY);
+      }
+    }
+}
+
+Sim.App.prototype.onDocumentMouseDown = function(event)
+{
+    event.preventDefault();
+        
+    var handled = false;
+
+    var intersected = this.objectFromMouse(event.pageX, event.pageY);
+    if (intersected.object)
+    {
+      if (intersected.object.handleMouseDown)
+      {
+        intersected.object.handleMouseDown(event.pageX, event.pageY, intersected.point, intersected.normal);
+        this.clickedObject = intersected.object;
+        handled = true;
+      }
+    }
+    
+    if (!handled && this.handleMouseDown)
+    {
+      this.handleMouseDown(event.pageX, event.pageY);
+    }
+}
+
+Sim.App.prototype.onDocumentMouseUp = function(event)
+{
+    event.preventDefault();
+    
+    var handled = false;
+    
+    var intersected = this.objectFromMouse(event.pageX, event.pageY);
+    if (intersected.object)
+    {
+      if (intersected.object.handleMouseUp)
+      {
+        intersected.object.handleMouseUp(event.pageX, event.pageY, intersected.point, intersected.normal);
+        handled = true;
+      }
+    }
+    
+    if (!handled && this.handleMouseUp)
+    {
+      this.handleMouseUp(event.pageX, event.pageY);
+    }
+    
+    this.clickedObject = null;
+}
+
+Sim.App.prototype.onDocumentMouseScroll = function(event, delta)
+{
+    event.preventDefault();
+
+    if (this.handleMouseScroll)
+    {
+      this.handleMouseScroll(delta);
+    }
+}
+
+Sim.App.prototype.objectFromMouse = function(pagex, pagey)
+{
+  // Translate page coords to element coords
+  var offset = $(this.renderer.domElement).offset();  
+  var eltx = pagex - offset.left;
+  var elty = pagey - offset.top;
+  
+  // Translate client coords into viewport x,y
+    var vpx = ( eltx / this.container.offsetWidth ) * 2 - 1;
+    var vpy = - ( elty / this.container.offsetHeight ) * 2 + 1;
+    
+    var vector = new THREE.Vector3( vpx, vpy, 0.5 );
+
+    this.projector.unprojectVector( vector, this.camera );
+  
+    var ray = new THREE.Ray( this.camera.position, vector.subSelf( this.camera.position ).normalize() );
+
+    var intersects = ray.intersectScene( this.scene );
+  
+    if ( intersects.length > 0 ) {      
+      
+      var i = 0;
+      while(!intersects[i].object.visible)
+      {
+        i++;
+      }
+      
+      var intersected = intersects[i];
+    var mat = new THREE.Matrix4().getInverse(intersected.object.matrixWorld);
+      var point = mat.multiplyVector3(intersected.point);
+      
+    return (this.findObjectFromIntersected(intersected.object, intersected.point, intersected.face.normal));                                             
+    }
+    else
+    {
+      return { object : null, point : null, normal : null };
+    }
+}
+
+Sim.App.prototype.findObjectFromIntersected = function(object, point, normal)
+{
+  if (object.data)
+  {
+    return { object: object.data, point: point, normal: normal };
+  }
+  else if (object.parent)
+  {
+    return this.findObjectFromIntersected(object.parent, point, normal);
+  }
+  else
+  {
+    return { object : null, point : null, normal : null };
+  }
+}
+
+
+Sim.App.prototype.onKeyDown = function(event)
+{
+  // N.B.: Chrome doesn't deliver keyPress if we don't bubble... keep an eye on this
+  event.preventDefault();
+
+    if (this.handleKeyDown)
+    {
+      this.handleKeyDown(event.keyCode, event.charCode);
+    }
+}
+
+Sim.App.prototype.onKeyUp = function(event)
+{
+  // N.B.: Chrome doesn't deliver keyPress if we don't bubble... keep an eye on this
+  event.preventDefault();
+
+  if (this.handleKeyUp)
+  {
+    this.handleKeyUp(event.keyCode, event.charCode);
+  }
+}
+          
+Sim.App.prototype.onKeyPress = function(event)
+{
+  // N.B.: Chrome doesn't deliver keyPress if we don't bubble... keep an eye on this
+  event.preventDefault();
+
+  if (this.handleKeyPress)
+  {
+    this.handleKeyPress(event.keyCode, event.charCode);
+  }
+}
+
+Sim.App.prototype.onWindowResize = function(event) {
+
+  this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);
+
+  this.camera.aspect = this.container.offsetWidth / this.container.offsetHeight;
+  this.camera.updateProjectionMatrix();
+
+}
+
+Sim.App.prototype.focus = function()
+{
+  if (this.renderer && this.renderer.domElement)
+  {
+    this.renderer.domElement.focus();
+  }
+}
+
+
 // Sim.Object - base class for all objects in our simulation
 Sim.Object = function()
 {
