@@ -7,7 +7,10 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['public/js/*.js', 'public/js/lib/*.js', 'public/js/app/*.js'],
+        src: ['public/js/**/*.js'],
+        filter: function(filepath) {
+          return !(filepath.contains('production'));
+        },
         dest: 'public/production.js'
       }
     },
@@ -38,8 +41,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'qunit']
+      files: ['public/js/**/*.js'],
+      tasks: ['concat']
     }
   });
 
