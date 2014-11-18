@@ -1,5 +1,5 @@
 // describe particles that represent cities
-define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
+define(['./util', './data/countries', 'three'], function(convert, countries, THREE) {
     
     var particles = new THREE.Geometry(),
         system,
@@ -11,16 +11,28 @@ define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
                         // transparent:  true
                       });
 
+
+    
   return {
+
 
       init: function() {
         var coords, particle;
-        for ( var i in cities ) {
-          coords = cities[i];
-          particle = convert.toParticle(convert.geoToCartesian(coords));
-          // particle.color = new THREE.Color(0xfafafa);
-          particles.vertices.push(particle);
-         }
+        for ( var country in countries ) {
+          var troops = countries[country].troops;
+          for (var playerid in troops) {
+            var number = troops[playerid];
+
+            while (number--) {
+
+              // particle = "";
+              // particles.vertices.push(particle);
+              // add a particle to `country` belonging to `playerid`
+            }
+
+          }
+        }
+        
         system = new THREE.PointCloud(particles, material);
         return system;
       }
