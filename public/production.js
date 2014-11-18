@@ -45132,18 +45132,21 @@ Sim.App.prototype.init = function(param)
   var canvas = param.canvas;
   
     // Create the Three.js renderer, add it to our div
-    var renderer = new THREE.WebGLRenderer( { antialias: true, canvas: canvas } );
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
+    var renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(new THREE.Color(0x000000));
     container.append( renderer.domElement );
 
     // Create a new Three.js scene
     var scene = new THREE.Scene();
-    scene.add( new THREE.AmbientLight( 0x505050 ) );
+    // scene.add( new THREE.AmbientLight( 0x505050 ) );
+    scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
     scene.data = this;
 
     // Put in a camera at a good default location
-    camera = new THREE.PerspectiveCamera( 45, container.offsetWidth / container.offsetHeight, 1, 10000 );
-    camera.position.set( 0, 0, 3.3333 );
+    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    //camera.position.set( 0, 0, 300);
+    camera.position.z = 650;
 
     scene.add(camera);
     
@@ -45173,6 +45176,7 @@ Sim.App.prototype.run = function()
 {
   this.update();
   this.renderer.render( this.scene, this.camera );
+  debugger;
   var that = this;
   requestAnimationFrame(function() { that.run(); });  
 }
@@ -51709,23 +51713,105 @@ if("undefined"!= typeof module) {
   }
 
   Map3DGeometry.prototype = Object.create (THREE.Geometry.prototype);
-;var Animation = (function() {
+;// common utilities for converting coordinates into vertices
+var convert = function(){
+    return {
 
-  var app = new Sim.App();
-  app.init({container: $('#container')});
-  app.run();
+        // takes spherical coordinates[theta, phi, rho] and converts to Cartesian[x,y,z]
+        toCartesian: function(coords) {
+          var x, y, z, 
+              theta = coords[0],
+              phi   = coords[1],
+              rho   = coords[2];
 
-  var createCountries = function() {
+          x = rho * Math.sin(theta) * Math.cos(phi); 
+          y = rho * Math.sin(theta) * Math.sin(phi); 
+          z = rho * Math.cos(theta);                
+          return [x, y, z];
+        },
 
-    var results = new Sim.Object();
+        // takes geodesic coordinates[latitude, longitude, height] and converts to spherical[theta, phi, rho]
+        toSpherical: function(coords) {
+          var theta, phi, rho,
+              latitude  = coords[0],
+              longitude = coords[1],
+              height    = coords[2],
 
-    var layer = new THREE.Object3D();
+          theta = Math.PI * (0.5 - latitude / 180.0);
+          phi   = Math.PI * (0.5 - longitude / 180.0);
+          rho   = height;
+          return [theta, phi, rho];
+        },
+
+        // takes geodesic coordinates[latitude, longitude, height] and converts to Cartesian[x,y,z]
+        geoToCartesian: function(coords) {
+          return this.toCartesian(this.toSpherical(coords));
+        },
+
+        toParticle: function(coords) {
+          var size      = 200,
+              particle  = new THREE.Vector3(
+                            coords[0] * size, 
+                            coords[2] * size,
+                            coords[1] * size
+                          );
+          return particle;
+        }
+    }
+
+}();;var sphere = function() {
+      var particles = new THREE.Geometry(),
+        system,
+        material  = new THREE.PointCloudMaterial({
+                    color:        0x000000,
+                    size:         10,
+                    map:          THREE.ImageUtils.loadTexture("images/dust.png"),
+                    blending:     THREE.AdditiveBlending,
+                    // fog: false,
+                    transparent:  true
+                  });
+  return {
+
+      init: function() {
+          var p, q, limit, theta, phi, rho, particle,
+              density = parseFloat(100);  // total number of particles in each 'ring'
+
+          for (q = -density; q < density; q++ ) {
+            limit = Math.sin( Math.abs(q/density) * Math.PI ) * density;
+
+            for(var p = -limit; p < limit; p++) {
+              theta = q/density * Math.PI;
+              phi   = p/limit * Math.PI;
+              rho   = 0.1875;
+              
+              // // Add randomness to make the globe fuzzy
+              theta += Math.random()/density;
+              rho -= Math.random()-0.3;
+              
+              particle = convert.toParticle(convert.toCartesian([theta, phi, rho]));
+              particles.vertices.push(particle);
+            }
+          }
+          system = new THREE.PointCloud(particles, material);
+                    // system = new THREE.Mesh();
+          return system;
+      } 
+
+  }
+
+}();;var Animator = (function() {
+
+  var convertCountriesTo3D = function() {
+    var obj = new THREE.Object3D();
+
     var factor = 205;
     
-    layer.scale.set(factor, factor, factor);
+    obj.scale.set(factor, factor, factor);
 
     var polygons = Object.keys(countries).map(function(name) {
       var country = countries[name];
+
+      var geometry = new THREE.Geometry();
       var geometry = new Map3DGeometry(country, 0.99);
       geometry.name = name;
       var colour = Math.random() * 0xF3F2F2
@@ -51734,83 +51820,85 @@ if("undefined"!= typeof module) {
         transparent: true,
         wrapAround: true,
         color: colour, 
-        specularity: 0x111111,
+        specularity: 0x000000,
         opacity: 1
       });
       var mesh = new THREE.Mesh(geometry, material);
       mesh.scale.x = 20
       mesh.scale.y = 20
       mesh.scale.z = 20 
-      layer.add( mesh )
+      obj.add( mesh )
       return mesh;
     });
-
-    results.object3D = layer;
-
-    app.addObject(results);
+    return obj
   };
 
 
   return {
-    init: function() {
-        app.init({container: $('#container')});
-        createCountries();
-        app.run();
-        debugger;
-    }
+    convertCountriesTo3D : convertCountriesTo3D
+  }
 
+
+})();;var Game = (function() {
+
+  var players = [];
+  var turnLength = 5;
+  var timer = '';
+  var animation = new Sim.App();
+  animation.init({container: $('#container')});
+  animation.run();
+
+  // add territories to the main animation
+  var territories = new Sim.Object();
+  territories.object3D = Animator.convertCountriesTo3D();
+  animation.addObject(territories);
+
+
+  animation.scene.children.push(sphere.init());
+
+
+
+  var updateState = function(data) {
+    players = data;
   };
 
-})();;function Game() {
-
-  this.state = [];
-  this.turnLength = 5;
-  this.timer = '';
-  this.animation = Animation;
-
-  return this;
-};
-
-Game.prototype.start = function() {
-  this.animation.init();
-}
-
-Game.prototype.updateState = function(data) {
-  this.state = data;
-};
-
-Game.prototype.moveTroops = function(playerid, num, from, to) {
-  var l = this.state.length;
-  var done = false;
-  while (l-- && !done) {
-    var p = this.state[l];
-    if (p.id == playerid) {
-      p.troops[from] -= num;
-      p.troops[to] += num;
-      done = true;
-    }
-  } 
-};
-
-Game.prototype.startTimer = function() {
-
-    clearInterval(timer);
-    $('#timer').text(this.turnLength);
-    timer = setInterval(triggerCountDown, 1000);
-
-
-    function triggerCountDown() {
-      var n = $('#timer').text();
-      if (n > 0) {
-        n--;
-        $('#timer').text(n);
+  var moveTroops = function(playerid, num, from, to) {
+    var l = players.length;
+    var done = false;
+    while (l-- && !done) {
+      var p = players[l];
+      if (p.id == playerid) {
+        p.troops[from] -= num;
+        p.troops[to] += num;
+        done = true;
       }
-    }
-};
+    } 
+  };
 
-var game = new Game();
-game.start();
-;
+  var startTimer = function() {
+
+      clearInterval(timer);
+      $('#timer').text(turnLength);
+      timer = setInterval(triggerCountDown, 1000);
+
+
+      function triggerCountDown() {
+        var n = $('#timer').text();
+        if (n > 0) {
+          n--;
+          $('#timer').text(n);
+        }
+      }
+  };
+
+  return {
+    state : players,
+    updateState : updateState,
+    moveTroops : moveTroops,
+    startTimer : startTimer
+  };
+
+})();;
 
 // //     // Load any app-specific modules
 // //     // with a relative require call,
@@ -51858,10 +51946,10 @@ io.socket.on('welcome', function(data) {
 io.socket.on('game state', function(data) {
     console.log("rec'd from server " + data);
     var data = JSON.parse(data);
-    game.updateState(data);
+    Game.updateState(data);
 
     // ALSO MAKE THIS PLZ
-    game.startTimer();
+    Game.startTimer();
 
 
     // MAKE THIS PLZZ! D:
@@ -51873,7 +51961,7 @@ io.socket.on('game state', function(data) {
 // receive other players' moves from server
 io.socket.on('move', function(data) {
    var json = JSON.parse(data);
-   game.moveTroops(json.playerid, json.num, json.from, json.to);
+   Game.moveTroops(json.playerid, json.num, json.from, json.to);
 
    /* at this point,`game.state` will be updated with the move, so
       we could use `animation.renderTroops(game.state)`. but I have a 
@@ -51886,17 +51974,17 @@ io.socket.on('move', function(data) {
 
 
 function triggerMove() {
-    game.makeMove(15, 'Zambia', 'Canada');
+    Game.makeMove(15, 'Zambia', 'Canada');
 }
 // use this function to move own troops
 // e.g. makeMove(5, 'Canada', 'Korea')
-game.makeMove = function(num, from, to) {
+Game.makeMove = function(num, from, to) {
 
     // check if I am assigned a player
     if (io.socket.playerid) {
 
         // update my local game with my move immediately
-        game.moveTroops(io.socket.playerid, num, from, to);
+        Game.moveTroops(io.socket.playerid, num, from, to);
         
         // send my move to the server
         io.socket.emit('move', {

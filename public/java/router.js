@@ -46,10 +46,10 @@ io.socket.on('welcome', function(data) {
 io.socket.on('game state', function(data) {
     console.log("rec'd from server " + data);
     var data = JSON.parse(data);
-    game.updateState(data);
+    Game.updateState(data);
 
     // ALSO MAKE THIS PLZ
-    game.startTimer();
+    Game.startTimer();
 
 
     // MAKE THIS PLZZ! D:
@@ -61,7 +61,7 @@ io.socket.on('game state', function(data) {
 // receive other players' moves from server
 io.socket.on('move', function(data) {
    var json = JSON.parse(data);
-   game.moveTroops(json.playerid, json.num, json.from, json.to);
+   Game.moveTroops(json.playerid, json.num, json.from, json.to);
 
    /* at this point,`game.state` will be updated with the move, so
       we could use `animation.renderTroops(game.state)`. but I have a 
@@ -74,17 +74,17 @@ io.socket.on('move', function(data) {
 
 
 function triggerMove() {
-    game.makeMove(15, 'Zambia', 'Canada');
+    Game.makeMove(15, 'Zambia', 'Canada');
 }
 // use this function to move own troops
 // e.g. makeMove(5, 'Canada', 'Korea')
-game.makeMove = function(num, from, to) {
+Game.makeMove = function(num, from, to) {
 
     // check if I am assigned a player
     if (io.socket.playerid) {
 
         // update my local game with my move immediately
-        game.moveTroops(io.socket.playerid, num, from, to);
+        Game.moveTroops(io.socket.playerid, num, from, to);
         
         // send my move to the server
         io.socket.emit('move', {

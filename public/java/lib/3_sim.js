@@ -93,18 +93,21 @@ Sim.App.prototype.init = function(param)
   var canvas = param.canvas;
   
     // Create the Three.js renderer, add it to our div
-    var renderer = new THREE.WebGLRenderer( { antialias: true, canvas: canvas } );
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
+    var renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(new THREE.Color(0x000000));
     container.append( renderer.domElement );
 
     // Create a new Three.js scene
     var scene = new THREE.Scene();
-    scene.add( new THREE.AmbientLight( 0x505050 ) );
+    // scene.add( new THREE.AmbientLight( 0x505050 ) );
+    scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
     scene.data = this;
 
     // Put in a camera at a good default location
-    camera = new THREE.PerspectiveCamera( 45, container.offsetWidth / container.offsetHeight, 1, 10000 );
-    camera.position.set( 0, 0, 3.3333 );
+    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    //camera.position.set( 0, 0, 300);
+    camera.position.z = 650;
 
     scene.add(camera);
     
@@ -134,6 +137,7 @@ Sim.App.prototype.run = function()
 {
   this.update();
   this.renderer.render( this.scene, this.camera );
+  debugger;
   var that = this;
   requestAnimationFrame(function() { that.run(); });  
 }

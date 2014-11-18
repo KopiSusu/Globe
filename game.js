@@ -6,7 +6,7 @@ var Player = require('./player');
 var players = [];
 
 // extract names from countries data
-var tData = require('./public/java/lib/countries');
+var tData = require('./public/java/lib/5_countries');
 var territories = [];
 for (var country in tData) {
   territories.push({id: String(country)});

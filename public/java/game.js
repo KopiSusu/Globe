@@ -1,49 +1,60 @@
-function Game() {
+var Game = (function() {
 
-  this.state = [];
-  this.turnLength = 5;
-  this.timer = '';
-  this.animation = Animation;
+  var players = [];
+  var turnLength = 5;
+  var timer = '';
+  var animation = new Sim.App();
+  animation.init({container: $('#container')});
+  animation.run();
 
-  return this;
-};
-
-Game.prototype.start = function() {
-  this.animation.init();
-}
-
-Game.prototype.updateState = function(data) {
-  this.state = data;
-};
-
-Game.prototype.moveTroops = function(playerid, num, from, to) {
-  var l = this.state.length;
-  var done = false;
-  while (l-- && !done) {
-    var p = this.state[l];
-    if (p.id == playerid) {
-      p.troops[from] -= num;
-      p.troops[to] += num;
-      done = true;
-    }
-  } 
-};
-
-Game.prototype.startTimer = function() {
-
-    clearInterval(timer);
-    $('#timer').text(this.turnLength);
-    timer = setInterval(triggerCountDown, 1000);
+  // add territories to the main animation
+  var territories = new Sim.Object();
+  territories.object3D = Animator.convertCountriesTo3D();
+  animation.addObject(territories);
 
 
-    function triggerCountDown() {
-      var n = $('#timer').text();
-      if (n > 0) {
-        n--;
-        $('#timer').text(n);
+  animation.scene.children.push(sphere.init());
+
+
+
+  var updateState = function(data) {
+    players = data;
+  };
+
+  var moveTroops = function(playerid, num, from, to) {
+    var l = players.length;
+    var done = false;
+    while (l-- && !done) {
+      var p = players[l];
+      if (p.id == playerid) {
+        p.troops[from] -= num;
+        p.troops[to] += num;
+        done = true;
       }
-    }
-};
+    } 
+  };
 
-var game = new Game();
-game.start();
+  var startTimer = function() {
+
+      clearInterval(timer);
+      $('#timer').text(turnLength);
+      timer = setInterval(triggerCountDown, 1000);
+
+
+      function triggerCountDown() {
+        var n = $('#timer').text();
+        if (n > 0) {
+          n--;
+          $('#timer').text(n);
+        }
+      }
+  };
+
+  return {
+    state : players,
+    updateState : updateState,
+    moveTroops : moveTroops,
+    startTimer : startTimer
+  };
+
+})();
