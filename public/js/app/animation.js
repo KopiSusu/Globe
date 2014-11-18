@@ -3,7 +3,7 @@
 ** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
-define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], function (THREE, $, TweenMax, layers, OrbitControls) {
+define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './layers/continents'], function (THREE, $, TweenMax, layers, OrbitControls, continentControls) {
 
     // set the scene size
     var WIDTH = window.innerWidth,
@@ -36,7 +36,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
 
 
 
-        scene.fog = new THREE.Fog( 0xfafafa, 40, 2000 );
+        scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
 
         var light   = new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ); 
         scene.add( light )
@@ -60,7 +60,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
       scene.add(layer);  // add the layer to the main Scene object
     }
 
-
+    // 
 
     // Click event listener
     document.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -100,7 +100,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
         // this is for the starting animation, so the title and the continents coming together to form the planet
         if (show === false){
             TweenMax.to(scene.children[6].children[0].position, 10, { y: 2000});
-            TweenMax.to(scene.children[6].children[1].position, 10, { y: -2000});
+            // TweenMax.to(scene.children[6].children[1].position, 10, { y: -2000});
             for (var i = 0; i < continents.length; i++) {
                 var time = Math.random()+1+Math.random();
                 TweenMax.to(continents[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
@@ -122,13 +122,18 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
             if (activeCountry) {
                 // reset country scale
                 // updateContinentScale(activeCountry, 1.0);
+                TweenMax.to(activeCountry.material, 1, { opacity: 1 });
+                // debugger
+                updateContinentScale(particles, 1.005);
             }
         }
 
         // this is performing some operations on the actual clicked object, so we are changing the activeCountry to the currently selected country, and we are also adding a particle to the country
         if (intersects[ 0 ]) {
             var continent = intersects[ 0 ].object;
-            // updateContinentScale(continent, 1.05);
+            // updateContinentScale(continent, 1.02);
+            TweenMax.to(continent.material, 1, { opacity: 0.8 });
+
             activeCountry = continent; 
 
             // this is creating the particle
@@ -141,7 +146,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
                 var vertex = new THREE.Vector3();
                 vertex.x = intersects[ 0 ].point.x;
                 vertex.y = intersects[ 0 ].point.y;
-                vertex.z = (intersects[ 0 ].point.z) + 1;
+                vertex.z = (intersects[ 0 ].point.z);
 
                 geometry.vertices.push( vertex );
 
@@ -151,35 +156,66 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
                 size: 5, 
                 sizeAttenuation: false, 
                 color: Math.random() * 0x555555, 
-                transparent: true 
+                // transparent: true 
             });
 
             particles = new THREE.PointCloud( geometry, material );
             particles.sortParticles = true;
-            scene.add( particles );
-            // updateContinentScale(continent, 1.05);
+            activeCountry.children.push( particles);
+            // activeCountry.add( particles );
+            scene.add(activeCountry.children[0])
+            // updateContinentScale(particles, 1.005);
+            updateContinentScale(particles, 1.025);
         }         
     }
 
-    // timer
-    var counter = 60;
-    function countDown() {
-        if (counter >= 0){
-            setTimeout(function(){
-                $('#timer').text(counter);
-                counter--;
-                countDown();
-            }, 1000);
-        } else {
-            //request new game state 
-            // on succesful request run countDown again!
-            counter = 60;
-            countDown();
+    function renderTroops(players) {
+
+        var i = players.length;
+        while (i--) {
+            var armies = players[i].troops;
+
+            for (var country in armies) {
+
+                // armies['Canada'] = 15
+                var numTroops = armies[country];
+                // debugger
+                // TODO
+                // this looks like
+                // renderTroopsInCountry(15, 'Canada')
+                renderTroopsInCountry(numTroops, country);
+            }
         }
     }
 
-    // start the damn timer
-    countDown();
+    // debugger
+
+    var renderTroopsInCountry = function(int, country) {
+        var country = continentControls.getGeometryByName(country)
+        debugger
+
+    }
+
+    // timer
+    // var resetCounter = function () {
+    //     counter = 5;
+    // }
+    var timer;
+
+    function countDown(counter) {
+        clearInterval(timer);
+        $('#timer').text(counter);
+        timer = setInterval(triggerCountDown, 1000)
+    };
+
+    function triggerCountDown() {
+        var n = $('#timer').text();
+        if (n > 0) {
+            n--;
+            $('#timer').text(n);
+        }
+    }
+
 
     /** object definition **/
     /* everything inside return{} is available to outside 
@@ -189,6 +225,9 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
         scene: scene,
         camera: camera,
         renderer: renderer,
+
+        startTimer: countDown,
+        renderTroops: renderTroops,
 
 
         // attach renderer to DOM container 
@@ -203,7 +242,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols'], func
 
             // start the renderer - set the clear colour
             // to a full black
-            renderer.setClearColor(new THREE.Color(0xfafafa));
+            renderer.setClearColor(new THREE.Color(0x111111));
             renderer.setSize(WIDTH, HEIGHT);
 
            

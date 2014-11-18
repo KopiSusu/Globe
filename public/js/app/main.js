@@ -44,17 +44,18 @@ define(function (require) {
 
     // receive game state from server
     io.socket.on('game state', function(data) {
-
+        var data = JSON.parse(data);
         game.updateState(data);
+        console.log(data)
 
         // ALSO MAKE THIS PLZ
-        // animation.startTimer(TURN_LENGTH);
+        animation.startTimer(3);
 
 
         // MAKE THIS PLZZ! D:
-        // animation.renderTroops(game.state);
+        animation.renderTroops(game.state);
 
-            // game.state is an array of players with their troops
+        //     game.state is an array of players with their troops
             // [
             //  {"id":1, troops":{"Germany":15,"Korea":15}},
             //  {"id":2, "troops":{"Australia":15,"Canada":15}},

@@ -49,7 +49,7 @@ function(convert, THREE) {
     logo.position.x = -65;
     logo.position.y = -170;
     layer.add(click);
-    layer.add(logo);
+    // layer.add(logo);
 
   return {
     init: function()
