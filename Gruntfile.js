@@ -7,10 +7,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['public/js/**/*.js'],
-        filter: function(filepath) {
-          return !(filepath.contains('production'));
-        },
+        src: ['public/java/lib/*.js', 'public/java/*.js'],
         dest: 'public/production.js'
       }
     },
@@ -41,7 +38,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['public/js/**/*.js'],
+      files: ['public/java/**/*.js'],
       tasks: ['concat']
     }
   });
