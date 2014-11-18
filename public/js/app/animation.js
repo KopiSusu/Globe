@@ -171,7 +171,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
 
     function renderTroops(players) {
 
-        var i = players.length;
+        var i = players.length - 1;
         while (i--) {
             var armies = players[i].troops;
 
@@ -192,8 +192,51 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
 
     var renderTroopsInCountry = function(int, country) {
         var country = continentControls.getGeometryByName(country)
-        debugger
+        // debugger
+        // console.log(country.name)
+            // this is creating the particle
+            // geometry = new THREE.Geometry();
 
+            // sprite = THREE.ImageUtils.loadTexture( "images/particle.png" );
+
+            // debugger
+
+
+            // for ( i = 0; i < 1; i ++ ) {
+            //                 // debugger
+            //     var vertex = new THREE.Vector3();
+            //     // console.log(country.geometry.vertices[0].x)
+            //     vertex.x = (country.geometry.vertices[0].x);
+            //     vertex.y = (country.geometry.vertices[0].y);
+            //     vertex.z = (country.geometry.vertices[0].z);
+
+            //     geometry.vertices.push( vertex );
+
+
+            // }
+
+            // material = new THREE.PointCloudMaterial( { 
+            //     size: 5, 
+            //     sizeAttenuation: false, 
+            //     color: Math.random() * 0x555555, 
+            //     // transparent: true 
+            // });
+
+            // particles = new THREE.PointCloud( geometry, material );
+
+            // for ( i = 0; i < 1; i ++ ) {
+
+            //     particles.position.x = (country.geometry.vertices[0].x)+1;
+            //     particles.position.y = (country.geometry.vertices[0].y)+1;
+            //     particles.position.z = (country.geometry.vertices[0].z)+1;
+            // }
+
+            // particles.sortParticles = true;
+            // country.children.push( particles);
+            // // debugger
+            // // activeCountry.add( particles );
+            // scene.add(country.children[0])
+            
     }
 
     // timer
