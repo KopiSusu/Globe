@@ -5327,509 +5327,216 @@ THREE.Matrix4.prototype = {
  * @author bhouston / http://exocortex.com
  */
 
+/**
+ * @author mr.doob / http://mrdoob.com/
+ */
+
 THREE.Ray = function ( origin, direction ) {
 
-	this.origin = ( origin !== undefined ) ? origin : new THREE.Vector3();
-	this.direction = ( direction !== undefined ) ? direction : new THREE.Vector3();
+	this.origin = origin || new THREE.Vector3();
+	this.direction = direction || new THREE.Vector3();
 
-};
+	this.intersectScene = function ( scene ) {
 
-THREE.Ray.prototype = {
+		return this.intersectObjects( scene.children );
 
-	constructor: THREE.Ray,
+	};
 
-	set: function ( origin, direction ) {
+	this.intersectObjects = function ( objects ) {
 
-		this.origin.copy( origin );
-		this.direction.copy( direction );
+		var i, l, object,
+		intersects = [];
 
-		return this;
+		for ( i = 0, l = objects.length; i < l; i ++ ) {
 
-	},
-
-	copy: function ( ray ) {
-
-		this.origin.copy( ray.origin );
-		this.direction.copy( ray.direction );
-
-		return this;
-
-	},
-
-	at: function ( t, optionalTarget ) {
-
-		var result = optionalTarget || new THREE.Vector3();
-
-		return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
-
-	},
-
-	recast: function () {
-
-		var v1 = new THREE.Vector3();
-
-		return function ( t ) {
-
-			this.origin.copy( this.at( t, v1 ) );
-
-			return this;
-
-		};
-
-	}(),
-
-	closestPointToPoint: function ( point, optionalTarget ) {
-
-		var result = optionalTarget || new THREE.Vector3();
-		result.subVectors( point, this.origin );
-		var directionDistance = result.dot( this.direction );
-
-		if ( directionDistance < 0 ) {
-
-			return result.copy( this.origin );
+			Array.prototype.push.apply( intersects, this.intersectObject( objects[ i ] ) );
 
 		}
 
-		return result.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+		intersects.sort( function ( a, b ) { return a.distance - b.distance; } );
 
-	},
+		return intersects;
 
-	distanceToPoint: function () {
+	};
 
-		var v1 = new THREE.Vector3();
+	var a = new THREE.Vector3();
+	var b = new THREE.Vector3();
+	var c = new THREE.Vector3();
+	var d = new THREE.Vector3();
 
-		return function ( point ) {
+	var origin = new THREE.Vector3();
+	var direction = new THREE.Vector3();
+	var vector = new THREE.Vector3();
+	var normal = new THREE.Vector3();
+	var intersectPoint = new THREE.Vector3()
 
-			var directionDistance = v1.subVectors( point, this.origin ).dot( this.direction );
+	this.intersectObject = function ( object ) {
 
-			// point behind the ray
+		var intersect, intersects = [];
 
-			if ( directionDistance < 0 ) {
+		for ( var i = 0, l = object.children.length; i < l; i ++ ) {
 
-				return this.origin.distanceTo( point );
+			Array.prototype.push.apply( intersects, this.intersectObject( object.children[ i ] ) );
+
+		}
+
+		if ( object instanceof THREE.Particle ) {
+
+			var distance = distanceFromIntersection( this.origin, this.direction, object.matrixWorld.getPosition() );
+
+			if ( distance === null || distance > object.scale.x ) {
+
+				return [];
 
 			}
 
-			v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+			intersect = {
 
-			return v1.distanceTo( point );
+				distance: distance,
+				point: object.position,
+				face: null,
+				object: object
 
-		};
+			};
 
-	}(),
+			intersects.push( intersect );
 
-	distanceSqToSegment: function ( v0, v1, optionalPointOnRay, optionalPointOnSegment ) {
+		} else if ( object instanceof THREE.Mesh ) {
 
-		// from http://www.geometrictools.com/LibMathematics/Distance/Wm5DistRay3Segment3.cpp
-		// It returns the min distance between the ray and the segment
-		// defined by v0 and v1
-		// It can also set two optional targets :
-		// - The closest point on the ray
-		// - The closest point on the segment
+			// Checking boundingSphere
 
-		var segCenter = v0.clone().add( v1 ).multiplyScalar( 0.5 );
-		var segDir = v1.clone().sub( v0 ).normalize();
-		var segExtent = v0.distanceTo( v1 ) * 0.5;
-		var diff = this.origin.clone().sub( segCenter );
-		var a01 = - this.direction.dot( segDir );
-		var b0 = diff.dot( this.direction );
-		var b1 = - diff.dot( segDir );
-		var c = diff.lengthSq();
-		var det = Math.abs( 1 - a01 * a01 );
-		var s0, s1, sqrDist, extDet;
+			var distance = distanceFromIntersection( this.origin, this.direction, object.matrixWorld.getPosition() );
 
-		if ( det >= 0 ) {
+			if ( distance === null || distance > object.geometry.boundingSphere.radius * Math.max( object.scale.x, Math.max( object.scale.y, object.scale.z ) ) ) {
 
-			// The ray and segment are not parallel.
+				return intersects;
 
-			s0 = a01 * b1 - b0;
-			s1 = a01 * b0 - b1;
-			extDet = segExtent * det;
+			}
 
-			if ( s0 >= 0 ) {
+			// Checking faces
 
-				if ( s1 >= - extDet ) {
+			var f, fl, face, dot, scalar,
+			geometry = object.geometry,
+			vertices = geometry.vertices,
+			objMatrix;
 
-					if ( s1 <= extDet ) {
+			object.matrixRotationWorld.extractRotation( object.matrixWorld );
 
-						// region 0
-						// Minimum at interior points of ray and segment.
+			for ( f = 0, fl = geometry.faces.length; f < fl; f ++ ) {
 
-						var invDet = 1 / det;
-						s0 *= invDet;
-						s1 *= invDet;
-						sqrDist = s0 * ( s0 + a01 * s1 + 2 * b0 ) + s1 * ( a01 * s0 + s1 + 2 * b1 ) + c;
+				face = geometry.faces[ f ];
 
-					} else {
+				origin.copy( this.origin );
+				direction.copy( this.direction );
 
-						// region 1
+				objMatrix = object.matrixWorld;
 
-						s1 = segExtent;
-						s0 = Math.max( 0, - ( a01 * s1 + b0 ) );
-						sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+				// check if face.centroid is behind the origin
+
+				vector = objMatrix.multiplyVector3( vector.copy( face.centroid ) ).subSelf( origin );
+				dot = vector.dot( direction );
+
+				if ( dot <= 0 ) continue;
+
+				//
+
+				a = objMatrix.multiplyVector3( a.copy( vertices[ face.a ].position ) );
+				b = objMatrix.multiplyVector3( b.copy( vertices[ face.b ].position ) );
+				c = objMatrix.multiplyVector3( c.copy( vertices[ face.c ].position ) );
+				if ( face instanceof THREE.Face4 ) d = objMatrix.multiplyVector3( d.copy( vertices[ face.d ].position ) );
+
+				normal = object.matrixRotationWorld.multiplyVector3( normal.copy( face.normal ) );
+				dot = direction.dot( normal );
+
+				if ( object.doubleSided || ( object.flipSided ? dot > 0 : dot < 0 ) ) { // Math.abs( dot ) > 0.0001
+
+					scalar = normal.dot( vector.sub( a, origin ) ) / dot;
+					intersectPoint.add( origin, direction.multiplyScalar( scalar ) );
+
+					if ( face instanceof THREE.Face3 ) {
+
+						if ( pointInFace3( intersectPoint, a, b, c ) ) {
+
+							intersect = {
+
+								distance: origin.distanceTo( intersectPoint ),
+								point: intersectPoint.clone(),
+								face: face,
+								object: object
+
+							};
+
+							intersects.push( intersect );
+
+						}
+
+					} else if ( face instanceof THREE.Face4 ) {
+
+						if ( pointInFace3( intersectPoint, a, b, d ) || pointInFace3( intersectPoint, b, c, d ) ) {
+
+							intersect = {
+
+								distance: origin.distanceTo( intersectPoint ),
+								point: intersectPoint.clone(),
+								face: face,
+								object: object
+
+							};
+
+							intersects.push( intersect );
+
+						}
 
 					}
 
-				} else {
-
-					// region 5
-
-					s1 = - segExtent;
-					s0 = Math.max( 0, - ( a01 * s1 + b0 ) );
-					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
-
-				}
-
-			} else {
-
-				if ( s1 <= - extDet ) {
-
-					// region 4
-
-					s0 = Math.max( 0, - ( - a01 * segExtent + b0 ) );
-					s1 = ( s0 > 0 ) ? - segExtent : Math.min( Math.max( - segExtent, - b1 ), segExtent );
-					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
-
-				} else if ( s1 <= extDet ) {
-
-					// region 3
-
-					s0 = 0;
-					s1 = Math.min( Math.max( - segExtent, - b1 ), segExtent );
-					sqrDist = s1 * ( s1 + 2 * b1 ) + c;
-
-				} else {
-
-					// region 2
-
-					s0 = Math.max( 0, - ( a01 * segExtent + b0 ) );
-					s1 = ( s0 > 0 ) ? segExtent : Math.min( Math.max( - segExtent, - b1 ), segExtent );
-					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
-
 				}
 
 			}
 
-		} else {
-
-			// Ray and segment are parallel.
-
-			s1 = ( a01 > 0 ) ? - segExtent : segExtent;
-			s0 = Math.max( 0, - ( a01 * s1 + b0 ) );
-			sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
-
 		}
 
-		if ( optionalPointOnRay ) {
+		return intersects;
 
-			optionalPointOnRay.copy( this.direction.clone().multiplyScalar( s0 ).add( this.origin ) );
+	}
 
-		}
+	var v0 = new THREE.Vector3(), v1 = new THREE.Vector3(), v2 = new THREE.Vector3();
+	var dot, intersect, distance;
 
-		if ( optionalPointOnSegment ) {
+	function distanceFromIntersection( origin, direction, position ) {
 
-			optionalPointOnSegment.copy( segDir.clone().multiplyScalar( s1 ).add( segCenter ) );
+		v0.sub( position, origin );
+		dot = v0.dot( direction );
 
-		}
+		if ( dot <= 0 ) return null; // check if position behind origin.
 
-		return sqrDist;
+		intersect = v1.add( origin, v2.copy( direction ).multiplyScalar( dot ) );
+		distance = position.distanceTo( intersect );
 
-	},
+		return distance;
 
-	isIntersectionSphere: function ( sphere ) {
+	}
 
-		return this.distanceToPoint( sphere.center ) <= sphere.radius;
+	// http://www.blackpawn.com/texts/pointinpoly/default.html
 
-	},
+	var dot00, dot01, dot02, dot11, dot12, invDenom, u, v;
 
-	intersectSphere: function () {
+	function pointInFace3( p, a, b, c ) {
 
-		// from http://www.scratchapixel.com/lessons/3d-basic-lessons/lesson-7-intersecting-simple-shapes/ray-sphere-intersection/
+		v0.sub( c, a );
+		v1.sub( b, a );
+		v2.sub( p, a );
 
-		var v1 = new THREE.Vector3();
+		dot00 = v0.dot( v0 );
+		dot01 = v0.dot( v1 );
+		dot02 = v0.dot( v2 );
+		dot11 = v1.dot( v1 );
+		dot12 = v1.dot( v2 );
 
-		return function ( sphere, optionalTarget ) {
+		invDenom = 1 / ( dot00 * dot11 - dot01 * dot01 );
+		u = ( dot11 * dot02 - dot01 * dot12 ) * invDenom;
+		v = ( dot00 * dot12 - dot01 * dot02 ) * invDenom;
 
-			v1.subVectors( sphere.center, this.origin );
-
-			var tca = v1.dot( this.direction );
-
-			var d2 = v1.dot( v1 ) - tca * tca;
-
-			var radius2 = sphere.radius * sphere.radius;
-
-			if ( d2 > radius2 ) return null;
-
-			var thc = Math.sqrt( radius2 - d2 );
-
-			// t0 = first intersect point - entrance on front of sphere
-			var t0 = tca - thc;
-
-			// t1 = second intersect point - exit point on back of sphere
-			var t1 = tca + thc;
-
-			// test to see if both t0 and t1 are behind the ray - if so, return null
-			if ( t0 < 0 && t1 < 0 ) return null;
-
-			// test to see if t0 is behind the ray:
-			// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
-			// in order to always return an intersect point that is in front of the ray.
-			if ( t0 < 0 ) return this.at( t1, optionalTarget );
-
-			// else t0 is in front of the ray, so return the first collision point scaled by t0 
-			return this.at( t0, optionalTarget );
-
-		}
-
-	}(),
-
-	isIntersectionPlane: function ( plane ) {
-
-		// check if the ray lies on the plane first
-
-		var distToPoint = plane.distanceToPoint( this.origin );
-
-		if ( distToPoint === 0 ) {
-
-			return true;
-
-		}
-
-		var denominator = plane.normal.dot( this.direction );
-
-		if ( denominator * distToPoint < 0 ) {
-
-			return true;
-
-		}
-
-		// ray origin is behind the plane (and is pointing behind it)
-
-		return false;
-
-	},
-
-	distanceToPlane: function ( plane ) {
-
-		var denominator = plane.normal.dot( this.direction );
-		if ( denominator == 0 ) {
-
-			// line is coplanar, return origin
-			if ( plane.distanceToPoint( this.origin ) == 0 ) {
-
-				return 0;
-
-			}
-
-			// Null is preferable to undefined since undefined means.... it is undefined
-
-			return null;
-
-		}
-
-		var t = - ( this.origin.dot( plane.normal ) + plane.constant ) / denominator;
-
-		// Return if the ray never intersects the plane
-
-		return t >= 0 ? t :  null;
-
-	},
-
-	intersectPlane: function ( plane, optionalTarget ) {
-
-		var t = this.distanceToPlane( plane );
-
-		if ( t === null ) {
-
-			return null;
-		}
-
-		return this.at( t, optionalTarget );
-
-	},
-
-	isIntersectionBox: function () {
-
-		var v = new THREE.Vector3();
-
-		return function ( box ) {
-
-			return this.intersectBox( box, v ) !== null;
-
-		};
-
-	}(),
-
-	intersectBox: function ( box , optionalTarget ) {
-
-		// http://www.scratchapixel.com/lessons/3d-basic-lessons/lesson-7-intersecting-simple-shapes/ray-box-intersection/
-
-		var tmin,tmax,tymin,tymax,tzmin,tzmax;
-
-		var invdirx = 1 / this.direction.x,
-			invdiry = 1 / this.direction.y,
-			invdirz = 1 / this.direction.z;
-
-		var origin = this.origin;
-
-		if ( invdirx >= 0 ) {
-
-			tmin = ( box.min.x - origin.x ) * invdirx;
-			tmax = ( box.max.x - origin.x ) * invdirx;
-
-		} else {
-
-			tmin = ( box.max.x - origin.x ) * invdirx;
-			tmax = ( box.min.x - origin.x ) * invdirx;
-		}
-
-		if ( invdiry >= 0 ) {
-
-			tymin = ( box.min.y - origin.y ) * invdiry;
-			tymax = ( box.max.y - origin.y ) * invdiry;
-
-		} else {
-
-			tymin = ( box.max.y - origin.y ) * invdiry;
-			tymax = ( box.min.y - origin.y ) * invdiry;
-		}
-
-		if ( ( tmin > tymax ) || ( tymin > tmax ) ) return null;
-
-		// These lines also handle the case where tmin or tmax is NaN
-		// (result of 0 * Infinity). x !== x returns true if x is NaN
-
-		if ( tymin > tmin || tmin !== tmin ) tmin = tymin;
-
-		if ( tymax < tmax || tmax !== tmax ) tmax = tymax;
-
-		if ( invdirz >= 0 ) {
-
-			tzmin = ( box.min.z - origin.z ) * invdirz;
-			tzmax = ( box.max.z - origin.z ) * invdirz;
-
-		} else {
-
-			tzmin = ( box.max.z - origin.z ) * invdirz;
-			tzmax = ( box.min.z - origin.z ) * invdirz;
-		}
-
-		if ( ( tmin > tzmax ) || ( tzmin > tmax ) ) return null;
-
-		if ( tzmin > tmin || tmin !== tmin ) tmin = tzmin;
-
-		if ( tzmax < tmax || tmax !== tmax ) tmax = tzmax;
-
-		//return point closest to the ray (positive side)
-
-		if ( tmax < 0 ) return null;
-
-		return this.at( tmin >= 0 ? tmin : tmax, optionalTarget );
-
-	},
-
-	intersectTriangle: function () {
-
-		// Compute the offset origin, edges, and normal.
-		var diff = new THREE.Vector3();
-		var edge1 = new THREE.Vector3();
-		var edge2 = new THREE.Vector3();
-		var normal = new THREE.Vector3();
-
-		return function ( a, b, c, backfaceCulling, optionalTarget ) {
-
-			// from http://www.geometrictools.com/LibMathematics/Intersection/Wm5IntrRay3Triangle3.cpp
-
-			edge1.subVectors( b, a );
-			edge2.subVectors( c, a );
-			normal.crossVectors( edge1, edge2 );
-
-			// Solve Q + t*D = b1*E1 + b2*E2 (Q = kDiff, D = ray direction,
-			// E1 = kEdge1, E2 = kEdge2, N = Cross(E1,E2)) by
-			//   |Dot(D,N)|*b1 = sign(Dot(D,N))*Dot(D,Cross(Q,E2))
-			//   |Dot(D,N)|*b2 = sign(Dot(D,N))*Dot(D,Cross(E1,Q))
-			//   |Dot(D,N)|*t = -sign(Dot(D,N))*Dot(Q,N)
-			var DdN = this.direction.dot( normal );
-			var sign;
-
-			if ( DdN > 0 ) {
-
-				if ( backfaceCulling ) return null;
-				sign = 1;
-
-			} else if ( DdN < 0 ) {
-
-				sign = - 1;
-				DdN = - DdN;
-
-			} else {
-
-				return null;
-
-			}
-
-			diff.subVectors( this.origin, a );
-			var DdQxE2 = sign * this.direction.dot( edge2.crossVectors( diff, edge2 ) );
-
-			// b1 < 0, no intersection
-			if ( DdQxE2 < 0 ) {
-
-				return null;
-
-			}
-
-			var DdE1xQ = sign * this.direction.dot( edge1.cross( diff ) );
-
-			// b2 < 0, no intersection
-			if ( DdE1xQ < 0 ) {
-
-				return null;
-
-			}
-
-			// b1+b2 > 1, no intersection
-			if ( DdQxE2 + DdE1xQ > DdN ) {
-
-				return null;
-
-			}
-
-			// Line intersects triangle, check if ray does.
-			var QdN = - sign * diff.dot( normal );
-
-			// t < 0, no intersection
-			if ( QdN < 0 ) {
-
-				return null;
-
-			}
-
-			// Ray intersects triangle.
-			return this.at( QdN / DdN, optionalTarget );
-
-		};
-
-	}(),
-
-	applyMatrix4: function ( matrix4 ) {
-
-		this.direction.add( this.origin ).applyMatrix4( matrix4 );
-		this.origin.applyMatrix4( matrix4 );
-		this.direction.sub( this.origin );
-		this.direction.normalize();
-
-		return this;
-	},
-
-	equals: function ( ray ) {
-
-		return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
-
-	},
-
-	clone: function () {
-
-		return new THREE.Ray().copy( this );
+		return ( u >= 0 ) && ( v >= 0 ) && ( u + v < 1 );
 
 	}
 
