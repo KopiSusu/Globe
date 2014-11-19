@@ -73,7 +73,6 @@ function start() {
   })
 };
 
-
 function startTurn() {
 
   // this emits the game state to every connected socket

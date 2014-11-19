@@ -1,13 +1,7 @@
-var Animator = (function() {
+function Animator() {
 
-  var convertCountriesTo3D = function() {
-    var obj = new THREE.Object3D();
-
-    var factor = 205;
-    
-    obj.scale.set(factor, factor, factor);
-
-    var polygons = Object.keys(countries).map(function(name) {
+  // array of Mesh objects
+  this.polygons = Object.keys(countries).map(function(name) {
       var country = countries[name];
 
       var geometry = new THREE.Geometry();
@@ -23,16 +17,25 @@ var Animator = (function() {
         opacity: 1
       });
       var mesh = new THREE.Mesh(geometry, material); 
-      obj.add( mesh )
       return mesh;
-    });
-    return obj
-  };
+  });
 
+};
 
-  return {
-    convertCountriesTo3D : convertCountriesTo3D
+Animator.prototype.convertCountriesTo3D = function() {
+  var obj = new THREE.Object3D();
+  var factor = 205;
+  obj.scale.set(factor, factor, factor);
+
+  var meshes = this.polygons;
+  var l = meshes.length;
+  while (l--) {
+    obj.add.meshes[l];
   }
+  return obj;
+};
 
-
-})();
+Animator.prototype.getGeometryByIndex = function(i) {
+  return this.polygons[i];
+}
+Animator = new Animator();

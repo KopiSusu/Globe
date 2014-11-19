@@ -301,6 +301,8 @@ Sim.App.prototype.onDocumentMouseDown = function(event)
     var handled = false;
 
     var intersected = this.objectFromMouse(event.pageX, event.pageY);
+    debugger;
+
     if (intersected.object)
     {
       if (intersected.object.handleMouseDown)
@@ -353,41 +355,32 @@ Sim.App.prototype.onDocumentMouseScroll = function(event, delta)
 
 Sim.App.prototype.objectFromMouse = function(pagex, pagey)
 {
+
   // Translate page coords to element coords
   var offset = $(this.renderer.domElement).offset();  
   var eltx = pagex - offset.left;
   var elty = pagey - offset.top;
   
   // Translate client coords into viewport x,y
-    var vpx = ( eltx / this.container.offsetWidth ) * 2 - 1;
-    var vpy = - ( elty / this.container.offsetHeight ) * 2 + 1;
+    var vpx = ( eltx / this.container.offsetWidth ) * 2 - 1 || 0;
+    var vpy = - ( elty / this.container.offsetHeight ) * 2 + 1 || 0;
     
     var vector = new THREE.Vector3( vpx, vpy, 0.5 );
 
     vector.unproject( this.camera );
   
-    var ray = new THREE.Ray( this.camera.position, vector.sub( this.camera.position ).normalize() );
+    var raycaster = new THREE.Raycaster();
+    raycaster.ray.set( camera.position, vector.sub( camera.position ).normalize() );
 
-    var intersects = ray.intersectScene( this.scene );
-  
-    if ( intersects.length > 0 ) {      
-      
-      var i = 0;
-      while(!intersects[i].object.visible)
-      {
-        i++;
-      }
-      
-      var intersected = intersects[i];
-    var mat = new THREE.Matrix4().getInverse(intersected.object.matrixWorld);
-      var point = mat.multiplyVector3(intersected.point);
-      
-    return (this.findObjectFromIntersected(intersected.object, intersected.point, intersected.face.normal));                                             
+    // type of object to check for intersect 
+    var objs = [];
+    var i = countries.length;
+    while (i--) {
+      objs.push.Animator.getGeometryByIndex(i);
     }
-    else
-    {
-      return { object : null, point : null, normal : null };
-    }
+
+    var intersects = raycaster.intersectObjects(objs);
+    return intersects[0];
 }
 
 Sim.App.prototype.findObjectFromIntersected = function(object, point, normal)
