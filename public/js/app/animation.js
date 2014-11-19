@@ -161,8 +161,8 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
 
             particles = new THREE.PointCloud( geometry, material );
             particles.sortParticles = true;
-            activeCountry.children.push( particles);
-            // activeCountry.add( particles );
+            // activeCountry.children.push( particles);
+            activeCountry.add( particles );
             scene.add(activeCountry.children[0])
             // updateContinentScale(particles, 1.005);
             updateContinentScale(particles, 1.025);
@@ -188,41 +188,53 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
         }
     }
 
-    // debugger
+
+    var update = THREE.Bone.prototype.update;
+        THREE.Bone.prototype.update = function(parentSkinMatrix, forceUpdate) {
+            update.call(this, parentSkinMatrix, forceUpdate);
+            this.updateMatrixWorld( true );
+    };
+                
+
+    // var Troop = function() {
+
+    // }
+
+    // Troop.protoype.method_1 = fucniton() { }
 
     var renderTroopsInCountry = function(int, country) {
         var country = continentControls.getGeometryByName(country)
         // debugger
-        // console.log(country.name)
+        console.log(country);
             // this is creating the particle
-            // geometry = new THREE.Geometry();
+            window.GEO = geometry = new THREE.Geometry();
 
-            // sprite = THREE.ImageUtils.loadTexture( "images/particle.png" );
-
-            // debugger
-
+            sprite = THREE.ImageUtils.loadTexture( "images/particle.png" );
 
             // for ( i = 0; i < 1; i ++ ) {
-            //                 // debugger
-            //     var vertex = new THREE.Vector3();
-            //     // console.log(country.geometry.vertices[0].x)
-            //     vertex.x = (country.geometry.vertices[0].x);
-            //     vertex.y = (country.geometry.vertices[0].y);
-            //     vertex.z = (country.geometry.vertices[0].z);
+                            // debugger
+                var vertex = new THREE.Vector3();
 
-            //     geometry.vertices.push( vertex );
+
+                vertex.x = (country.geometry.vertices[0].x);
+                vertex.y = (country.geometry.vertices[0].y);
+                vertex.z = (country.geometry.vertices[0].z);
+
+                console.log(vertex.x, vertex.y, vertex.z)
+
+                geometry.vertices.push( vertex );
 
 
             // }
 
-            // material = new THREE.PointCloudMaterial( { 
-            //     size: 5, 
-            //     sizeAttenuation: false, 
-            //     color: Math.random() * 0x555555, 
-            //     // transparent: true 
-            // });
+            material = new THREE.PointCloudMaterial( { 
+                size: 5, 
+                sizeAttenuation: false, 
+                color: Math.random() * 0x555555, 
+                // transparent: true 
+            });
 
-            // particles = new THREE.PointCloud( geometry, material );
+            particles = new THREE.PointCloud( geometry, material );
 
             // for ( i = 0; i < 1; i ++ ) {
 
@@ -231,18 +243,13 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
             //     particles.position.z = (country.geometry.vertices[0].z)+1;
             // }
 
-            // particles.sortParticles = true;
-            // country.children.push( particles);
-            // // debugger
-            // // activeCountry.add( particles );
-            // scene.add(country.children[0])
-            
+            particles.sortParticles = true;
+            country.add( particles );
+            // activeCountry.add( particles );
+            scene.add(country.children[0])       
     }
 
     // timer
-    // var resetCounter = function () {
-    //     counter = 5;
-    // }
     var timer;
 
     function countDown(counter) {

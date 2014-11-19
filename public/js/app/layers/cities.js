@@ -8,7 +8,7 @@ define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
                         size:         10,
                         map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                         blending:     THREE.AdditiveBlending,
-                        // transparent:  true
+                        transparent:  true
                       });
 
   return {
@@ -23,7 +23,10 @@ define(['./util', './data/cities', 'three'], function(convert, cities, THREE) {
          }
         system = new THREE.PointCloud(particles, material);
         return system;
-      }
+      }, 
+      // createParticle: function createParticle() {
+
+      // }
 
   }
 
