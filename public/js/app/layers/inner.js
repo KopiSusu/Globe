@@ -4,7 +4,7 @@ define(['./util', 'three'], function(convert, THREE) {
     var particles = new THREE.Geometry(),
         system,
         material  = new THREE.PointCloudMaterial({
-                    // color:        0xF3F2F2,
+                    color:        0xE0E0E0,
                     size:         2,
                     map:          THREE.ImageUtils.loadTexture("images/dust.png"),
                     blending:     THREE.AdditiveBlending,
@@ -33,8 +33,8 @@ define(['./util', 'three'], function(convert, THREE) {
               particles.vertices.push(particle);
             }
           }
-          system = new THREE.PointCloud(particles, material);
-                    // system = new THREE.Mesh();
+          // system = new THREE.PointCloud(particles, material);
+                    system = new THREE.Mesh();
           return system;
 
       } 

@@ -46,10 +46,9 @@ define(function (require) {
     io.socket.on('game state', function(data) {
         var data = JSON.parse(data);
         game.updateState(data);
-        console.log(data)
 
         // ALSO MAKE THIS PLZ
-        animation.startTimer(3);
+        animation.startTimer(5);
 
 
         // MAKE THIS PLZZ! D:

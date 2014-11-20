@@ -116,6 +116,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
         raycaster.ray.set( camera.position, vector.sub( camera.position ).normalize() );
 
         var intersects = raycaster.intersectObjects( continents );
+        // console.log(intersects[0].object.geometry.name)
 
         // this is for the animation, not sure if we are going to use it
         if (intersects[ 0 ]) {
@@ -154,15 +155,15 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
 
             material = new THREE.PointCloudMaterial( { 
                 size: 5, 
-                sizeAttenuation: false, 
+                // sizeAttenuation: false, 
                 color: Math.random() * 0x555555, 
                 // transparent: true 
             });
 
             particles = new THREE.PointCloud( geometry, material );
             particles.sortParticles = true;
-            activeCountry.children.push( particles);
-            // activeCountry.add( particles );
+            // activeCountry.children.push( particles);
+            activeCountry.add( particles );
             scene.add(activeCountry.children[0])
             // updateContinentScale(particles, 1.005);
             updateContinentScale(particles, 1.025);
@@ -170,17 +171,12 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
     }
 
     function renderTroops(players) {
-
-        var i = players.length;
-        while (i--) {
-            var armies = players[i].troops;
+        for (var i = 0; i < players.length; i++) {
+            var armies = players[0].troops;
 
             for (var country in armies) {
-
                 // armies['Canada'] = 15
                 var numTroops = armies[country];
-                // debugger
-                // TODO
                 // this looks like
                 // renderTroopsInCountry(15, 'Canada')
                 renderTroopsInCountry(numTroops, country);
@@ -188,18 +184,71 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
         }
     }
 
-    // debugger
 
     var renderTroopsInCountry = function(int, country) {
+        // get country geometry
         var country = continentControls.getGeometryByName(country)
-        debugger
 
+        // this is creating the particle
+        geometry = new THREE.Geometry();
+
+        sprite = THREE.ImageUtils.loadTexture( "images/particle.png" );
+
+        var vertex = new THREE.Vector3();
+
+        // country.geometry.computeBoundingBox();
+
+        // var boundingBox = country.geometry.boundingBox;
+
+        var geom = country.geometry;
+        geom.centroid = new THREE.Vector3();
+        var A = 0;
+
+        for (var i = 0, l = geom.vertices.length; i < l; i++) {
+            geom.centroid.add(geom.vertices[i]);
+        }
+
+        geom.centroid.divideScalar(geom.vertices.length);
+        geom.centroid.divideScalar(Math.sqrt(Math.pow(geom.centroid.x, 2) +
+                                    Math.pow(geom.centroid.y, 2) +
+                                    Math.pow(geom.centroid.z, 2)));
+        var position = geom.centroid;
+        position.applyMatrix4( country.matrixWorld );
+
+
+        for ( i = 0; i < country.geometry.vertices.length; i ++ ) {
+
+            vertex.x = (position.x);
+            vertex.y = (position.y);
+            vertex.z = (position.z);
+
+            geometry.vertices.push( vertex );
+            // geometry.vertices.push( vertex.clone ().multiplyScalar (1.1))
+
+        }
+
+        material = new THREE.PointCloudMaterial( { 
+            size: 5, 
+            // sizeAttenuation: false, 
+            color: Math.random() * 0x555555, 
+        });
+
+        particles = new THREE.PointCloud( geometry, material );
+
+        particles.position.x = Math.random() * 2 - 1;
+        particles.position.y = Math.random() * 2 - 1;
+        particles.position.z = Math.random() * 2 - 1;
+        particles.position.normalize();
+        // sphare.position.x.multiplyScalar( 200 );
+        // particles.position.y += Math.random();
+
+        particles.sortParticles = true;
+        updateContinentScale(particles, 1.005)
+        country.add( particles );
+        scene.add(country.children[0])     
     }
 
     // timer
-    // var resetCounter = function () {
-    //     counter = 5;
-    // }
     var timer;
 
     function countDown(counter) {
@@ -285,6 +334,8 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
                 scene.children[4].rotation.y += 0.002;
                 scene.children[3].rotation.y += 0.002;
                 scene.children[6].rotation.y += 0.001;
+
+                scene.updateMatrixWorld();
 
 
                 controls.update();

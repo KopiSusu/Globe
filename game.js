@@ -9,8 +9,8 @@ var players = [];
 var territories = [
   { id: 'Canada' },
   { id: 'Australia' },
-  { id: 'Korea' },
-  { id: 'Germany' }
+  // { id: 'Mexico' },
+  // { id: 'Germany' }
 ];
 
 
