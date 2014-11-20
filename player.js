@@ -1,6 +1,6 @@
-var teams = require('./teams');
+// generates unique id for players
+var COUNTER = 0; 
 
-var COUNTER = 0; // generates unique id for players
 
 function Player() {
 
@@ -8,13 +8,8 @@ function Player() {
   COUNTER++;
   this.id = COUNTER;
 
-  // // assign player to team with fewest players
-  // teams.sortAscendingSize();
-  // this.team_id = teams[0].id;
-  // teams[0].num_players += 1;
-
-
-  this.troops = {}; // 'Canada' : 5 (Int)
+  // format: 'Canada' : 5 (Int)
+  this.troops = {}; 
 
   return this;
 };
@@ -30,18 +25,18 @@ Player.prototype.moveTroops = function(num, fromId, toId) {
 };
 
 Player.prototype.troopsIn = function(territory) {
-  return this.troops[territory];
+  return this.troops[territory.id];
 };
 
 Player.prototype.sendTroops = function(territory, num) {
-  if (!this.troops[territory]) {
-    this.troops[territory] = 0;
+  if (!this.troops[territory.id]) {
+    this.troops[territory.id] = 0;
   }
-  this.troops[territory] += num;
+  this.troops[territory.id] += num;
 }
 
 Player.prototype.loseTroops = function(territory, num) {
-  this.troops[territory] -= num;
+  this.troops[territory.id] -= num;
 }
 
 Player.prototype.totalTroops = function() {

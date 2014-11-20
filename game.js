@@ -5,14 +5,12 @@ var GAME_OVER = false;
 var Player = require('./player');
 var players = [];
 
-
-var territories = [
-  { id: 'Canada' },
-  { id: 'Australia' },
-  // { id: 'Mexico' },
-  // { id: 'Germany' }
-];
-
+// extract names from countries data
+var tData = require('./public/java/lib/0_countries');
+var territories = [];
+for (var country in tData) {
+  territories.push({id: String(country)});
+}
 
 function addNewPlayer() {
     newPlayer = new Player();
@@ -25,7 +23,7 @@ function addNewPlayer() {
 function initTroops(player) {
   var terrs = emptyTerritories(2);
   for (var i = 0; i < terrs.length; i++) {
-    player.sendTroops(String(terrs[i].id), STARTING_TROOPS/terrs.length);
+    player.sendTroops(terrs[i], STARTING_TROOPS/terrs.length);
   }
 }
 
@@ -44,7 +42,7 @@ function emptyTerritories(x) {
 
     var i = players.length;
     while (i-- && empty) {
-      if (players[i].troopsIn(t.id) > 0) {
+      if (players[i].troopsIn(t) > 0) {
         empty = false;
       }
     }
@@ -61,8 +59,9 @@ function evaluateState() {
 
   var i = territories.length;
   while (i--) {
+
     // each territory
-    var territory = territories[i].id;
+    var territory = territories[i];
 
     var playersAtWar = playersIn(territory);
 
@@ -156,6 +155,9 @@ module.exports = {
   addNewPlayer : addNewPlayer,
   evaluateState : evaluateState,
   state : players,
+
+  // moveTroops(playerid, num, from, to)
+  // moveTroops(1, 15, 'Canada', 'Australia')
   moveTroops : moveTroops,
   end : GAME_OVER
 }

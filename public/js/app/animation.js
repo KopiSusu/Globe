@@ -3,7 +3,8 @@
 ** 2. edit app/layers/config.js to include your new file
 ** New layer should be added automatically to the animation */
 
-define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './layers/continents'], function (THREE, $, TweenMax, layers, OrbitControls, continentControls) {
+define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './layers/continents', './layers/data/countries'], 
+    function (THREE, $, TweenMax, layers, OrbitControls, continentControls, countries) {
 
     // set the scene size
     var WIDTH = window.innerWidth,
@@ -179,7 +180,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
                 var numTroops = armies[country];
                 // this looks like
                 // renderTroopsInCountry(15, 'Canada')
-                renderTroopsInCountry(numTroops, country);
+                //renderTroopsInCountry(numTroops, country);
             }
         }
     }

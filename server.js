@@ -50,9 +50,9 @@ io.on('connection', function(socket) {
 
       //move troops in server copy of the game
       game.moveTroops(move.playerid, move.num, move.from, move.to);
-
+      console.log(move);
       //send move to everyone except sender
-      io.broadcast.emit('move', JSON.stringify({
+      io.emit('move', JSON.stringify({
                                   playerid: move.playerid, 
                                   num: move.num, 
                                   from: move.from, 
@@ -72,7 +72,6 @@ function start() {
 
   })
 };
-
 
 function startTurn() {
 

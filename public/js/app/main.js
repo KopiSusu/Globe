@@ -1,26 +1,28 @@
-define(function (require) {
+// define(function (require) {
+
+    debugger;
 
     var TURN_LENGTH = 5;
 
-    // Load any app-specific modules
-    // with a relative require call,
-    // like:
-    var animation = require('./animation').create();
-    var game = require('./game');
+//     // Load any app-specific modules
+//     // with a relative require call,
+//     // like:
+//     var animation = require('./animation').create();
+//     var game = require('./game');
 
 
-    // Load library/vendor modules using
-    // full IDs, like:
-    var $     = require('jquery');
-    var THREE = require('three');
-    var io = require('socketio');
-    var font = require('font');
-    var OrbitControls = require('orbitcontrols');
+//     // Load library/vendor modules using
+//     // full IDs, like:
+//     var $     = require('jquery');
+//     var THREE = require('three');
+//     var io = require('socketio');
+//     var font = require('font');
+//     var OrbitControls = require('orbitcontrols');
 
 
-    // Main application code goes here:
+//     // Main application code goes here:
 
-    animation.run();
+//     animation.run();
 
 
     // connect to server with socket
@@ -29,7 +31,7 @@ define(function (require) {
 
     // do stuff when connected
     io.socket.on('connect', function() {
-
+        console.log("i still work");
     });
 
 
@@ -46,6 +48,12 @@ define(function (require) {
     io.socket.on('game state', function(data) {
         var data = JSON.parse(data);
         game.updateState(data);
+<<<<<<< HEAD
+||||||| merged common ancestors
+        console.log(data)
+=======
+    
+>>>>>>> feature/render-troops
 
         // ALSO MAKE THIS PLZ
         animation.startTimer(5);
@@ -99,4 +107,4 @@ define(function (require) {
         }
     }
 
-});
+// });
