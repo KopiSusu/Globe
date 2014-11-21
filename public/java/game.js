@@ -3,19 +3,16 @@ var Game = (function() {
   var players = [];
   var turnLength = 5;
   var timer = '';
-  var animation = new Sim.App();
-  animation.init({container: $('#container')});
+  var vfx = new VFX();
+
+  vfx.init();
 
   // add territories to the main animation
-  var territories = new Sim.Object();
-  territories.object3D = Animator.convertCountriesTo3D();
-  animation.addObject(territories);
-
-  animation.run();
-
+  vfx.run();
 
   var updateState = function(data) {
     players = data;
+    vfx.renderState(data);
   };
 
   var moveTroops = function(playerid, num, from, to) {

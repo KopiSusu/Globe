@@ -306,6 +306,8 @@ VFX = function() {
     this.scene = null;
     this.camera = null;
     this.objects = [];
+
+
 }
 
 VFX.prototype.init = function () {
@@ -332,10 +334,14 @@ VFX.prototype.init = function () {
     
     // Create a root object to contain all other scene objects
     var root = new THREE.Object3D();
+    root.scale.set(205,205,205);
 
     // countries.meshes is a single THREE.Object3D()
     // has 242 Mesh objects as children
-    root.add(countries.meshes);
+
+    for (var name in countries) {
+        root.add(countries[name]);
+    }
     scene.add(root);
 
     
@@ -361,7 +367,7 @@ VFX.prototype.init = function () {
     this.root = root;
     this.controls = controls;
 
-    this.continentsEvent.init();
+    //this.continentsEvent.init();
 } // end init
 
 
@@ -374,8 +380,25 @@ VFX.prototype.run = function() {
     });  
 }
 
+VFX.prototype.addObj = function(obj3d) {
+    this.root.add(obj3d);
+}
 
-VFX.prototype.continentsEvent.init = function() {
+VFX.prototype.renderState = function(data) {
+    var i = data.length;
+    while (i--) {
+        var player = data[i];
+        var troops = player.troops;
+        for (var country in troops) {
+            //add troops[country] /*int*/ to country.troops /*string*/;
+        }
+    }
+}
+
+
+VFX.prototype.Events = function() {}
+
+VFX.prototype.Events.init = function() {
      // Click event listener
     document.addEventListener( 'mousedown', onDocumentMouseDown, true );
     // the actual mousedown function
