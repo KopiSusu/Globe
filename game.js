@@ -1,5 +1,5 @@
 
-var STARTING_TROOPS = 30;
+var STARTING_TROOPS = 3;
 var GAME_OVER = false;
 
 var Player = require('./player');
