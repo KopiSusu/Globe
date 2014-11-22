@@ -4,20 +4,15 @@ var Game = (function() {
   var turnLength = 5;
   var timer = '';
   
+  // see our animation.js file for details
   var vfx = new VFX();
-
-  vfx.init();
-
-  // add territories to the main animation
-  vfx.run();
+  vfx.init(); // creates scenes, adds countries
+  vfx.run(); // sets up update loop
 
   var updateState = function(data) {
     players = data;
     vfx.renderState(data);
-    debugger;
   };
-
-
 
   var moveTroops = function(playerid, num, from, to) {
     var l = players.length;

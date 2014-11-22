@@ -16,6 +16,9 @@ var Countries = (function(THREE) {
         opacity: 1
       });
       var mesh = new THREE.Mesh(geometry, material);
+      mesh.scale.x = 20
+      mesh.scale.y = 20
+      mesh.scale.z = 20 
       mesh.name = name;
       results[name] = mesh;
   };
@@ -31,6 +34,7 @@ Countries.clearTroops = function() {
     }
   }
 }
+
 
 // each individual country Mesh object can addTroops to itself
 THREE.Mesh.prototype.addTroops = function(playerid, num) {
@@ -86,3 +90,11 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   this.children.push(troop);
 }
 
+Countries.arr = (function() {
+  result = [];
+  for (var name in Countries) {
+    if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
+      result.push(Countries[name]);
+  }
+  return result;
+})();

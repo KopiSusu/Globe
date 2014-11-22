@@ -59168,6 +59168,9 @@ var Countries = (function(THREE) {
         opacity: 1
       });
       var mesh = new THREE.Mesh(geometry, material);
+      mesh.scale.x = 20
+      mesh.scale.y = 20
+      mesh.scale.z = 20 
       mesh.name = name;
       results[name] = mesh;
   };
@@ -59183,6 +59186,7 @@ Countries.clearTroops = function() {
     }
   }
 }
+
 
 // each individual country Mesh object can addTroops to itself
 THREE.Mesh.prototype.addTroops = function(playerid, num) {
@@ -59238,7 +59242,14 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   this.children.push(troop);
 }
 
-;// common utilities for converting coordinates into vertices
+Countries.arr = (function() {
+  result = [];
+  for (var name in Countries) {
+    if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
+      result.push(Countries[name]);
+  }
+  return result;
+})();;// common utilities for converting coordinates into vertices
 var convert = function(){
     return {
 
@@ -59350,12 +59361,22 @@ VFX.prototype.init = function () {
     this.controls = controls;
 
     this.initMouse();
+
+    //starting animation
+    this.renderer.render(this.scene, this.camera);
+    for (var i = 0; i < Countries.arr.length; i++) {
+        console.log('INSIDE FOR LOOP');
+        var time = Math.random()+1+Math.random();
+        TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+    }
 } // end init
 
 
 VFX.prototype.run = function() {
+
     this.renderer.render(this.scene, this.camera);
     var that = this;
+
     requestAnimationFrame(function() { 
         that.run(); 
     });  
@@ -59375,24 +59396,73 @@ VFX.prototype.initMouse = function() {
     dom.addEventListener('mouseup', function(e) { 
                                         that.onDocumentMouseUp(e); 
                                     }, false );
-    
-    $(dom).mousewheel(
-            function(e, delta) {
-                that.onDocumentMouseScroll(e, delta);
-            }
-        );
+
     
     this.overObject = null;
     this.clickedObject = null;
+    this.intersects = null;
+    this.activeCountry = null;
+}
+
+VFX.prototype.getIntersects = function(e, objs) {
+// this is setting up the ray cast, so how this works is it sends a invisible beam out from the camera to where you are clicking, and stores any object it encounters in INTERSCECTS
+    var vector = new THREE.Vector3();
+    vector.set( ( e.clientX / window.innerWidth ) * 2 - 1, - ( e.clientY / window.innerHeight ) * 2 + 1, 0.5 );
+    vector.unproject( camera );
+
+    var raycaster = new THREE.Raycaster();
+    raycaster.ray.set( this.camera.position, vector.sub( this.camera.position ).normalize() );
+
+    return raycaster.intersectObjects(objs);
 }
 
 VFX.prototype.onDocumentMouseMove = function(e) {
 
+    var intersects = this.getIntersects(e, Countries.arr);
+    if (intersects[ 0 ]) {
+        INTERSECTED = intersects[ 0 ];
+        INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+
+        this.container.style.cursor = 'pointer';
+    }  else  {
+        INTERSECTED = null;
+
+        this.container.style.cursor = 'auto';
+    }
+
 }
 
+
 VFX.prototype.onDocumentMouseDown = function(e) {
-    console.log('hi');
-}
+    event.preventDefault();
+
+    var intersects = this.getIntersects(e, Countries.arr);
+
+    // this is for the animation, not sure if we are going to use it
+    if (intersects[ 0 ]) {
+        if (this.activeCountry) {
+            TweenMax.to(this.activeCountry.material, 1, { opacity: 1 });
+            // updateContinentScale(particles, 1.005);
+        }
+
+        var continent = intersects[ 0 ];
+        // updateContinentScale(continent, 1.02);
+        TweenMax.to(continent.material, 1, { opacity: 0.6 });
+
+        this.activeCountry = continent; 
+
+
+        if (!SELECTED == []) {
+            // for (var i = 0; i < SELECTED.length; i++) {
+                console.log(SELECTED)
+                TweenMax.to(SELECTED.object.geometry.vertices[0],1 , { x: intersects[ 0 ].point.x, y: intersects[ 0 ].point.y , z: intersects[ 0 ].point.z, yoyo:true, ease:Linear.easeNone});
+
+                SELECTED = null
+            // }
+        }
+    }
+
+}   
 
 VFX.prototype.onDocumentMouseUp = function(e) {
 
@@ -59416,49 +59486,21 @@ VFX.prototype.renderState = function(data) {
         }
     }
 }
-
-
-VFX.prototype.Events = function() {}
-
-VFX.prototype.Events.init = function() {
-     // Click event listener
-    document.addEventListener( 'mousedown', onDocumentMouseDown, true );
-    // the actual mousedown function
-    function onDocumentMouseDown( event ) {
-        console.log("hi");
-        event.preventDefault();
-        // this is for the starting animation, so the title and the continents coming together to form the planet
-        if (show === false){
-            //TweenMax.to(scene.children[6].children[0].position, 10, { y: 2000});
-            // TweenMax.to(scene.children[6].children[1].position, 10, { y: -2000});
-            for (var i = 0; i < continents.length; i++) {
-                var time = Math.random()+1+Math.random();
-                TweenMax.to(continents[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-                show = true
-            }
-        }
-    }
-};
 ;var Game = (function() {
 
   var players = [];
   var turnLength = 5;
   var timer = '';
   
+  // see our animation.js file for details
   var vfx = new VFX();
-
-  vfx.init();
-
-  // add territories to the main animation
-  vfx.run();
+  vfx.init(); // creates scenes, adds countries
+  vfx.run(); // sets up update loop
 
   var updateState = function(data) {
     players = data;
     vfx.renderState(data);
-    debugger;
   };
-
-
 
   var moveTroops = function(playerid, num, from, to) {
     var l = players.length;
