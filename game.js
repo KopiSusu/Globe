@@ -1,15 +1,15 @@
 
-var STARTING_TROOPS = 3;
+var STARTING_TROOPS = 30;
 var GAME_OVER = false;
 
 var Player = require('./player');
 var players = [];
 
 // extract names from countries data
-var tData = require('./public/java/lib/countries');
+var tData = require('./public/java/lib/0_countriesdata');
 var territories = [];
 for (var country in tData) {
-  territories.push({id: String(country)});
+  territories.push(String(country));
 }
 
 function addNewPlayer() {

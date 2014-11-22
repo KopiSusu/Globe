@@ -3,6 +3,7 @@ var Game = (function() {
   var players = [];
   var turnLength = 5;
   var timer = '';
+  
   var vfx = new VFX();
 
   vfx.init();
@@ -13,7 +14,10 @@ var Game = (function() {
   var updateState = function(data) {
     players = data;
     vfx.renderState(data);
+    debugger;
   };
+
+
 
   var moveTroops = function(playerid, num, from, to) {
     var l = players.length;

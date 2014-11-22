@@ -25,18 +25,18 @@ Player.prototype.moveTroops = function(num, fromId, toId) {
 };
 
 Player.prototype.troopsIn = function(territory) {
-  return this.troops[territory.id];
+  return this.troops[territory];
 };
 
 Player.prototype.sendTroops = function(territory, num) {
-  if (!this.troops[territory.id]) {
-    this.troops[territory.id] = 0;
+  if (!this.troops[territory]) {
+    this.troops[territory] = 0;
   }
-  this.troops[territory.id] += num;
+  this.troops[territory] += num;
 }
 
 Player.prototype.loseTroops = function(territory, num) {
-  this.troops[territory.id] -= num;
+  this.troops[territory] -= num;
 }
 
 Player.prototype.totalTroops = function() {
