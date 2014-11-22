@@ -59365,10 +59365,10 @@ VFX.prototype.init = function () {
     //starting animation
     this.renderer.render(this.scene, this.camera);
     for (var i = 0; i < Countries.arr.length; i++) {
-        console.log('INSIDE FOR LOOP');
         var time = Math.random()+1+Math.random();
         TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
     }
+
 } // end init
 
 
