@@ -138,32 +138,33 @@ VFX.prototype.onDocumentMouseMove = function(e) {
 
 
 VFX.prototype.onDocumentMouseDown = function(e) {
-    event.preventDefault();
+    e.preventDefault();
+    var that = this;
 
     var intersects = this.getIntersects(e, Countries.arr);
 
     // this is for the animation, not sure if we are going to use it
     if (intersects[ 0 ]) {
-        if (this.activeCountry) {
-            TweenMax.to(this.activeCountry.material, 1, { opacity: 1 });
+        var country = intersects[0].object;
+        if (that.activeCountry) {
+            TweenMax.to(that.activeCountry.material, 1, { opacity: 1 });
             // updateContinentScale(particles, 1.005);
         }
 
-        var continent = intersects[ 0 ];
         // updateContinentScale(continent, 1.02);
-        TweenMax.to(continent.material, 1, { opacity: 0.6 });
+        TweenMax.to(country.material, 1, { opacity: 0.6 });
 
-        this.activeCountry = continent; 
+        that.activeCountry = country; 
+        console.log('active: ' + this.activeCountry.name);
 
+        // if (!SELECTED == []) {
+        //     // for (var i = 0; i < SELECTED.length; i++) {
+        //         console.log(SELECTED)
+        //         TweenMax.to(SELECTED.object.geometry.vertices[0],1 , { x: intersects[ 0 ].point.x, y: intersects[ 0 ].point.y , z: intersects[ 0 ].point.z, yoyo:true, ease:Linear.easeNone});
 
-        if (!SELECTED == []) {
-            // for (var i = 0; i < SELECTED.length; i++) {
-                console.log(SELECTED)
-                TweenMax.to(SELECTED.object.geometry.vertices[0],1 , { x: intersects[ 0 ].point.x, y: intersects[ 0 ].point.y , z: intersects[ 0 ].point.z, yoyo:true, ease:Linear.easeNone});
-
-                SELECTED = null
-            // }
-        }
+        //         SELECTED = null
+        //     // }
+        // }
     }
 
 }   
