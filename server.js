@@ -62,6 +62,7 @@ io.on('connection', function(socket) {
 
   });
 
+// on.click, send msg ('move', JSON.stringify({playerid: socket.playerid, num: integer, from: 'Canada', to: 'Korea'}))
 }); // socket connection ends
 
 function start() {
