@@ -376,6 +376,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
             sprite.position.x = position.x
             sprite.position.y = position.y
             sprite.position.z = position.z
+/////////////////////////////////////////////////////////
 
             // var projector = new THREE.Projector();
             // var pos = projector.projectVector(sprite.position.clone(), camera);
@@ -403,6 +404,7 @@ define(['three', 'jquery', 'TweenMax', './layers/config', 'orbitcontrols', './la
 
 //////////////////////////////////////////////////////////////////////////////////
             // adding sprite to the particle
+            // you can also just add it directly to the scene im pretty sure
             particles.add(sprite);
 /////////////////////////////////////////////////////////////////////////////////
 
