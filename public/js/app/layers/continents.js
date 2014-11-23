@@ -11,6 +11,8 @@ function(convert, countries, THREE, Map3DGeometry) {
     {
       var country = countries[name];
       var geometry = new Map3DGeometry(country, 0.99);
+      geometry.dynamic = true;
+      geometry.verticesNeedUpdate = true;
       geometry.name = name;
       var colour = Math.random() * 0xF3F2F2
       var material = new THREE.MeshPhongMaterial({ 

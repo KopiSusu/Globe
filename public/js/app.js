@@ -11,7 +11,8 @@ requirejs.config({
         three: 'three',
         orbitcontrols: 'threejs/orbitcontrols',
         socketio: 'socketio',
-        font: 'threejs/helvetiker_regular.typeface'
+        font: 'threejs/helvetiker_regular.typeface',
+        CSS3DRenderer: 'CSS3DRenderer' 
     },
     shim: {
       'socketio' : {
