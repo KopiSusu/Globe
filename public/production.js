@@ -59855,7 +59855,7 @@ VFX.prototype.init = function () {
     scene.add(mesh);
 
     // making cloud layer
-    var geometryCloud   = new THREE.SphereGeometry(210, 50, 50)
+    var geometryCloud   = new THREE.SphereGeometry(250, 50, 50)
     var materialCloud  = new THREE.MeshPhongMaterial({
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       // side        : THREE.DoubleSide,
