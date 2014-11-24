@@ -5,6 +5,7 @@ var Countries = (function(THREE) {
 
   for (var name in countriesData) {
       var countryData = countriesData[name];
+      var gdp = countryData.data.gdp;
       var geometry = new Map3DGeometry(countryData, 0.99);
       var colour = Math.random() * 0xF3F2F2
       var material = new THREE.MeshPhongMaterial({ 
@@ -20,6 +21,7 @@ var Countries = (function(THREE) {
       mesh.scale.y = 20
       mesh.scale.z = 20 
       mesh.name = name;
+      mesh.gdp = gdp;
       results[name] = mesh;
   };
 
@@ -33,6 +35,7 @@ Countries.clearTroops = function() {
       Countries[name].clear();
     }
   }
+  $("#playerTroops").html('');
 }
 
 
@@ -72,7 +75,7 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
       // geometry.vertices.push( tvertices.clone ().multiplyScalar (1.1))
 
   var tmaterial = new THREE.PointCloudMaterial( { 
-            size: 50, 
+            size: 15, 
             // sizeAttenuation: false, 
             color: Math.random() * 0x555555, 
         });
@@ -86,8 +89,11 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
 
   troop.sortParticles = true;
   troop.name = playerid;
+    // debugger
   this.updateScale(1.005);
   this.children.push(troop);
+  $("<li class ='troops'>").text(this.name + ' Troops: ' + this.children.length).appendTo("#playerTroops");
+
 }
 
 Countries.arr = (function() {

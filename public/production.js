@@ -52783,7 +52783,232 @@ THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype )
 
 THREE.Object3D.prototype.updateScale = function(scale) {
   TweenMax.to(this.scale, 0.7, { x: scale, y:scale, z:scale});
-};!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.io=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+};/**
+ * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
+ * @author mrdoob / http://mrdoob.com/
+ */
+
+THREE.CSS3DObject = function ( element ) {
+
+	THREE.Object3D.call( this );
+
+	this.element = element;
+	this.element.style.position = 'absolute';
+
+	this.addEventListener( 'removed', function ( event ) {
+
+		if ( this.element.parentNode !== null ) {
+
+			this.element.parentNode.removeChild( this.element );
+
+			for ( var i = 0, l = this.children.length; i < l; i ++ ) {
+
+				this.children[ i ].dispatchEvent( event );
+
+			}
+
+		}
+
+	} );
+
+};
+
+THREE.CSS3DObject.prototype = Object.create( THREE.Object3D.prototype );
+
+THREE.CSS3DSprite = function ( element ) {
+
+	THREE.CSS3DObject.call( this, element );
+
+};
+
+THREE.CSS3DSprite.prototype = Object.create( THREE.CSS3DObject.prototype );
+
+//
+
+THREE.CSS3DRenderer = function () {
+
+	console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
+
+	var _width, _height;
+	var _widthHalf, _heightHalf;
+
+	var matrix = new THREE.Matrix4();
+
+	var domElement = document.createElement( 'div' );
+	domElement.style.overflow = 'hidden';
+
+	domElement.style.WebkitTransformStyle = 'preserve-3d';
+	domElement.style.MozTransformStyle = 'preserve-3d';
+	domElement.style.oTransformStyle = 'preserve-3d';
+	domElement.style.transformStyle = 'preserve-3d';
+
+	this.domElement = domElement;
+
+	var cameraElement = document.createElement( 'div' );
+
+	cameraElement.style.WebkitTransformStyle = 'preserve-3d';
+	cameraElement.style.MozTransformStyle = 'preserve-3d';
+	cameraElement.style.oTransformStyle = 'preserve-3d';
+	cameraElement.style.transformStyle = 'preserve-3d';
+
+	domElement.appendChild( cameraElement );
+
+	this.setClearColor = function () {
+
+	};
+
+	this.setSize = function ( width, height ) {
+
+		_width = width;
+		_height = height;
+
+		_widthHalf = _width / 2;
+		_heightHalf = _height / 2;
+
+		domElement.style.width = width + 'px';
+		domElement.style.height = height + 'px';
+
+		cameraElement.style.width = width + 'px';
+		cameraElement.style.height = height + 'px';
+
+	};
+
+	var epsilon = function ( value ) {
+
+		return Math.abs( value ) < 0.000001 ? 0 : value;
+
+	};
+
+	var getCameraCSSMatrix = function ( matrix ) {
+
+		var elements = matrix.elements;
+
+		return 'matrix3d(' +
+			epsilon( elements[ 0 ] ) + ',' +
+			epsilon( - elements[ 1 ] ) + ',' +
+			epsilon( elements[ 2 ] ) + ',' +
+			epsilon( elements[ 3 ] ) + ',' +
+			epsilon( elements[ 4 ] ) + ',' +
+			epsilon( - elements[ 5 ] ) + ',' +
+			epsilon( elements[ 6 ] ) + ',' +
+			epsilon( elements[ 7 ] ) + ',' +
+			epsilon( elements[ 8 ] ) + ',' +
+			epsilon( - elements[ 9 ] ) + ',' +
+			epsilon( elements[ 10 ] ) + ',' +
+			epsilon( elements[ 11 ] ) + ',' +
+			epsilon( elements[ 12 ] ) + ',' +
+			epsilon( - elements[ 13 ] ) + ',' +
+			epsilon( elements[ 14 ] ) + ',' +
+			epsilon( elements[ 15 ] ) +
+		')';
+
+	};
+
+	var getObjectCSSMatrix = function ( matrix ) {
+
+		var elements = matrix.elements;
+
+		return 'translate3d(-50%,-50%,0) matrix3d(' +
+			epsilon( elements[ 0 ] ) + ',' +
+			epsilon( elements[ 1 ] ) + ',' +
+			epsilon( elements[ 2 ] ) + ',' +
+			epsilon( elements[ 3 ] ) + ',' +
+			epsilon( - elements[ 4 ] ) + ',' +
+			epsilon( - elements[ 5 ] ) + ',' +
+			epsilon( - elements[ 6 ] ) + ',' +
+			epsilon( - elements[ 7 ] ) + ',' +
+			epsilon( elements[ 8 ] ) + ',' +
+			epsilon( elements[ 9 ] ) + ',' +
+			epsilon( elements[ 10 ] ) + ',' +
+			epsilon( elements[ 11 ] ) + ',' +
+			epsilon( elements[ 12 ] ) + ',' +
+			epsilon( elements[ 13 ] ) + ',' +
+			epsilon( elements[ 14 ] ) + ',' +
+			epsilon( elements[ 15 ] ) +
+		')';
+
+	};
+
+	var renderObject = function ( object, camera ) {
+
+		if ( object instanceof THREE.CSS3DObject ) {
+
+			var style;
+
+			if ( object instanceof THREE.CSS3DSprite ) {
+
+				// http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
+
+				matrix.copy( camera.matrixWorldInverse );
+				matrix.transpose();
+				matrix.copyPosition( object.matrixWorld );
+				matrix.scale( object.scale );
+
+				matrix.elements[ 3 ] = 0;
+				matrix.elements[ 7 ] = 0;
+				matrix.elements[ 11 ] = 0;
+				matrix.elements[ 15 ] = 1;
+
+				style = getObjectCSSMatrix( matrix );
+
+			} else {
+
+				style = getObjectCSSMatrix( object.matrixWorld );
+
+			}
+
+			var element = object.element;
+
+			element.style.WebkitTransform = style;
+			element.style.MozTransform = style;
+			element.style.oTransform = style;
+			element.style.transform = style;
+
+			if ( element.parentNode !== cameraElement ) {
+
+				cameraElement.appendChild( element );
+
+			}
+
+		}
+
+		for ( var i = 0, l = object.children.length; i < l; i ++ ) {
+
+			renderObject( object.children[ i ], camera );
+
+		}
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		var fov = 0.5 / Math.tan( THREE.Math.degToRad( camera.fov * 0.5 ) ) * _height;
+
+		domElement.style.WebkitPerspective = fov + "px";
+		domElement.style.MozPerspective = fov + "px";
+		domElement.style.oPerspective = fov + "px";
+		domElement.style.perspective = fov + "px";
+
+		scene.updateMatrixWorld();
+
+		if ( camera.parent === undefined ) camera.updateMatrixWorld();
+
+		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+
+		var style = "translate3d(0,0," + fov + "px)" + getCameraCSSMatrix( camera.matrixWorldInverse ) +
+			" translate3d(" + _widthHalf + "px," + _heightHalf + "px, 0)";
+
+		cameraElement.style.WebkitTransform = style;
+		cameraElement.style.MozTransform = style;
+		cameraElement.style.oTransform = style;
+		cameraElement.style.transform = style;
+
+		renderObject( scene, camera );
+
+	};
+
+};
+;!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.io=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
 module.exports = _dereq_('./lib/');
 
@@ -59157,6 +59382,7 @@ var Countries = (function(THREE) {
 
   for (var name in countriesData) {
       var countryData = countriesData[name];
+      var gdp = countryData.data.gdp;
       var geometry = new Map3DGeometry(countryData, 0.99);
       var colour = Math.random() * 0xF3F2F2
       var material = new THREE.MeshPhongMaterial({ 
@@ -59172,6 +59398,7 @@ var Countries = (function(THREE) {
       mesh.scale.y = 20
       mesh.scale.z = 20 
       mesh.name = name;
+      mesh.gdp = gdp;
       results[name] = mesh;
   };
 
@@ -59185,6 +59412,7 @@ Countries.clearTroops = function() {
       Countries[name].clear();
     }
   }
+  $("#playerTroops").html('');
 }
 
 
@@ -59224,7 +59452,7 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
       // geometry.vertices.push( tvertices.clone ().multiplyScalar (1.1))
 
   var tmaterial = new THREE.PointCloudMaterial( { 
-            size: 50, 
+            size: 15, 
             // sizeAttenuation: false, 
             color: Math.random() * 0x555555, 
         });
@@ -59238,8 +59466,11 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
 
   troop.sortParticles = true;
   troop.name = playerid;
+    // debugger
   this.updateScale(1.005);
   this.children.push(troop);
+  $("<li class ='troops'>").text(this.name + ' Troops: ' + this.children.length).appendTo("#playerTroops");
+
 }
 
 Countries.arr = (function() {
@@ -59319,6 +59550,7 @@ VFX.prototype.init = function () {
     //scene.add( new THREE.AmbientLight( 0x505050 ) );
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
+    scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
 
 
     // Put in a camera at a good default location
@@ -59445,14 +59677,20 @@ VFX.prototype.onDocumentMouseDown = function(e) {
         var country = intersects[0].object;
         if (that.activeCountry) {
             TweenMax.to(that.activeCountry.material, 1, { opacity: 1 });
+            TweenMax.to(that.activeCountry.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+
             // updateContinentScale(particles, 1.005);
         }
 
         // updateContinentScale(continent, 1.02);
-        TweenMax.to(country.material, 1, { opacity: 0.6 });
+        TweenMax.to(country.material, 1, { opacity: 0.8 });
+        TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
+
 
         that.activeCountry = country; 
-        console.log('active: ' + this.activeCountry.name);
+        $("#currentcountry").text(country.name + ' GDP: ' + country.gdp);
+        $("#troopsInCountry").text('There are ' + country.children.length + ' Troops in ' + country.name);
+        // console.log('active: ' + this.activeCountry.name);
 
         // if (!SELECTED == []) {
         //     // for (var i = 0; i < SELECTED.length; i++) {
@@ -59464,7 +59702,11 @@ VFX.prototype.onDocumentMouseDown = function(e) {
         // }
     }
 
-}   
+} 
+
+// VFX.prototype.myTroops = function() {
+//     for (var i = 0; i < countries.length)
+// }  
 
 VFX.prototype.onDocumentMouseUp = function(e) {
 

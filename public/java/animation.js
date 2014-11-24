@@ -22,6 +22,7 @@ VFX.prototype.init = function () {
     //scene.add( new THREE.AmbientLight( 0x505050 ) );
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
+    scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
 
 
     // Put in a camera at a good default location
@@ -148,14 +149,20 @@ VFX.prototype.onDocumentMouseDown = function(e) {
         var country = intersects[0].object;
         if (that.activeCountry) {
             TweenMax.to(that.activeCountry.material, 1, { opacity: 1 });
+            TweenMax.to(that.activeCountry.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+
             // updateContinentScale(particles, 1.005);
         }
 
         // updateContinentScale(continent, 1.02);
-        TweenMax.to(country.material, 1, { opacity: 0.6 });
+        TweenMax.to(country.material, 1, { opacity: 0.8 });
+        TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
+
 
         that.activeCountry = country; 
-        console.log('active: ' + this.activeCountry.name);
+        $("#currentcountry").text(country.name + ' GDP: ' + country.gdp);
+        $("#troopsInCountry").text('There are ' + country.children.length + ' Troops in ' + country.name);
+        // console.log('active: ' + this.activeCountry.name);
 
         // if (!SELECTED == []) {
         //     // for (var i = 0; i < SELECTED.length; i++) {
@@ -167,7 +174,7 @@ VFX.prototype.onDocumentMouseDown = function(e) {
         // }
     }
 
-}   
+} 
 
 VFX.prototype.onDocumentMouseUp = function(e) {
 
