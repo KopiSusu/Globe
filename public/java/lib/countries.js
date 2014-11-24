@@ -10,18 +10,21 @@ var Countries = (function(THREE) {
       var colour = Math.random() * 0xF3F2F2
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
+        // depthWrite  : false,
         transparent: true,
         wrapAround: true,
         color: colour, 
         specularity: 0x111111,
-        opacity: 1
+        opacity: 0.9
       });
       var mesh = new THREE.Mesh(geometry, material);
-      mesh.scale.x = 20
-      mesh.scale.y = 20
-      mesh.scale.z = 20 
+      mesh.scale.x = 20;
+      mesh.scale.y = 20;
+      mesh.scale.z = 20; 
       mesh.name = name;
       mesh.gdp = gdp;
+      mesh.receiveShadow = false;
+      mesh.castShadow = true;
       results[name] = mesh;
   };
 
@@ -75,7 +78,8 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
       // geometry.vertices.push( tvertices.clone ().multiplyScalar (1.1))
 
   var tmaterial = new THREE.PointCloudMaterial( { 
-            size: 15, 
+            size: 1, 
+            transparent: true,
             // sizeAttenuation: false, 
             color: Math.random() * 0x555555, 
         });
@@ -86,6 +90,7 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   troop.position.y = Math.random() * 2 - 1;
   troop.position.z = Math.random() * 2 - 1;
   troop.position.normalize();
+
 
   troop.sortParticles = true;
   troop.name = playerid;

@@ -16,6 +16,8 @@ VFX.prototype.init = function () {
     renderer.setClearColor(new THREE.Color(0x111111));
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.append( renderer.domElement );
+    renderer.shadowMapEnabled = true;
+    renderer.sortObjects = false;
 
     // Create a new Three.js scene
     var scene = new THREE.Scene();
@@ -69,9 +71,62 @@ VFX.prototype.init = function () {
     //starting animation
     this.renderer.render(this.scene, this.camera);
     for (var i = 0; i < Countries.arr.length; i++) {
-        var time = Math.random()+1+Math.random();
+        var time = Math.random()+1+Math.random()+1;
         TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+        TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
+        var rightBar = document.getElementById("rside");
+        // var showTroops = document.getElementById("showTroops");
+        var about = document.getElementById("about");
+        var timer = document.getElementById("timer");
+        rightBar.style.right = '0%';
+        // showTroops.style.opacity = '0.8';
+        about.style.opacity = '1';
+        timer.style.opacity = '0.8';
     }
+
+    var geometry  = new THREE.SphereGeometry(7000, 50, 50);
+    // create the material, using a texture of startfield
+    var material  = new THREE.MeshBasicMaterial({
+        fog: false,
+        opacity: 1,
+         // transparent : true,
+        // depthWrite  : false,
+    });
+    material.map   = THREE.ImageUtils.loadTexture('images/starfield.png');
+    material.side  = THREE.BackSide;
+    material.wrapS = material.wrapT = THREE.RepeatWrapping;
+    // material.repeat.set( 2, 2 )
+    // create the mesh based on geometry and material
+    var mesh  = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    // making cloud layer
+    var geometryCloud   = new THREE.SphereGeometry(210, 50, 50)
+    var materialCloud  = new THREE.MeshPhongMaterial({
+        map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
+      // side        : THREE.DoubleSide,
+        wrapAround: true,
+        opacity     : 0.8,
+        transparent : true,
+        depthWrite  : false,
+
+    })
+    var cloudMesh = new THREE.Mesh(geometryCloud, materialCloud)
+    cloudMesh.castShadow = true;
+    scene.add(cloudMesh)
+
+    // making inner sphere layer
+    var geometryInner   = new THREE.SphereGeometry(200, 32, 32)
+    var materialInner  = new THREE.MeshBasicMaterial({
+        // map     : THREE.ImageUtils.loadTexture('images/fairInners.jpg'),
+        // wireframe: true,
+        color: 0x2194CE,
+        transparent: true,
+        // depthWrite: false,
+    })
+    var innerMesh = new THREE.Mesh(geometryInner, materialInner)
+    scene.add(innerMesh)
+
 
 } // end init
 
@@ -80,6 +135,21 @@ VFX.prototype.run = function() {
 
     this.renderer.render(this.scene, this.camera);
     var that = this;
+    // debugger
+    // this.scene.children[2].children.rotation.y += 0.001;
+    for (var i in this.scene.children[2].children) {
+        this.scene.children[2].children[i].rotation.y += 0.001;
+    }
+
+    debugger
+    this.scene.children[3].rotation.y += 0.0001;
+    this.scene.children[4].rotation.y += 0.0011;
+    this.scene.children[5].rotation.y += 0.001;
+    // debugger
+    // this.scene.children[5].rotation.y += 0.0001;
+    // this.scene.children[3].rotation.x += 0.0001;
+    // this.scene.children[4].rotation.y += 0.0013;
+
 
     requestAnimationFrame(function() { 
         that.run(); 
@@ -155,8 +225,9 @@ VFX.prototype.onDocumentMouseDown = function(e) {
         }
 
         // updateContinentScale(continent, 1.02);
-        TweenMax.to(country.material, 1, { opacity: 0.8 });
+        TweenMax.to(country.material, 1, { opacity: 0.95 });
         TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
+
 
 
         that.activeCountry = country; 

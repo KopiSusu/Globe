@@ -72,7 +72,9 @@ font-size: 28px;
 text-align: center;
 font-size: 30px;
 font-family: 'Inconsolata';
-opacity: 0.8;
+opacity: 0;
+transition: all 1s linear;
+transition-delay: 4.5s;
 }
 
 #currentcountry {
@@ -84,15 +86,21 @@ padding: 10px;
 
 #rside {
 position: absolute;
-right: 0%;
+right: -100%;
 border-right: none; 
 height: 600px;
 width: 250px;
 top: 50px;
 opacity: 0.8;
+
+transition: all 2s linear;
+transition-delay: 2.5s;
+/*-webkit-transition: all 2s linear;*/
+/*-webkit-transform:rotate(180deg);*/
 }
 
 #infoBox {
+text-align: center;
 width: 92%;
 border-bottom: 1px solid #fafafa;
 font-family: 'Inconsolata';
@@ -101,6 +109,7 @@ color: #2194CE;
 font-size: 25px;
 padding-left: 15px;
 padding: 10px;
+transition: all 1s linear;
 }
 
 #countryName {
@@ -110,11 +119,28 @@ height: 50%;
 border-bottom: 1px solid #fafafa;
 width: 100%;
 color: #fafafa;
+transition: all 1s linear;
 }
 
 #troopsInCountry{
   color: #fafafa;
+  transition: all 1s linear;
 }
+
+#showTroops {
+position: absolute;
+font-family: 'Inconsolata';
+color: #F3F2F2;
+border: 1px solid;
+padding: 5px;
+top: -40px;
+opacity: 0;
+border-radius: 10px;
+cursor: pointer;
+transition: all 1s linear;
+transition-delay: 4.5s;
+}
+
 
 #troopLocations {
 width: 92%;
@@ -134,12 +160,14 @@ top: 348px;
 
 #about{
 position: absolute;
-right: 71px;
+right: 10px;
 bottom: -44px;
 font-size: 30px;
 color: #2194CE;
 opacity: 1;
 cursor: pointer;
+transition: all 1s linear;
+transition-delay: 4.5s;
 }
 
 #container {
