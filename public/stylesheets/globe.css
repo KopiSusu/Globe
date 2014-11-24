@@ -72,55 +72,102 @@ font-size: 28px;
 text-align: center;
 font-size: 30px;
 font-family: 'Inconsolata';
-opacity: 0.8;
+opacity: 0;
+transition: all 1s linear;
+transition-delay: 4.5s;
+}
+
+#currentcountry {
+color: #fafafa;
+width: 50%;
+padding: 10px;
 }
 
 
 #rside {
-  position: absolute;
-right: 5%;
-/*border-left: 2px solid #555;*/
+position: absolute;
+right: -100%;
+border-right: none; 
 height: 600px;
+width: 250px;
 top: 50px;
 opacity: 0.8;
+
+transition: all 2s linear;
+transition-delay: 2.5s;
+/*-webkit-transition: all 2s linear;*/
+/*-webkit-transform:rotate(180deg);*/
 }
 
-#rtopbar{
-  position: absolute;
-width: 50px;
-border-bottom: 2px solid;
-left: -26px;
-opacity: 0.8;
+#infoBox {
+text-align: center;
+width: 92%;
+border-bottom: 1px solid #fafafa;
+font-family: 'Inconsolata';
+position: absolute;
+color: #2194CE;
+font-size: 25px;
+padding-left: 15px;
+padding: 10px;
+transition: all 1s linear;
 }
 
-#rbottombar {
-  position: absolute;
-width: 50px;
-border-bottom: 2px solid;
-left: -26px;
-bottom:0px;
-opacity: 0.8;
+#countryName {
+position: absolute;
+top: 48px;
+height: 50%;
+border-bottom: 1px solid #fafafa;
+width: 100%;
+color: #fafafa;
+transition: all 1s linear;
 }
 
-#zoom {
-  position: absolute;
-width: 40px;
-height: 5px;
-background-color: #62A07B;
-left: -21px;
-bottom: 1%;
-margin-bottom: 1%;
-margin-top: 1%;
+#troopsInCountry{
+  color: #fafafa;
+  transition: all 1s linear;
+}
+
+#showTroops {
+position: absolute;
+font-family: 'Inconsolata';
+color: #F3F2F2;
+border: 1px solid;
+padding: 5px;
+top: -40px;
+opacity: 0;
+border-radius: 10px;
+cursor: pointer;
+transition: all 1s linear;
+transition-delay: 4.5s;
+}
+
+
+#troopLocations {
+width: 92%;
+border-bottom: 1px solid #fafafa;
+font-family: 'Inconsolata';
+position: absolute;
+color: #fafafa;
+padding-left: 15px;
+padding: 10px;
+top: 348px;
+}
+
+#playerTroops {
+/*  position: absolute;
+  border: 2px solid #fafafa;*/
 }
 
 #about{
 position: absolute;
-right: -30px;
-bottom: -36px;
+right: 10px;
+bottom: -44px;
 font-size: 30px;
 color: #2194CE;
 opacity: 1;
 cursor: pointer;
+transition: all 1s linear;
+transition-delay: 4.5s;
 }
 
 #container {
