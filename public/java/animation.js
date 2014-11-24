@@ -64,6 +64,8 @@ VFX.prototype.init = function () {
     this.controls = controls;
 
     this.initMouse();
+    this.initCSS();
+    this.runCSS();
 
     //starting animation
     this.renderer.render(this.scene, this.camera);
@@ -79,12 +81,25 @@ VFX.prototype.run = function() {
 
     this.renderer.render(this.scene, this.camera);
     var that = this;
-
     requestAnimationFrame(function() { 
         that.run(); 
     });  
 }
 
+VFX.prototype.initCSS = function() {
+    this.cssScene = new THREE.Scene();
+    this.cssRenderer = new THREE.CSS3DRenderer();
+    this.container.append(this.cssRenderer.domElement);
+    this.renderer.domElement.style.zIndex = 1;
+}
+
+VFX.prototype.runCSS = function() {
+    this.cssRenderer.render(this.cssScene, camera);
+    var that = this;
+    requestAnimationFrame(function() {
+        that.runCSS();
+    });
+}
 VFX.prototype.initMouse = function() {
 
     var dom = this.renderer.domElement; 
