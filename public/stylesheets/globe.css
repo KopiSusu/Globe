@@ -78,13 +78,14 @@ opacity: 0.8;
 #currentcountry {
 color: #fafafa;
 width: 50%;
+padding: 10px;
 }
 
 
 #rside {
 position: absolute;
 right: 0%;
-border: 2px solid #fafafa;
+border-right: none; 
 height: 600px;
 width: 250px;
 top: 50px;

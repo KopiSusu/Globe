@@ -59467,7 +59467,7 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   troop.sortParticles = true;
   troop.name = playerid;
     // debugger
-  this.updateScale(1.005);
+  this.updateScale(1.0);
   this.children.push(troop);
   $("<li class ='troops'>").text(this.name + ' Troops: ' + this.children.length).appendTo("#playerTroops");
 
@@ -59703,10 +59703,6 @@ VFX.prototype.onDocumentMouseDown = function(e) {
     }
 
 } 
-
-// VFX.prototype.myTroops = function() {
-//     for (var i = 0; i < countries.length)
-// }  
 
 VFX.prototype.onDocumentMouseUp = function(e) {
 
