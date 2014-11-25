@@ -59532,8 +59532,25 @@ var convert = function(){
     this.camera = null;
     this.objects = [];
 
-
 }
+
+$(document).ready(function(){
+    $('#targetCountry .myArmy').blur(function(){
+        var oldVal = parseInt($(this).attr('data-orig-value'));
+        var val = parseInt($(this).html());
+        var changeNumber = parseInt($('#activeCountry .myArmy').html());
+        var newNum = val - oldVal;
+            changeNumber -= newNum;
+        if (changeNumber < 0) {
+            console.log('You have run out of troops')
+            $('#targetCountry .myArmy').html(oldVal);
+        }
+        if (changeNumber > 0 ) {
+            $('#activeCountry .myArmy').text(changeNumber);
+            var oldVal = $(this).attr('data-orig-value', val);
+        }
+    })
+})
 
 VFX.prototype.init = function () {
     var container = $('#container');
@@ -59570,7 +59587,7 @@ VFX.prototype.init = function () {
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
         wrapAround: true,
-        opacity     : 0.6,
+        opacity     : 0.5,
         transparent : true,
         depthWrite  : false,
 
@@ -59675,9 +59692,9 @@ VFX.prototype.run = function() {
     this.scene.children[4].rotation.y += 0.0001;
     this.scene.children[5].rotation.y += 0.0001;
 
+    ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
+    ////// kinda like a screen saver. 
     // this.scene.children[1].rotation.y += rotation;
-
-
 
     // if (this.scene.children[1].rotation.y < -0.2) {
     //     rotation = 0.0001;
@@ -59805,6 +59822,7 @@ VFX.prototype.onDocumentMouseUp = function(e) {
 
 }
 
+
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
     var material = new THREE.LineBasicMaterial({
         color: 0xfafafa
@@ -59834,11 +59852,10 @@ VFX.prototype.renderState = function(data) {
         for (var country in troops) {
             var n = troops[country]; // number of troops
             country = Countries[country]; // Mesh object for the country
-            if (io.socket.playerid == player.id) {
-                country.material.color = 0xfafafa;
-            }
+            // if (io.socket.playerid == player.id) {
+            //     country.material.color = 0xfafafa;
+            // }
             country.addTroops(player.id, n);
-            debugger
         }
     }
 }
@@ -59886,6 +59903,8 @@ VFX.prototype.renderState = function(data) {
         }
       }
   };
+
+
 
   return {
     state : players,
