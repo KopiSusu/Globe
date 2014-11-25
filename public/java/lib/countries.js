@@ -7,7 +7,7 @@ var Countries = (function(THREE) {
       var countryData = countriesData[name];
       var gdp = countryData.data.gdp;
       var geometry = new Map3DGeometry(countryData, 0.99);
-      var colour = 0x666666;
+      var colour = 0x666666; 
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
         // depthWrite  : false,
@@ -98,8 +98,7 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
     // debugger
   this.updateScale(1.0);
   this.children.push(troop);
-  $("<li class ='troops'>").text(this.name + ' Troops: ' + num).appendTo("#playerTroops");
-
+  
 }
 
 Countries.arr = (function() {
@@ -111,6 +110,7 @@ Countries.arr = (function() {
   return result;
 })();
 
+// this is used to determine which countries are clickable
 Countries.inPlay = function() {
   var result = [];
   var i = countriesInPlay.length;

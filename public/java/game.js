@@ -13,8 +13,10 @@ var Game = (function() {
     territories = data;
     //vfx.renderState(territories);
 
-    $('div.standingArmies').empty();
+    // remove existing standing armies
+    $('div.standingArmies > .army').remove();
     
+    // add own armies to standing armies
     var id = io.socket.playerid;
     var i = territories.length;
     while (i--) {
@@ -29,9 +31,9 @@ var Game = (function() {
 
       }
     }
-    
   };
 
+  // takes a name and returns a territory object
   var terrsFind = function(name) {
     var i = territories.length;
     while (i--) {
@@ -41,29 +43,35 @@ var Game = (function() {
     }
   }
 
+  // this is called when a country is clicked (made active)
   var updateActiveCountry = function(name) {
     $('div.activeCountry > .army').remove();
-    var id = io.socket.playerid;
+    var pId = io.socket.playerid;
     var terr = terrsFind(name);
 
     // find own troops in territory
     var num = 0;
-    if (terr.troops[id]) {
-      num += terr.troops[id];
+    if (terr.troops[pId]) {
+      num += terr.troops[pId];
     }
 
+    // update active country info
     $('div.activeCountry > .header').text(terr.name);
     $('div.activeCountry > .myArmy').text(num);
 
+    // update enemy troops in active country
     for (var id in terr.troops) {
-      var num = terr.troops[id];
-      $('<p>').text('Player ' + id + ': ' + num + 'troops')
-            .appendTo('<div>')
-            .addClass('army')
-            .appendTo('div.activeCountry');
+      if (id != pId) {
+        var num = terr.troops[id];
+        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+              .appendTo('<div>')
+              .addClass('army')
+              .appendTo('div.activeCountry');
+      }
     }
-
   }
+
+
   var moveTroops = function(playerid, from, to, num) {
     var l = players.length;
     var done = false;

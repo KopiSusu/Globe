@@ -59380,7 +59380,7 @@ var Countries = (function(THREE) {
       var countryData = countriesData[name];
       var gdp = countryData.data.gdp;
       var geometry = new Map3DGeometry(countryData, 0.99);
-      var colour = 0x666666;
+      var colour = 0x666666; 
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
         // depthWrite  : false,
@@ -59471,8 +59471,7 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
     // debugger
   this.updateScale(1.0);
   this.children.push(troop);
-  $("<li class ='troops'>").text(this.name + ' Troops: ' + num).appendTo("#playerTroops");
-
+  
 }
 
 Countries.arr = (function() {
@@ -59484,6 +59483,7 @@ Countries.arr = (function() {
   return result;
 })();
 
+// this is used to determine which countries are clickable
 Countries.inPlay = function() {
   var result = [];
   var i = countriesInPlay.length;
@@ -59886,7 +59886,7 @@ VFX.prototype.renderState = function(data) {
     territories = data;
     //vfx.renderState(territories);
 
-    $('div.standingArmies').empty();
+    $('div.standingArmies > .army').remove();
     
     var id = io.socket.playerid;
     var i = territories.length;
@@ -59916,24 +59916,26 @@ VFX.prototype.renderState = function(data) {
 
   var updateActiveCountry = function(name) {
     $('div.activeCountry > .army').remove();
-    var id = io.socket.playerid;
+    var pId = io.socket.playerid;
     var terr = terrsFind(name);
 
     // find own troops in territory
     var num = 0;
-    if (terr.troops[id]) {
-      num += terr.troops[id];
+    if (terr.troops[pId]) {
+      num += terr.troops[pId];
     }
 
     $('div.activeCountry > .header').text(terr.name);
     $('div.activeCountry > .myArmy').text(num);
 
     for (var id in terr.troops) {
-      var num = terr.troops[id];
-      $('<p>').text('Player ' + id + ': ' + num + 'troops')
-            .appendTo('<div>')
-            .addClass('army')
-            .appendTo('div.activeCountry');
+      if (id != pId) {
+        var num = terr.troops[id];
+        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+              .appendTo('<div>')
+              .addClass('army')
+              .appendTo('div.activeCountry');
+      }
     }
 
   }

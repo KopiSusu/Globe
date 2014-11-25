@@ -179,7 +179,7 @@ transition-delay: 4.5s;
 
 
 /* new css */
-#activeCountry{
+.activeCountry{
   position: relative;
   border-bottom: 1px solid #fafafa;
   width: 100%;
@@ -188,7 +188,7 @@ transition-delay: 4.5s;
   padding-top: 10px;
 }
 
-#targetCountry{
+.targetCountry{
   position: relative;
   border-bottom: 1px solid #fafafa;
   width: 100%;
@@ -197,7 +197,7 @@ transition-delay: 4.5s;
   padding-top: 10px;
 }
 
-#standingArmies{
+.standingArmies{
   position: relative;
   border-bottom: 1px solid #fafafa;
   color: #E57C09;
