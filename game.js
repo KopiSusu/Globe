@@ -1,164 +1,85 @@
-
-var STARTING_TROOPS = 30;
-var GAME_OVER = false;
-
+var STARTING_TROOPS = 50;
+var STARTING_TERRITORIES = 4;
+var Territory = require('./territory');
 var Player = require('./player');
-var players = [];
 
-// extract names from countries data
-var tData = require('./public/java/lib/0_countriesdata');
-var territories = [];
-for (var country in tData) {
-  territories.push(String(country));
+var territoriesInPlay = require('./public/java/lib/0_countriesdata');
+
+var state = [];
+for (var i in territoriesInPlay) {
+  var name = territoriesInPlay[i]
+  var t = new Territory(name);
+  state.push(t);
 }
 
 function addNewPlayer() {
-    newPlayer = new Player();
-    initTroops(newPlayer);
-    players.push(newPlayer);
-    return newPlayer;
+  newPlayer = new Player();
+  initTroops(newPlayer);
+  return newPlayer;
 }
 
-// call when making new player. gives new player troops in 2 empty territories
 function initTroops(player) {
-  var terrs = emptyTerritories(2);
-  for (var i = 0; i < terrs.length; i++) {
-    player.sendTroops(terrs[i], STARTING_TROOPS/terrs.length);
+  var terrs = emptyTerritories(STARTING_TERRITORIES);
+  for (var i in terrs) {
+    terrs[i].troops[player.id] = Math.floor(STARTING_TROOPS/STARTING_TERRITORIES);
   }
 }
 
-// returns x number of empty territories
+// if x is undefined, returns all empty territories
 function emptyTerritories(x) {
-  var results = [];
-  var l = territories.length;
-
-  if (!x) {
-    var x = l;
-  }
-
-  while (l-- && results.length < x) {
-    var t = territories[l];
-    var empty = true;
-
-    var i = players.length;
-    while (i-- && empty) {
-      if (players[i].troopsIn(t) > 0) {
-        empty = false;
-      }
+  x = x || state.length;
+  var terrs = [];
+  var i = 0;
+  while ( i < state.length && x > 0) {
+    if ( state[i].isEmpty() ) {
+      terrs.push(state[i]);
+      x--;
     }
-
-    if (empty) {
-      results.push(t);
-    }
+    i++;
   }
-  return results;
+  return terrs;
 }
 
+function moveTroops(player, from, to, num) {
+    var i = state.length;
+
+    // grabbing territory objects from names
+    while (i--) {
+        if (state[i].name == from) {
+          from = state[i];
+        };
+        if (state[i].name == to) {
+          to = state[i];
+        };
+    }
+
+    // moving the troops
+    if ( from.remTroops(player.id, num) ) {
+      to.addTroops(player.id, num)
+    }
+};
 
 function evaluateState() {
-
-  var i = territories.length;
+  var i = state.length;
   while (i--) {
-
-    // each territory
-    var territory = territories[i];
-
-    var playersAtWar = playersIn(territory);
-
-    if (playersAtWar.length > 1) {
-     lastOneStanding(playersAtWar, territory); // destroys troops until only 1 player has troops
-    }
-  }// end each territory
-
-  GAME_OVER = true;
-  i = players.length;
-  while (i-- && GAME_OVER) {
-    if (players[i].totalTroops() > 0)
-      GAME_OVER = false;
+    var terr = state[i];
+    terr.lastOneStanding();
   }
 }
 
-function playersIn(territory) {
-  var i = players.length;
-  var warring = [];
+function removePlayer(id) {
+  var i = state.length;
   while (i--) {
-    if (players[i].troopsIn(territory) > 0) {
-      warring.push(players[i]);
-    }
-  }
-  return warring;
-}
-
-// each player loses troops until only 1 player has troops left
-function lastOneStanding(warriors, territory) {
-  var i = warriors.length;
-
-  while (warriors.length > 1) {
-    var i = warriors.length;
-    while (i--) {
-      warriors[i].loseTroops(territory, 1);
-    }
-
-    warriors = playersIn(territory);
-  }
-
-}
-
-function removePlayer(player) {
-  id = player.id;
-
-  var i = players.length;
-  var found = false;
-  while (i-- && !found) {
-    if ( players[i].id == id ) {
-      players.splice(i, 1);
-      found = true;
-    }
+    state[i].removePlayer(id);
   }
 }
-
-function moveTroops(id, num, from, to) {
-  var i = players.length;
-  var done = false;
-  while (i-- && !done) {
-    if ( players[i].id == id ) {
-      players[i].moveTroops(num, from, to);
-      done = true;
-    }
-  }
-}
-// //test
-// for (var i = 0; i < 6; i++) {
-//   newPlayer = new Player();
-//   initTroops(newPlayer);
-//   players.push(newPlayer);
-// };
-
-// console.log('BEFORE MOVING');
-// console.dir(players);
-
-// p1 = players[0];
-// p2 = players[1];
-// p3 = players[2];
-// p4 = players[3];
-// p5 = players[4];
-// p6 = players[5];
-
-// p1.moveTroops(15, 'Korea', 'Australia');
-// p1.moveTroops(5, 'Germany', 'Australia');
-
-// evaluateState();
 
 
 module.exports = {
   removePlayer : removePlayer,
   addNewPlayer : addNewPlayer,
   evaluateState : evaluateState,
-  state : players,
-
-  // moveTroops(playerid, num, from, to)
-  // moveTroops(1, 15, 'Canada', 'Australia')
+  state : state,
   moveTroops : moveTroops,
-  end : GAME_OVER
 }
 
