@@ -8,21 +8,29 @@ VFX = function() {
 }
 
 $(document).ready(function(){
-    $('#targetCountry .myArmy').blur(function(){
+    $('div.targetCountry > .myArmy').blur(function(){
         var oldVal = parseInt($(this).attr('data-orig-value'));
         var val = parseInt($(this).html());
-        var changeNumber = parseInt($('#activeCountry .myArmy').html());
+        var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
         var newNum = val - oldVal;
             changeNumber -= newNum;
         if (changeNumber < 0) {
             console.log('You have run out of troops')
-            $('#targetCountry .myArmy').html(oldVal);
+            $('div.targetCountry > .myArmy').html(oldVal);
         }
         if (changeNumber > 0 ) {
-            $('#activeCountry .myArmy').text(changeNumber);
+            $('div.activeCountry > .myArmy').text(changeNumber);
             var oldVal = $(this).attr('data-orig-value', val);
+
+            var from = $('div.activeCountry').attr('data-name');
+            var to = $('div.activeCountry').attr('data-name');
+            Game.moveTroops(io.socket.playerid, from, to, newNum)
         }
     })
+
+    // $('standingArmies .army').on('click', function() {
+        
+    // })
 })
 
 VFX.prototype.init = function () {
@@ -41,13 +49,17 @@ VFX.prototype.init = function () {
     //scene.add( new THREE.AmbientLight( 0x505050 ) );
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
+
+    var directionalLight = new THREE.DirectionalLight(0xfafafa,  0.3);
+    directionalLight.position.set(20, 20, 5).normalize();
+
     scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
 
 
     // Put in a camera at a good default location
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10000 );
     camera.position.z = 650;
-
+    camera.add(directionalLight);
     scene.add(camera);
     
     // Create a root object to contain all other scene objects
