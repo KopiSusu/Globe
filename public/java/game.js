@@ -44,8 +44,10 @@ var Game = (function() {
   }
 
   // this is called when a country is clicked (made active)
-  var updateActiveCountry = function(name) {
+  var updateActiveCountry = function(country) {
     $('div.activeCountry > .army').remove();
+
+    var name = country.name;
     var pId = io.socket.player.id;
     var terr = terrsFind(name);
 
