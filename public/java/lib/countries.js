@@ -97,7 +97,7 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
     // debugger
   this.updateScale(1.0);
   this.children.push(troop);
-  $("<li class ='troops'>").text(this.name + ' Troops: ' + this.children.length).appendTo("#playerTroops");
+  $("<li class ='troops'>").text(this.name + ' Troops: ' + num).appendTo("#playerTroops");
 
 }
 
