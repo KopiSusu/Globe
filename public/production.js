@@ -59601,7 +59601,7 @@ VFX.prototype.init = function () {
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
         wrapAround: true,
-        opacity     : 0.5,
+        opacity     : 0.6,
         transparent : true,
         depthWrite  : false,
 
@@ -59653,10 +59653,14 @@ VFX.prototype.init = function () {
         // var showTroops = document.getElementById("showTroops");
         var about = document.getElementById("about");
         var timer = document.getElementById("timer");
+        var top = document.getElementById("systemTop");
+        var bottom = document.getElementById("systemBottom");
         rightBar.style.right = '0%';
         // showTroops.style.opacity = '0.8';
         about.style.opacity = '1';
         timer.style.opacity = '0.8';
+        top.style.left = '10px';
+        bottom.style.left = '10px';
     }
 
     var geometry  = new THREE.SphereGeometry(7000, 50, 50);
@@ -59886,8 +59890,10 @@ VFX.prototype.renderState = function(data) {
     territories = data;
     //vfx.renderState(territories);
 
+    // remove existing standing armies
     $('div.standingArmies > .army').remove();
     
+    // add own armies to standing armies
     var id = io.socket.playerid;
     var i = territories.length;
     while (i--) {
@@ -59902,9 +59908,9 @@ VFX.prototype.renderState = function(data) {
 
       }
     }
-    
   };
 
+  // takes a name and returns a territory object
   var terrsFind = function(name) {
     var i = territories.length;
     while (i--) {
@@ -59914,6 +59920,7 @@ VFX.prototype.renderState = function(data) {
     }
   }
 
+  // this is called when a country is clicked (made active)
   var updateActiveCountry = function(name) {
     $('div.activeCountry > .army').remove();
     var pId = io.socket.playerid;
@@ -59925,9 +59932,11 @@ VFX.prototype.renderState = function(data) {
       num += terr.troops[pId];
     }
 
+    // update active country info
     $('div.activeCountry > .header').text(terr.name);
-    $('div.activeCountry > .myArmy').text(num);
+    $('div.activeCountry > .myArmy').text('Your Troops: ' + num);
 
+    // update enemy troops in active country
     for (var id in terr.troops) {
       if (id != pId) {
         var num = terr.troops[id];
@@ -59937,8 +59946,9 @@ VFX.prototype.renderState = function(data) {
               .appendTo('div.activeCountry');
       }
     }
-
   }
+
+
   var moveTroops = function(playerid, from, to, num) {
     var l = players.length;
     var done = false;

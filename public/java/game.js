@@ -57,7 +57,7 @@ var Game = (function() {
 
     // update active country info
     $('div.activeCountry > .header').text(terr.name);
-    $('div.activeCountry > .myArmy').text(num);
+    $('div.activeCountry > .myArmy').text('Your Troops: ' + num);
 
     // update enemy troops in active country
     for (var id in terr.troops) {

@@ -60,7 +60,7 @@ VFX.prototype.init = function () {
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
         wrapAround: true,
-        opacity     : 0.5,
+        opacity     : 0.6,
         transparent : true,
         depthWrite  : false,
 
@@ -112,10 +112,14 @@ VFX.prototype.init = function () {
         // var showTroops = document.getElementById("showTroops");
         var about = document.getElementById("about");
         var timer = document.getElementById("timer");
+        var top = document.getElementById("systemTop");
+        var bottom = document.getElementById("systemBottom");
         rightBar.style.right = '0%';
         // showTroops.style.opacity = '0.8';
         about.style.opacity = '1';
         timer.style.opacity = '0.8';
+        top.style.left = '10px';
+        bottom.style.left = '10px';
     }
 
     var geometry  = new THREE.SphereGeometry(7000, 50, 50);
