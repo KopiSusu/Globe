@@ -19,13 +19,6 @@ var TURN_LENGTH = 5; // turn length in seconds
 var PAUSE = true;
 var newPlayers = [];
 
-var myMove = {
-  playerid : 1,
-  num : 5,
-  from: 'Canada',
-  to: 'Korea'
-}
-
 
 // socket connection starts
 io.on('connection', function(socket) {
@@ -49,7 +42,7 @@ io.on('connection', function(socket) {
     if (!PAUSE) {
 
       //move troops in server copy of the game
-      game.moveTroops(move.playerid, move.num, move.from, move.to);
+      game.moveTroops(move.playerid, move.from, move.to, move.num );
       console.log(move);
       //send move to everyone except sender
       io.emit('move', JSON.stringify({

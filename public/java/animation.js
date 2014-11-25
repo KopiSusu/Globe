@@ -191,6 +191,7 @@ VFX.prototype.initMouse = function() {
     this.clickedObject = null;
     this.intersects = null;
     this.activeCountry = null;
+    this.targetCountry = null;
 }
 
 VFX.prototype.getIntersects = function(e, objs) {
@@ -227,7 +228,7 @@ VFX.prototype.onDocumentMouseDown = function(e) {
     e.preventDefault();
     var that = this;
 
-    var intersects = this.getIntersects(e, Countries.arr);
+    var intersects = this.getIntersects(e, Countries.inPlay);
 
     // this is for the animation, not sure if we are going to use it
     if (intersects[ 0 ]) {
@@ -246,10 +247,7 @@ VFX.prototype.onDocumentMouseDown = function(e) {
 
 
         that.activeCountry = country; 
-        $("#currentcountry").text(country.name + ' GDP: ' + country.gdp);
-        $("#troopsInCountry").text('There are ' + country.children.length + ' Troops in ' + country.name);
-        // console.log('active: ' + this.activeCountry.name);
-
+        Game.updateActiveCountry(country.name);
         // if (!SELECTED == []) {
         //     // for (var i = 0; i < SELECTED.length; i++) {
         //         console.log(SELECTED)

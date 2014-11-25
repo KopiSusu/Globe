@@ -27,7 +27,7 @@ io.socket = io.connect(window.SOCKET);
 // do stuff when connected
 io.socket.on('connect', function() {
     console.log('Im connected');
-    setTimeout(triggerMove, 6000);
+    //setTimeout(triggerMove, 6000);
 });
 
 
@@ -44,7 +44,7 @@ io.socket.on('welcome', function(data) {
 
 // receive game state from server
 io.socket.on('game state', function(data) {
-    console.log("rec'd from server " + data);
+
     var data = JSON.parse(data);
     Game.updateState(data);
 
