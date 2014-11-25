@@ -59549,19 +59549,23 @@ var convert = function(){
 }
 
 $(document).ready(function(){
-    $('#targetCountry .myArmy').blur(function(){
+    $('div.targetCountry > .myArmy').blur(function(){
         var oldVal = parseInt($(this).attr('data-orig-value'));
         var val = parseInt($(this).html());
-        var changeNumber = parseInt($('#activeCountry .myArmy').html());
+        var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
         var newNum = val - oldVal;
             changeNumber -= newNum;
         if (changeNumber < 0) {
             console.log('You have run out of troops')
-            $('#targetCountry .myArmy').html(oldVal);
+            $('div.targetCountry > .myArmy').html(oldVal);
         }
         if (changeNumber > 0 ) {
-            $('#activeCountry .myArmy').text(changeNumber);
+            $('div.activeCountry > .myArmy').text(changeNumber);
             var oldVal = $(this).attr('data-orig-value', val);
+
+            var from = $('div.activeCountry').attr('data-name');
+            var to = $('div.activeCountry').attr('data-name');
+            Game.moveTroops(io.socket.playerid, from, to, newNum)
         }
     })
 })
@@ -59886,9 +59890,11 @@ VFX.prototype.renderState = function(data) {
     territories = data;
     //vfx.renderState(territories);
 
+    // remove existing standing armies
     $('div.standingArmies > .army').remove();
     
-    var id = io.socket.playerid;
+    // add own armies to standing armies
+    var id = io.socket.player.id;
     var i = territories.length;
     while (i--) {
       var territory = territories[i];
@@ -59902,9 +59908,9 @@ VFX.prototype.renderState = function(data) {
 
       }
     }
-    
   };
 
+  // takes a name and returns a territory object
   var terrsFind = function(name) {
     var i = territories.length;
     while (i--) {
@@ -59914,9 +59920,10 @@ VFX.prototype.renderState = function(data) {
     }
   }
 
+  // this is called when a country is clicked (made active)
   var updateActiveCountry = function(name) {
     $('div.activeCountry > .army').remove();
-    var pId = io.socket.playerid;
+    var pId = io.socket.player.id;
     var terr = terrsFind(name);
 
     // find own troops in territory
@@ -59925,9 +59932,12 @@ VFX.prototype.renderState = function(data) {
       num += terr.troops[pId];
     }
 
+    // update active country info
     $('div.activeCountry > .header').text(terr.name);
     $('div.activeCountry > .myArmy').text(num);
+    $('div.activeCountry').attr('data-name', terr.name);
 
+    // update enemy troops in active country
     for (var id in terr.troops) {
       if (id != pId) {
         var num = terr.troops[id];
@@ -59937,29 +59947,32 @@ VFX.prototype.renderState = function(data) {
               .appendTo('div.activeCountry');
       }
     }
-
   }
-  var moveTroops = function(playerid, from, to, num) {
-    var l = players.length;
-    var done = false;
-    while (l-- && !done) {
-      var p = players[l];
-      if (p.id == playerid) {
-        p.troops[from] -= num;
-        p.troops[to] += num;
-        done = true;
-      }
-    } 
-  };
 
-  var findTroops = function(playerid, country) {
-    var i = players.length;
-    while (i--) {
-      if (playerid = players[i].id) {
-        return players[i].troops[country] || 0;
-      }
+
+  var moveTroops = function(player, from, to, num) {
+    var id = player.id;
+    from = terrsFind(from);
+    to = terrsFind(to);
+
+    // remove troops from active territory
+    if (from.troops[id] < num){
+      return false;
     }
-  }
+    from.troops[id] -= num;
+    if ( from.troops[id] == 0 ) {
+      delete from.troops[id];
+    }
+
+    // add troops to target territory
+    if (!to.troops[id]) {
+      to.troops[id] = 0;
+    }
+    to.troops[id] += num;
+
+    updateState(territories);
+}
+
 
   var startTimer = function() {
 
@@ -59985,7 +59998,6 @@ VFX.prototype.renderState = function(data) {
     updateActiveCountry : updateActiveCountry,
     moveTroops : moveTroops,
     startTimer : startTimer,
-    findTroops : findTroops
   };
 
 })();;
@@ -60017,7 +60029,7 @@ io.socket = io.connect(window.SOCKET);
 // do stuff when connected
 io.socket.on('connect', function() {
     console.log('Im connected');
-    //setTimeout(triggerMove, 6000);
+    setTimeout(triggerMove, 6000);
 });
 
 
@@ -60026,9 +60038,9 @@ io.socket.on('welcome', function(data) {
     json = JSON.parse(data);
 
     // set socket playerid
-    io.socket.playerid = json.playerid;
+    io.socket.player = json.player;
 
-    console.log("i joined the game and my id is " + io.socket.playerid);
+    console.log("i joined the game and my id is " + io.socket.player.id);
 })
 
 
@@ -60051,7 +60063,7 @@ io.socket.on('game state', function(data) {
 // receive other players' moves from server
 io.socket.on('move', function(data) {
    var json = JSON.parse(data);
-   Game.moveTroops(json.playerid, json.num, json.from, json.to);
+   Game.moveTroops(json.player, json.num, json.from, json.to);
 
    /* at this point,`game.state` will be updated with the move, so
       we could use `animation.renderTroops(game.state)`. but I have a 
@@ -60062,23 +60074,30 @@ io.socket.on('move', function(data) {
 
 });
 
+var move1 = 'Russia'
+var move2 = 'Brazil'
 
 function triggerMove() {
-    Game.makeMove(15, 'Zambia', 'Canada');
+  if (io.socket.player.id == 1) {
+    Game.makeMove(10, move1, 'Greenland');
+  }
+  else {
+    Game.makeMove(12, move2, 'Greenland');
+  }
 }
 // use this function to move own troops
 // e.g. makeMove(5, 'Canada', 'Korea')
 Game.makeMove = function(num, from, to) {
 
     // check if I am assigned a player
-    if (io.socket.playerid) {
+    if (io.socket.player) {
 
         // update my local game with my move immediately
-        Game.moveTroops(io.socket.playerid, num, from, to);
+        Game.moveTroops(io.socket.player, from, to, num);
         
         // send my move to the server
         io.socket.emit('move', {
-            playerid : io.socket.playerid, 
+            player : io.socket.player, 
             num : num, 
             from : from, 
             to : to

@@ -45,7 +45,7 @@ Territory.prototype.lastOneStanding = function() {
         delete armies[id];
       }
     }
-    this.lastOneStanding();;
+    this.lastOneStanding();
   }
 }
 
@@ -55,7 +55,7 @@ Territory.prototype.removePlayer = function(id) {
   }
 }
 Territory.prototype.remTroops = function(id, num) {
-  if (this.troops[id] < num){
+  if (this.troops[id] < num || !this.troops[id] ){
     return false;
   }
   this.troops[id] -= num;

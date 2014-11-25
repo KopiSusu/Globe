@@ -52,7 +52,6 @@ function moveTroops(player, from, to, num) {
           to = state[i];
         };
     }
-
     // moving the troops
     if ( from.remTroops(player.id, num) ) {
       to.addTroops(player.id, num)
@@ -63,7 +62,7 @@ function evaluateState() {
   var i = state.length;
   while (i--) {
     var terr = state[i];
-    terr.lastOneStanding();
+    terr.lastOneStanding(terr.troops);
   }
 }
 

@@ -42,11 +42,11 @@ io.on('connection', function(socket) {
     if (!PAUSE) {
 
       //move troops in server copy of the game
-      game.moveTroops(move.playerid, move.from, move.to, move.num );
+      game.moveTroops(move.player, move.from, move.to, move.num );
       console.log(move);
       //send move to everyone except sender
       io.emit('move', JSON.stringify({
-                                  playerid: move.playerid, 
+                                  player: move.player, 
                                   num: move.num, 
                                   from: move.from, 
                                   to: move.to
@@ -95,7 +95,7 @@ function endOfTurn() {
     var socket = newPlayers.pop();
     socket.player = game.addNewPlayer();
     socket.emit('welcome', JSON.stringify({
-                              playerid : socket.player.id 
+                              player : socket.player 
                             }));
   }
 

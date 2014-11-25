@@ -8,19 +8,23 @@ VFX = function() {
 }
 
 $(document).ready(function(){
-    $('#targetCountry .myArmy').blur(function(){
+    $('div.targetCountry > .myArmy').blur(function(){
         var oldVal = parseInt($(this).attr('data-orig-value'));
         var val = parseInt($(this).html());
-        var changeNumber = parseInt($('#activeCountry .myArmy').html());
+        var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
         var newNum = val - oldVal;
             changeNumber -= newNum;
         if (changeNumber < 0) {
             console.log('You have run out of troops')
-            $('#targetCountry .myArmy').html(oldVal);
+            $('div.targetCountry > .myArmy').html(oldVal);
         }
         if (changeNumber > 0 ) {
-            $('#activeCountry .myArmy').text(changeNumber);
+            $('div.activeCountry > .myArmy').text(changeNumber);
             var oldVal = $(this).attr('data-orig-value', val);
+
+            var from = $('div.activeCountry').attr('data-name');
+            var to = $('div.activeCountry').attr('data-name');
+            Game.moveTroops(io.socket.playerid, from, to, newNum)
         }
     })
 })

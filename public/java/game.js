@@ -17,7 +17,7 @@ var Game = (function() {
     $('div.standingArmies > .army').remove();
     
     // add own armies to standing armies
-    var id = io.socket.playerid;
+    var id = io.socket.player.id;
     var i = territories.length;
     while (i--) {
       var territory = territories[i];
@@ -46,7 +46,7 @@ var Game = (function() {
   // this is called when a country is clicked (made active)
   var updateActiveCountry = function(name) {
     $('div.activeCountry > .army').remove();
-    var pId = io.socket.playerid;
+    var pId = io.socket.player.id;
     var terr = terrsFind(name);
 
     // find own troops in territory
@@ -58,6 +58,7 @@ var Game = (function() {
     // update active country info
     $('div.activeCountry > .header').text(terr.name);
     $('div.activeCountry > .myArmy').text(num);
+    $('div.activeCountry').attr('data-name', terr.name);
 
     // update enemy troops in active country
     for (var id in terr.troops) {
@@ -72,27 +73,29 @@ var Game = (function() {
   }
 
 
-  var moveTroops = function(playerid, from, to, num) {
-    var l = players.length;
-    var done = false;
-    while (l-- && !done) {
-      var p = players[l];
-      if (p.id == playerid) {
-        p.troops[from] -= num;
-        p.troops[to] += num;
-        done = true;
-      }
-    } 
-  };
+  var moveTroops = function(player, from, to, num) {
+    var id = player.id;
+    from = terrsFind(from);
+    to = terrsFind(to);
 
-  var findTroops = function(playerid, country) {
-    var i = players.length;
-    while (i--) {
-      if (playerid = players[i].id) {
-        return players[i].troops[country] || 0;
-      }
+    // remove troops from active territory
+    if (from.troops[id] < num){
+      return false;
     }
-  }
+    from.troops[id] -= num;
+    if ( from.troops[id] == 0 ) {
+      delete from.troops[id];
+    }
+
+    // add troops to target territory
+    if (!to.troops[id]) {
+      to.troops[id] = 0;
+    }
+    to.troops[id] += num;
+
+    updateState(territories);
+}
+
 
   var startTimer = function() {
 
@@ -118,7 +121,6 @@ var Game = (function() {
     updateActiveCountry : updateActiveCountry,
     moveTroops : moveTroops,
     startTimer : startTimer,
-    findTroops : findTroops
   };
 
 })();

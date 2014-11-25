@@ -213,6 +213,8 @@ transition-delay: 4.5s;
 .myArmy {
   padding: 5px;
   color: #fafafa;
+  font-size: 3em;
+  position: absolute;
 }
 
 .army {

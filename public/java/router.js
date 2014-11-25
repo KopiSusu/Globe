@@ -27,7 +27,7 @@ io.socket = io.connect(window.SOCKET);
 // do stuff when connected
 io.socket.on('connect', function() {
     console.log('Im connected');
-    //setTimeout(triggerMove, 6000);
+    setTimeout(triggerMove, 6000);
 });
 
 
@@ -36,9 +36,9 @@ io.socket.on('welcome', function(data) {
     json = JSON.parse(data);
 
     // set socket playerid
-    io.socket.playerid = json.playerid;
+    io.socket.player = json.player;
 
-    console.log("i joined the game and my id is " + io.socket.playerid);
+    console.log("i joined the game and my id is " + io.socket.player.id);
 })
 
 
@@ -61,7 +61,7 @@ io.socket.on('game state', function(data) {
 // receive other players' moves from server
 io.socket.on('move', function(data) {
    var json = JSON.parse(data);
-   Game.moveTroops(json.playerid, json.num, json.from, json.to);
+   Game.moveTroops(json.player, json.num, json.from, json.to);
 
    /* at this point,`game.state` will be updated with the move, so
       we could use `animation.renderTroops(game.state)`. but I have a 
@@ -72,23 +72,32 @@ io.socket.on('move', function(data) {
 
 });
 
+var move1 = 'Russia'
+var move2 = 'Brazil'
 
 function triggerMove() {
-    Game.makeMove(15, 'Zambia', 'Canada');
+  if (io.socket.player.id == 1) {
+    Game.makeMove(10, move1, 'Greenland');
+  }
+  else {
+    Game.makeMove(12, move2, 'Greenland');
+  }
 }
+
+
 // use this function to move own troops
 // e.g. makeMove(5, 'Canada', 'Korea')
 Game.makeMove = function(num, from, to) {
 
     // check if I am assigned a player
-    if (io.socket.playerid) {
+    if (io.socket.player) {
 
         // update my local game with my move immediately
-        Game.moveTroops(io.socket.playerid, num, from, to);
+        Game.moveTroops(io.socket.player, from, to, num);
         
         // send my move to the server
         io.socket.emit('move', {
-            playerid : io.socket.playerid, 
+            player : io.socket.player, 
             num : num, 
             from : from, 
             to : to
