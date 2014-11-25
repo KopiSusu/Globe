@@ -21,13 +21,26 @@
 	      </div>
     	</div>
     	<div id='rside'>
-    	  <div id='infoBox'>COMMAND PANEL</div>
-    		<div id='countryName'>
-    			<div id='currentcountry'></div>
-    			<div id='troopsInCountry'></div>
-    		</div>
-    		<div id='troopLocations'>
-    			  <div id='playerTroops'></div>
+    		<div class='command'>
+	    	  <div id='infoBox'>COMMAND PANEL</div>
+	    		
+	    		<div class='activeCountry'>
+	    			<div class='header'>COUNTRY NAME</div>
+	    			<div class='myArmy'>20</div> <!-- my current troops-->
+	    			<div class='army'>Player 1: 5 troops</div>
+	    			<div class='army'>Player 2: 5 troops</div>
+	    		</div>
+
+	    		<div class='targetCountry'>
+	    			<div class='header'>COUNTRY NAME</div>	   
+	    			<div class='myArmy'>0</div> <!-- input field!! this triggers a move -->
+	    			<div class='army'>Player 5: 10 troops</div>
+	    			<div class='army'>Player 3: 15 troops</div>
+	    		</div> 	
+	    	</div>
+
+    		<div class='standingArmies'>
+    			  <div class='army'>Canada: 5 troops</div> <!-- sample data-->
     		</div>
         <div id='about'>?</div>
     	</div>
