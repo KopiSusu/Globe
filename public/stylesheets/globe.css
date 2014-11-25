@@ -104,7 +104,7 @@ text-align: center;
 width: 92%;
 border-bottom: 1px solid #fafafa;
 font-family: 'Inconsolata';
-position: absolute;
+position: relative;
 color: #2194CE;
 font-size: 25px;
 padding-left: 15px;
@@ -176,3 +176,55 @@ transition-delay: 4.5s;
   width: 100%;
   height: 100%;
 }
+
+
+/* new css */
+#activeCountry{
+  position: relative;
+  border-bottom: 1px solid #fafafa;
+  width: 100%;
+  top: 8%;
+  color: #E57C09;
+  padding-top: 10px;
+}
+
+#targetCountry{
+  position: relative;
+  border-bottom: 1px solid #fafafa;
+  width: 100%;
+  top: 20%;
+  color: #E57C09;
+  padding-top: 10px;
+}
+
+#standingArmies{
+  position: relative;
+  border-bottom: 1px solid #fafafa;
+  color: #E57C09;
+  padding-top: 10px;
+}
+
+.header {
+  color: #2194CE;
+  text-align: center;
+  padding: 5px;
+}
+
+.myArmy {
+  padding: 5px;
+  color: #fafafa;
+}
+
+.army {
+  padding: 5px;
+  color: #fafafa;
+}
+
+
+
+
+
+
+
+
+

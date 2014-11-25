@@ -59546,8 +59546,25 @@ var convert = function(){
     this.camera = null;
     this.objects = [];
 
-
 }
+
+$(document).ready(function(){
+    $('#targetCountry .myArmy').blur(function(){
+        var oldVal = parseInt($(this).attr('data-orig-value'));
+        var val = parseInt($(this).html());
+        var changeNumber = parseInt($('#activeCountry .myArmy').html());
+        var newNum = val - oldVal;
+            changeNumber -= newNum;
+        if (changeNumber < 0) {
+            console.log('You have run out of troops')
+            $('#targetCountry .myArmy').html(oldVal);
+        }
+        if (changeNumber > 0 ) {
+            $('#activeCountry .myArmy').text(changeNumber);
+            var oldVal = $(this).attr('data-orig-value', val);
+        }
+    })
+})
 
 VFX.prototype.init = function () {
     var container = $('#container');
@@ -59569,7 +59586,7 @@ VFX.prototype.init = function () {
 
 
     // Put in a camera at a good default location
-    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10000 );
     camera.position.z = 650;
 
     scene.add(camera);
@@ -59577,6 +59594,21 @@ VFX.prototype.init = function () {
     // Create a root object to contain all other scene objects
     var root = new THREE.Object3D();
     root.scale.set(205,205,205);
+
+        // making cloud layer
+    var geometryCloud   = new THREE.SphereGeometry(210, 50, 50)
+    var materialCloud  = new THREE.MeshPhongMaterial({
+        map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
+      side        : THREE.DoubleSide,
+        wrapAround: true,
+        opacity     : 0.5,
+        transparent : true,
+        depthWrite  : false,
+
+    })
+    var cloudMesh = new THREE.Mesh(geometryCloud, materialCloud)
+    cloudMesh.castShadow = true;
+    scene.add(cloudMesh)
 
     // countries is a collection {name: Mesh object}
     for (var name in Countries) {
@@ -59631,9 +59663,9 @@ VFX.prototype.init = function () {
     // create the material, using a texture of startfield
     var material  = new THREE.MeshBasicMaterial({
         fog: false,
-        opacity: 1,
-         // transparent : true,
-        // depthWrite  : false,
+        opacity: 0.5,
+         transparent : true,
+        depthWrite  : false,
     });
     material.map   = THREE.ImageUtils.loadTexture('images/starfield.png');
     material.side  = THREE.BackSide;
@@ -59643,27 +59675,14 @@ VFX.prototype.init = function () {
     var mesh  = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    // making cloud layer
-    var geometryCloud   = new THREE.SphereGeometry(210, 50, 50)
-    var materialCloud  = new THREE.MeshPhongMaterial({
-        map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
-      // side        : THREE.DoubleSide,
-        wrapAround: true,
-        opacity     : 0.8,
-        transparent : true,
-        depthWrite  : false,
 
-    })
-    var cloudMesh = new THREE.Mesh(geometryCloud, materialCloud)
-    cloudMesh.castShadow = true;
-    scene.add(cloudMesh)
 
     // making inner sphere layer
-    var geometryInner   = new THREE.SphereGeometry(200, 32, 32)
+    var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
     var materialInner  = new THREE.MeshBasicMaterial({
         // map     : THREE.ImageUtils.loadTexture('images/fairInners.jpg'),
         // wireframe: true,
-        color: 0x2194CE,
+        color: 0x00688B,
         transparent: true,
         // depthWrite: false,
     })
@@ -59673,24 +59692,34 @@ VFX.prototype.init = function () {
 
 } // end init
 
-
+// var rotation = -0.0001;
 VFX.prototype.run = function() {
 
     this.renderer.render(this.scene, this.camera);
     var that = this;
-    // debugger
-    // this.scene.children[2].children.rotation.y += 0.001;
-    for (var i in this.scene.children[2].children) {
-        this.scene.children[2].children[i].rotation.y += 0.001;
+    for (var i in this.scene.children[3].children) {
+        this.scene.children[3].children[i].rotation.y = 1;
+        this.scene.children[3].children[i].rotation.y += 0.0001;
     }
+    // this.scene.children[1].rotation.y += 0.0008;
+    this.scene.children[2].rotation.y += 0.0009;
+    this.scene.children[4].rotation.y += 0.0001;
+    this.scene.children[5].rotation.y += 0.0001;
 
-    this.scene.children[3].rotation.y += 0.0001;
-    this.scene.children[4].rotation.y += 0.0011;
-    this.scene.children[5].rotation.y += 0.001;
-    // debugger
-    // this.scene.children[5].rotation.y += 0.0001;
-    // this.scene.children[3].rotation.x += 0.0001;
-    // this.scene.children[4].rotation.y += 0.0013;
+    ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
+    ////// kinda like a screen saver. 
+    // this.scene.children[1].rotation.y += rotation;
+
+    // if (this.scene.children[1].rotation.y < -0.2) {
+    //     rotation = 0.0001;
+    // }
+
+    // if (this.scene.children[1].rotation.y > 0.2) {
+    //     rotation = -0.0001;
+    // }
+
+    // console.log('this is rotation = ' + rotation)
+    // console.log('this is this.scene.children[1].rotation.y = ' + this.scene.children[1].rotation.y)
 
 
     requestAnimationFrame(function() { 
@@ -59749,6 +59778,7 @@ VFX.prototype.getIntersects = function(e, objs) {
 
 VFX.prototype.onDocumentMouseMove = function(e) {
 
+
     // not using
     // var intersects = this.getIntersects(e, Countries.arr);
     // if (intersects[ 0 ]) {
@@ -59777,13 +59807,12 @@ VFX.prototype.onDocumentMouseDown = function(e) {
         if (that.activeCountry) {
             TweenMax.to(that.activeCountry.material, 1, { opacity: 1 });
             TweenMax.to(that.activeCountry.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
-
             // updateContinentScale(particles, 1.005);
         }
 
         // updateContinentScale(continent, 1.02);
         TweenMax.to(country.material, 1, { opacity: 0.95 });
-        TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
+        TweenMax.to(country.scale, 1, { x : 1.1, y : 1.1, z : 1.1 });
 
 
 
@@ -59806,6 +59835,22 @@ VFX.prototype.onDocumentMouseUp = function(e) {
 }
 
 
+VFX.prototype.moveUnits = function(previousCountry, newCountry) {
+    var material = new THREE.LineBasicMaterial({
+        color: 0xfafafa
+    });
+    var geometry = new THREE.Geometry();
+
+    // note! line is drawn between each consecutive pair of verticies
+    geometry.vertices.push(previousCountry);
+    geometry.vertices.push(newCountry);
+
+    // now we draw the line
+    var line = new THREE.Line(geometry, material);
+    scene.add(line);
+}
+
+
 VFX.prototype.addObj = function(obj3d) {
     this.root.add(obj3d);
 }
@@ -59819,6 +59864,9 @@ VFX.prototype.renderState = function(data) {
         for (var country in troops) {
             var n = troops[country]; // number of troops
             country = Countries[country]; // Mesh object for the country
+            // if (io.socket.playerid == player.id) {
+            //     country.material.color = 0xfafafa;
+            // }
             country.addTroops(player.id, n);
         }
     }
@@ -59926,6 +59974,8 @@ VFX.prototype.renderState = function(data) {
         }
       }
   };
+
+
 
   return {
     state : territories,

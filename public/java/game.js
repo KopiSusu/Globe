@@ -102,6 +102,8 @@ var Game = (function() {
       }
   };
 
+
+
   return {
     state : territories,
     updateState : updateState,
