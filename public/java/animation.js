@@ -29,7 +29,7 @@ $(document).ready(function(){
     })
 
     // $('standingArmies .army').on('click', function() {
-        
+
     // })
 })
 
@@ -50,7 +50,7 @@ VFX.prototype.init = function () {
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
 
-    var directionalLight = new THREE.DirectionalLight(0xfafafa,  0.3);
+    var directionalLight = new THREE.DirectionalLight(0xfafafa,  0.6);
     directionalLight.position.set(20, 20, 5).normalize();
 
     scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
@@ -66,8 +66,11 @@ VFX.prototype.init = function () {
     var root = new THREE.Object3D();
     root.scale.set(205,205,205);
 
+
+ 
+
         // making cloud layer
-    var geometryCloud   = new THREE.SphereGeometry(210, 50, 50)
+    var geometryCloud   = new THREE.SphereGeometry(207, 50, 50)
     var materialCloud  = new THREE.MeshPhongMaterial({
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
@@ -155,14 +158,33 @@ VFX.prototype.init = function () {
     // making inner sphere layer
     var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
     var materialInner  = new THREE.MeshBasicMaterial({
-        // map     : THREE.ImageUtils.loadTexture('images/fairInners.jpg'),
-        // wireframe: true,
         color: 0x00688B,
         transparent: true,
-        // depthWrite: false,
     })
     var innerMesh = new THREE.Mesh(geometryInner, materialInner)
     scene.add(innerMesh)
+
+    // here we are making the moon
+    // lets make the invisiable sphere first
+    var invisSphere = new THREE.Mesh(new THREE.SphereGeometry(300, 10, 10), new THREE.MeshBasicMaterial({
+        transparent: true,
+        color: 0x111111,
+        opacity: 0.1,
+        depthWrite  : false,
+    }));
+    var moonMaterial = new THREE.MeshPhongMaterial({
+        map: THREE.ImageUtils.loadTexture('images/moonmap4k.jpg'),
+        bumpMap: THREE.ImageUtils.loadTexture('images/moonbump4k.jpg'),
+        bumpScale: 0.05
+    });
+    var sphere = new THREE.Mesh(new THREE.SphereGeometry(30, 32, 32), moonMaterial);
+      sphere.overdraw = true;
+      sphere.position.x = 300;
+      invisSphere.add(sphere);
+      scene.add(invisSphere);
+
+
+      // debugger;
 
 
 } // end init
@@ -180,6 +202,7 @@ VFX.prototype.run = function() {
     this.scene.children[2].rotation.y += 0.0009;
     this.scene.children[4].rotation.y += 0.0001;
     this.scene.children[5].rotation.y += 0.0001;
+    this.scene.children[6].rotation.y += 0.0005;
 
     ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
     ////// kinda like a screen saver. 
@@ -282,10 +305,8 @@ VFX.prototype.onDocumentMouseDown = function(e) {
         if (that.activeCountry) {
             TweenMax.to(that.activeCountry.material, 1, { opacity: 1 });
             TweenMax.to(that.activeCountry.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
-            // updateContinentScale(particles, 1.005);
         }
 
-        // updateContinentScale(continent, 1.02);
         TweenMax.to(country.material, 1, { opacity: 0.95 });
         TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
 
