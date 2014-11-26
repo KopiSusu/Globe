@@ -59834,14 +59834,14 @@ VFX.prototype.onDocumentMouseDown = function(e) {
     }
 } 
 
-VFX.prototype.activate = function(name) {
+VFX.prototype.deactivate = function(name) {
     console.log('inside vfx activate');
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 1 });
     TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
 
-VFX.prototype.deactivate = function(name) {
+VFX.prototype.activate = function(name) {
     console.log('inside vfx deactive');
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 0.95 });
