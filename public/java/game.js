@@ -79,7 +79,6 @@ var Game = (function() {
   }
 
   function activate(name) {
-    console.log('inside activate');
     _activeCountry = name;
 
     var t = getTerritory(name);
@@ -89,7 +88,6 @@ var Game = (function() {
   }
 
   function deactivate(name) {
-    console.log('inside game deactive');
     var name = name || _activeCountry;
     _activeCountry = null;
     vfx.deactivate(name);
@@ -97,7 +95,6 @@ var Game = (function() {
   }
 
   function target(name) {
-    console.log('inside game target');
     _targetCountry = name;
 
     var t = getTerritory(name);

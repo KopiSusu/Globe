@@ -90,7 +90,6 @@ var domhandler = (function() {
         $('div.targetCountry').attr('country', '');
     });
     var empty = $('div.targetCountry > .myArmy').text();
-    console.log(empty);
     if (empty) {
       $('div.targetCountry').animate({
           height: '0%',
