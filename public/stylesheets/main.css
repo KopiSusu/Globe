@@ -5,17 +5,6 @@ body {
 }
 
 
-
-#left {
-  z-index: 1;
-  position: absolute;
-  top: 0%;
-  left: 0%;
-  width: 200px;
-  height: 705px;
-  color: #7f8c8d;
-}
-
 #timer {
   height: 6%;
   width: 52%;
@@ -128,6 +117,17 @@ font-family: 'Inconsolata';
 }
 
 
+#left {
+  z-index: 1;
+  position: absolute;
+  top: 0%;
+  left: 5%;
+  width: 300px;
+  height: 705px;
+  color: #7f8c8d;
+}
+
+
 #title {
   position: relative;
   left: 0px;
@@ -182,15 +182,6 @@ font-family: 'Inconsolata';
 }
 
 
-#lside {
-  z-index: 1;
-  position: absolute;
-  top: 0%;
-  left: 0%;
-  width: 200px;
-  height: 705px;
-  color: #7f8c8d;
-}
 
 #arrow-left {
   width: 0;
