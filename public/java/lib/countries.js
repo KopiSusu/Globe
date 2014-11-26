@@ -125,20 +125,10 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   troop.sortParticles = true;
   troop.name = playerid;
   troop.strength = num;
-    // debugger
   this.updateScale(1.0);
   this.children.push(troop);
   
 }
-
-// Countries.arr = (function() {
-//   var result = [];
-//   for (var name in Countries) {
-//     if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
-//       result.push(Countries[name]);
-//   }
-//   return result;
-// })();
 
 // this is used to determine which countries are clickable
 Countries.inPlay = function() {

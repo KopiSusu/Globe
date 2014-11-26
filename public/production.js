@@ -59289,20 +59289,10 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   troop.sortParticles = true;
   troop.name = playerid;
   troop.strength = num;
-    // debugger
   this.updateScale(1.0);
   this.children.push(troop);
   
 }
-
-// Countries.arr = (function() {
-//   var result = [];
-//   for (var name in Countries) {
-//     if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
-//       result.push(Countries[name]);
-//   }
-//   return result;
-// })();
 
 // this is used to determine which countries are clickable
 Countries.inPlay = function() {
@@ -59369,7 +59359,7 @@ VFX.prototype.init = function () {
 
     // Put in a camera at a good default location
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10000 );
-    camera.position.z = 650;
+    camera.position.z = 750;
     camera.add(directionalLight);
     scene.add(camera);
     
@@ -59427,7 +59417,7 @@ VFX.prototype.init = function () {
     // here we are fucking with the controls, if you want to change some aspect of controls take a quick peek at the ORbit controls file, it lays out pretty well what you can change.
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.minDistance = 250,
-    controls.maxDistance = 650,
+    controls.maxDistance = 750,
     controls.zoomSpeed = 0.3,
     controls.zoomDampingFactor = 0.3,
     controls.momentumDampingFactor = 0.5,

@@ -37,22 +37,12 @@ h2 {
     transition: all 0.5s ease;
 }
 
-#title{
-  position: absolute;
-  color: #F3F2F2;
-  opacity: 0.8;
-  bottom: -5px;
-  left: 10%;
-  font-size: 25px;
-  font-family: 'Inconsolata';
-}
-
 #coffee{
   position: absolute;
-  width: 31%;
+  width: 50%;
   height: 100%;
-  bottom: 15.7%;
-  left: 40%;
+  bottom: 12.7%;
+  left: 100%; 
 }
 
 #timer {
@@ -226,14 +216,20 @@ h2 {
   color: #2194CE;
   padding-bottom: 5px;
   margin-bottom: 10px;
+  font-size: 25px;
+  font-family: 'Inconsolata';
+  opacity: 0.8;
+  bottom: -5px;
 }
 
 #titleLogo {
-  position: relative;
-  left: 0px;
-  color: #2194CE;
-  padding-bottom: 5px;
-  margin-bottom: 10px;
+  position: absolute;
+  color: #F3F2F2;
+  opacity: 0.8;
+  bottom: -5px;
+  left: 10%;
+  font-size: 25px;
+  font-family: 'Inconsolata';
 }
 
 #systemTop {
@@ -259,24 +255,9 @@ h2 {
   left: 50px;
   padding: 5px;
   opacity: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0), rgba(245,245,245, 0.1));
   transition: all 1s linear;
   transition-delay: 4.5s;
-}
-
-#rightLight {
-  position: absolute;
-  height: 100%;
-  width: 15%;
-  right: 0;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgba(250, 250, 250, 0.1));
-}
-
-#leftLight {
-  position: absolute;
-  height: 100%;
-  width: 15%;
-  left: 0;
-  background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0), rgba(250, 250, 250, 0.1));
 }
 
 #gif {
