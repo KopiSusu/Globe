@@ -60142,11 +60142,15 @@ VFX.prototype.renderState = function(data) {
         $('div.targetCountry > .myArmy').text('');
         $('div.targetCountry').attr('country', '');
     });
-    $('div.targetCountry').animate({
-        height: '0%',
-      }, function() {
-      $(this).animate({height: '30%'});
-    });
+    var empty = $('div.targetCountry > .myArmy').text();
+    console.log(empty);
+    if (empty) {
+      $('div.targetCountry').animate({
+          height: '0%',
+        }, function() {
+        $(this).animate({height: '30%'});
+      });
+    }
   }
 
   function target(country) {
