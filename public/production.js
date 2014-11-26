@@ -59967,7 +59967,6 @@ VFX.prototype.initMouse = function() {
     
     this.overObject = null;
     this.clickedObject = null;
-    this.activeCountry = null;
     this.targetCountry = null;
 }
 
@@ -60007,7 +60006,14 @@ VFX.prototype.activate = function(name) {
     TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
 }
 
+VFX.prototype.target = function(name) {
+    if (this.targetCountry) {
+        this.deactivate(this.targetCountry);
+    }
 
+    this.activate(name);
+    this.targetCountry = name;
+}
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
 
@@ -60397,6 +60403,7 @@ $(function(){
 
     var t = getTerritory(name);
     domhandler.target(t);
+    vfx.target(name);
   }
 
   function moveTroops(from, to, num, plyr) {

@@ -101,6 +101,7 @@ var Game = (function() {
 
     var t = getTerritory(name);
     domhandler.target(t);
+    vfx.target(name);
   }
 
   function moveTroops(from, to, num, plyr) {
