@@ -59639,58 +59639,81 @@ VFX.prototype.renderState = function(data) {
   function activate(country) {
     $('div.activeCountry > .army').remove();
 
-    var num = country.troops[_player.id] || 0;
+    $('div.activeCountry').animate({height: '0%'}, function() {
+        var num = country.troops[_player.id] || 0;
+        $(this).animate({height: '30%'});
+        $('div.activeCountry').attr('country', country.name);
+        $('div.activeCountry > .clickedCountry').text(country.name);
+        $('div.activeCountry > .myArmy').text(num);
+  
+        // dynamic deactivate button
+        $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
-    $('div.activeCountry').attr('country', country.name);
-    $('div.activeCountry > .clickedCountry').text(country.name);
-    $('div.activeCountry > .myArmy').text(num);
-
-    // dynamic deactivate button
-    $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate');
-
-    // update enemy troops in active country
-    for (var id in country.troops) {
-      if (id != _player.id) {
-        var num = country.troops[id];
-        $('<p>').text('P' + id + ' (' + num + ')')
-              .appendTo('<div>')
-              .addClass('army-enemy')
-              .appendTo('div.activeCountry');
-      }
-    }
+        // update enemy troops in active country
+        for (var id in country.troops) {
+          if (id != _player.id) {
+            var num = country.troops[id];
+            $('<p>').text('P' + id + ' (' + num + ')')
+                  .appendTo('<div>')
+                  .addClass('army-enemy')
+                  .appendTo('div.activeCountry');
+          }
+        }
+    });
   }
 
   function deactivate() {
-    $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
-    $('div.activeCountry > .army').remove();
-    $('div.activeCountry > .clickedCountry').empty();
-    $('div.activeCountry > .myArmy').text('');
-    $('div.activeCountry').attr('country', '');
+    $('#arrow-left').animate({opacity: '0'});
+    $('#arrow-right').animate({opacity: '0'});
+    $('div.activeCountry').animate({
+        height: '0%',
+      }, function() {
+        $(this).animate({height: '30%'});
+        $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
 
-    $('div.targetCountry > .army').remove();
-    $('div.targetCountry > .clickedCountry').empty();
-    $('div.targetCountry > .myArmy').text('');
-    $('div.targetCountry').attr('country', '');
+    // $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
+        $('div.activeCountry > .army').remove();
+        $('div.activeCountry > .clickedCountry').empty();
+        $('div.activeCountry > .myArmy').text('');
+        $('div.activeCountry').attr('country', '');
+
+        $('div.targetCountry > .army').remove();
+        $('div.targetCountry > .clickedCountry').empty();
+        $('div.targetCountry > .myArmy').text('');
+        $('div.targetCountry').attr('country', '');
+    });
+    $('div.targetCountry').animate({
+        height: '0%',
+      }, function() {
+      $(this).animate({height: '30%'});
+    });
   }
 
   function target(country) {
     $('div.targetCountry > .army').remove();
-    var num = country.troops[_player.id] || 0;
+    $('#arrow-left').animate({opacity: '0'});
+    $('#arrow-right').animate({opacity: '0'});
 
-    $('div.targetCountry').attr('country', country.name);
-    $('div.targetCountry > .clickedCountry').text(country.name);
-    $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
+    $('div.targetCountry').animate({ height: '0%'}, function() {
+        $(this).animate({height: '30%'});
+        var num = country.troops[_player.id] || 0;
+        $('#arrow-left').animate({opacity: '1'});
+        $('#arrow-right').animate({opacity: '1'});
+        $('div.targetCountry').attr('country', country.name);
+        $('div.targetCountry > .clickedCountry').text(country.name);
+        $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
-    // update enemy troops in active country
-    for (var id in country.troops) {
-      if (id != _player.id) {
-        var num = country.troops[id];
-        $('<p>').text('P' + id + ' (' + num + ')')
-              .appendTo('<div>')
-              .addClass('army-enemy')
-              .appendTo('div.targetCountry');
-      }
-    }
+        // update enemy troops in active country
+        for (var id in country.troops) {
+            if (id != _player.id) {
+              var num = country.troops[id];
+              $('<p>').text('P' + id + ' (' + num + ')')
+                    .appendTo('<div>')
+                    .addClass('army-enemy')
+                    .appendTo('div.targetCountry');
+            }
+        }
+    });
   }
 
   function update(data) {
@@ -59767,6 +59790,13 @@ $(function(){
   // button to deactivate active army
   $('.activeCountry').on('click', '.deactivate', function() {
     Game.handleClick();
+  });
+
+  $('#arrow-left').on('click', function(){
+    console.log('inside arrow');
+    var number = parseInt($('div.targetCountry > .myArmy').text());
+        number -= 1;
+    $('div.activeCountry > .myArmy').text(number);
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
@@ -59991,12 +60021,14 @@ socket.on('game state', function(state) {
 // receive other players' moves from server
 socket.on('move', function(data) {
   var move = JSON.parse(data);
+
   Game.moveTroops(move.from, move.to, move.num, move.player);
-  domhandler.standingArmies(Game.armies(socket.player));
 
   var data = {
     type: 'move',
     msg: move
   }
+  
+  domhandler.standingArmies(Game.armies(socket.player));
   domhandler.update(data);
 });

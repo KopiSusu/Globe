@@ -4,6 +4,15 @@ body {
   background: #fafafa;
 }
 
+#left {
+  z-index: 1;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 200px;
+  height: 705px;
+  color: #7f8c8d;
+}
 
 #timer {
   height: 6%;
@@ -61,7 +70,7 @@ font-family: 'Inconsolata';
   margin: 0px;
   padding: 0px;
   padding-bottom: 5px;
-  transition: all 1s linear;
+  /*transition: all 1s linear;*/
 }
 
 .section > h1.deactivate {
@@ -69,7 +78,7 @@ font-family: 'Inconsolata';
   text-align: center;
   width: 2em;
   cursor: pointer;
-  transition: all 1s linear;
+  /*transition: all 1s linear;*/
 }
 
 
@@ -114,17 +123,6 @@ font-family: 'Inconsolata';
   width: 200px;
   cursor: pointer;
   transition: all 0.3s linear;
-}
-
-
-#left {
-  z-index: 1;
-  position: absolute;
-  top: 0%;
-  left: 5%;
-  width: 300px;
-  height: 705px;
-  color: #7f8c8d;
 }
 
 
@@ -182,4 +180,40 @@ font-family: 'Inconsolata';
 }
 
 
+#lside {
+  z-index: 1;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 200px;
+  height: 705px;
+  color: #7f8c8d;
+}
+
+#arrow-left {
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 15px solid #ba0e0e;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0;
+  /*border-radius: 50%;*/
+  top: 39%;
+}
+
+#arrow-right {
+  width: 0; 
+  height: 0; 
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 15px solid #ba0e0e;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0;
+  /*border-radius: 50%;*/
+  top: 39%;
+  left: 93%;
+}
 
