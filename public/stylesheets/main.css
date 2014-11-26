@@ -74,6 +74,16 @@ body {
   padding: 0px;
 }
 
+.section > h1.deactivate {
+  color: red;
+  text-align: center;
+  width: 2em;
+}
+
+.section > h1.deactivate:hover {
+  color: #fafafa;
+}
+
 .section > h2 {
   color: #2194CE;
   font-size: 1.2em;
@@ -92,11 +102,12 @@ body {
 }
 
 .army {
-  padding: 5px;
+  padding: 4px;
   background-color: #2194CE;
   color: #111;
-  margin: 3px;
+  margin: 5px;
   display: inline-block;
   border-radius: 7%;
   text-transform: uppercase;
+  font-weight: bold;
 }

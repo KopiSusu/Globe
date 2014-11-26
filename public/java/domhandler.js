@@ -53,8 +53,8 @@ var domhandler = (function() {
     $('div.activeCountry > .clickedCountry').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
 
-    // TODO: dynamically add button with class 'deactivate'
-
+    // dynamic deactivate button
+    $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate');
 
     // update enemy troops in active country
     for (var id in country.troops) {
@@ -69,7 +69,7 @@ var domhandler = (function() {
   }
 
   function deactivate() {
-    console.log('inside dom deactive');
+    $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
     $('div.activeCountry > .army').remove();
     $('div.activeCountry > .clickedCountry').empty();
     $('div.activeCountry > .myArmy').text('');
@@ -82,8 +82,6 @@ var domhandler = (function() {
   }
 
   function target(country) {
-    console.log('inside dom target');
-
     $('div.targetCountry > .army').remove();
     var num = country.troops[_player.id] || 0;
 
