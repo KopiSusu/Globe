@@ -33,17 +33,30 @@ io.on('connection', function(socket) {
      updated game state will be broadcast at start of next turn */
   socket.on('disconnect', function() {
     if (socket.player)
+
+      // construct data object
+      var data = {
+        type: 'disconnect',
+        msg: {
+          player: socket.player,
+          armies: game.armies(socket.player)
+        }
+      };
+      
       game.removePlayer(socket.player);
+      io.emit('game state', JSON.stringify(game.state()));
+      io.emit('game update', JSON.stringify(data))
   });
 
 
   // this watches for a 'move' message from the socket
   socket.on('move', function(move) {
     if (!PAUSE) {
+
       var move = JSON.parse(move);
       //move troops in server copy of the game
-      game.moveTroops(move.player, move.from, move.to, move.num );
-      console.log(move);
+      game.moveTroops(move.player, move.from, move.to, move.num);
+
       //send move to everyone except sender
       io.emit('move', JSON.stringify({
                                   player: move.player, 

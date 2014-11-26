@@ -26,6 +26,11 @@ socket.on('welcome', function(data) {
 });
 
 
+socket.on('game update', function(data) {
+    var data = JSON.parse(data);
+    domhandler.update(data);
+});
+
 // receive game state from server
 socket.on('game state', function(state) {
 

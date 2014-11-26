@@ -109,6 +109,33 @@ var domhandler = (function() {
     }
   }
 
+  function update(data) {
+    // TODO: implement infinite scroll in #systemBottom > .messages
+    //$('#systemBottom > .messages').empty();
+    switch (data.type) {
+      case 'disconnect':
+        updateDisconnect(data.msg);
+        break;
+        case 'new player':
+        console.log('new player');
+        break;
+    }
+  }
+
+  function updateDisconnect(msg) {
+    var playerid = msg.player.id;
+    var armies = msg.armies;
+    $('<p>').text('P' + playerid + ' disconnected. Territories left empty: ')
+      .appendTo('#systemBottom > .messages');
+    for (var country in armies) {
+      $('<div>').text(country + ' (' + armies[country] + ')')
+                .addClass('army')
+                .attr('country', country)
+                .appendTo('#systemBottom > .messages')
+                .fadeIn(1000);
+    }
+  }
+  
 
   return {
     timer : timer,
@@ -116,7 +143,8 @@ var domhandler = (function() {
     standingArmies : standingArmies,
     activate : activate,
     deactivate : deactivate,
-    target : target
+    target : target,
+    update: update
   }
 
 
@@ -161,7 +189,7 @@ $(function(){
   });
 
   // makes army divs click-able
-  $('.standingArmies').on('click', '.army', function(e) {
+  $('#scene').on('click', '.army', function(e) {
     var name = $(e.target).attr('country');
     Game.handleClick(name);
   })
