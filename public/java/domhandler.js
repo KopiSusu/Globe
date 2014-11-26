@@ -4,11 +4,10 @@ var domhandler = (function() {
  var _player = '';
 
   function player(player) {
+    console.log('inside domhandler player');
     if (player) {
       _player = player;
     }
-
-    $('div#title').text('Player ' + _player.id);
     return _player;
   }
 
