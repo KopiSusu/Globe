@@ -15,7 +15,6 @@ app.get('/', function(req, res){
 
 var game = require('./game');
 
-var TURN_LENGTH = 5; // turn length in seconds
 var PAUSE = true;
 var newPlayers = [];
 
@@ -82,14 +81,17 @@ function start() {
 
 function startTurn() {
 
+  var data = game.state();
+
   // this emits the game state to every connected socket
-  io.emit('game state', JSON.stringify(game.state()));
+  io.emit('game state', JSON.stringify(data));
 
   // start accepting moves
   PAUSE = false;
 
   // this triggers end of turn
-  setTimeout(endOfTurn, (TURN_LENGTH + 1)*1000);
+  setTimeout(endOfTurn, (game.turnLength + 2)*1000);
+
 }
 
 
