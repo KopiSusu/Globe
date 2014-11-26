@@ -59379,7 +59379,7 @@ var Countries = (function(THREE) {
   for (var name in countriesData) {
       var countryData = countriesData[name];
       var gdp = countryData.data.gdp;
-      var geometry = new Map3DGeometry(countryData, 0.99);
+      var geometry = new Map3DGeometry(countryData, 0.8);
       var colour = 0x666666; 
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
@@ -59391,9 +59391,9 @@ var Countries = (function(THREE) {
         opacity: 0.9
       });
       var mesh = new THREE.Mesh(geometry, material);
-      mesh.scale.x = 20;
-      mesh.scale.y = 20;
-      mesh.scale.z = 20; 
+      mesh.scale.x = 0.5;
+      mesh.scale.y = 0.5;
+      mesh.scale.z = 0.5; 
       mesh.name = name;
       mesh.gdp = gdp;
       mesh.receiveShadow = false;
@@ -59674,8 +59674,8 @@ VFX.prototype.init = function () {
         // showTroops.style.opacity = '0.8';
         about.style.opacity = '1';
         timer.style.opacity = '0.8';
-        top.style.left = '10px';
-        bottom.style.left = '10px';
+        top.style.opacity = '1';
+        bottom.style.opacity = '1';
     }
 
     var geometry  = new THREE.SphereGeometry(7000, 50, 50);
@@ -59720,7 +59720,7 @@ VFX.prototype.init = function () {
     });
     var sphere = new THREE.Mesh(new THREE.SphereGeometry(30, 32, 32), moonMaterial);
       sphere.overdraw = true;
-      sphere.position.x = 300;
+      sphere.position.x = -300;
       invisSphere.add(sphere);
       scene.add(invisSphere);
 

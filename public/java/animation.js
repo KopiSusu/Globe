@@ -133,8 +133,8 @@ VFX.prototype.init = function () {
         // showTroops.style.opacity = '0.8';
         about.style.opacity = '1';
         timer.style.opacity = '0.8';
-        top.style.left = '10px';
-        bottom.style.left = '10px';
+        top.style.opacity = '1';
+        bottom.style.opacity = '1';
     }
 
     var geometry  = new THREE.SphereGeometry(7000, 50, 50);
@@ -179,7 +179,7 @@ VFX.prototype.init = function () {
     });
     var sphere = new THREE.Mesh(new THREE.SphereGeometry(30, 32, 32), moonMaterial);
       sphere.overdraw = true;
-      sphere.position.x = 300;
+      sphere.position.x = -300;
       invisSphere.add(sphere);
       scene.add(invisSphere);
 
