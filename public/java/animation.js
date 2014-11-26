@@ -3,7 +3,6 @@ VFX = function() {
     this.renderer = null;
     this.scene = null;
     this.camera = null;
-    this.objects = [];
 
 }
 
@@ -27,6 +26,10 @@ $(document).ready(function(){
             Game.moveTroops(io.socket.playerid, from, to, newNum)
         }
     })
+
+    // $('standingArmies .army').on('click', function() {
+        
+    // })
 })
 
 VFX.prototype.init = function () {
@@ -45,13 +48,17 @@ VFX.prototype.init = function () {
     //scene.add( new THREE.AmbientLight( 0x505050 ) );
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
+
+    var directionalLight = new THREE.DirectionalLight(0xfafafa,  0.3);
+    directionalLight.position.set(20, 20, 5).normalize();
+
     scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
 
 
     // Put in a camera at a good default location
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10000 );
     camera.position.z = 650;
-
+    camera.add(directionalLight);
     scene.add(camera);
     
 
@@ -61,7 +68,7 @@ VFX.prototype.init = function () {
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
         wrapAround: true,
-        opacity     : 0.5,
+        opacity     : 0.6,
         transparent : true,
         depthWrite  : false,
 
@@ -148,10 +155,14 @@ VFX.prototype.init = function () {
         // var showTroops = document.getElementById("showTroops");
         var about = document.getElementById("about");
         var timer = document.getElementById("timer");
+        var top = document.getElementById("systemTop");
+        var bottom = document.getElementById("systemBottom");
         rightBar.style.right = '0%';
         // showTroops.style.opacity = '0.8';
         about.style.opacity = '1';
         timer.style.opacity = '0.8';
+        top.style.left = '10px';
+        bottom.style.left = '10px';
     }
 
 } // end init
@@ -164,7 +175,7 @@ VFX.prototype.run = function() {
     var that = this;
 
     this.scene.children[2].rotation.y += 0.0009; // cloud layer
-    this.scene.children[3].rotation.y += 0.0009; // star field
+    this.scene.children[3].rotation.y += 0.0003; // star field
     
 
     ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
@@ -194,15 +205,9 @@ VFX.prototype.initMouse = function() {
     var dom = this.renderer.domElement; 
     var that = this;
 
-    dom.addEventListener('mousemove', function(e) { 
-                                        that.onDocumentMouseMove(e); 
-                                    }, false);
     dom.addEventListener('mousedown', function(e) { 
                                         that.onDocumentMouseDown(e); 
                                     }, false);
-    dom.addEventListener('mouseup', function(e) { 
-                                        that.onDocumentMouseUp(e); 
-                                    }, false );
 
     
     this.overObject = null;
@@ -223,67 +228,36 @@ VFX.prototype.getIntersects = function(e, objs) {
     return raycaster.intersectObjects(objs);
 }
 
-VFX.prototype.onDocumentMouseMove = function(e) {
-
-
-    // not using
-    // var intersects = this.getIntersects(e, Countries.arr);
-    // if (intersects[ 0 ]) {
-    //     INTERSECTED = intersects[ 0 ];
-    //     INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-
-    //     this.container.style.cursor = 'pointer';
-    // }  else  {
-    //     INTERSECTED = null;
-
-    //     this.container.style.cursor = 'auto';
-    // }
-
-}
 
 
 VFX.prototype.onDocumentMouseDown = function(e) {
     e.preventDefault();
-    var that = this;
 
     var intersects = this.getIntersects(e, Countries.inPlay);
 
     // this is for the animation, not sure if we are going to use it
     if (intersects[ 0 ]) {
         var country = intersects[0].object;
-
-        // if no active country, set selected country to be active
-        if (!that.activeCountry) {
-            TweenMax.to(country.material, 1, { opacity: 0.95 });
-            TweenMax.to(country.scale, 1, { x : 1.1, y : 1.1, z : 1.1 });
-            that.activeCountry = country;
-            Game.updateActiveCountry(country);
-        }
-
-        // if selected country is currently active country, de-activate country
-        else if (that.activeCountry == country) {
-            // deactivate country
-            TweenMax.to(that.activeCountry.material, 1, { opacity: 1 });
-            TweenMax.to(that.activeCountry.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
-            that.activeCountry = null;
-            console.log('deactivated ' + country.name);
-            console.log('active country is now ' + that.activeCountry);
-            // Game.deactivate
-        }
-
-        // 
-        else if (that.activeCountry && country != that.activeCountry) {
-            console.log('target: ' + country.name);
-        }
-
-        // updateContinentScale(continent, 1.02);
+        console.log('handling click');
+        Game.handleClick(country.name);
     }
 
 } 
 
-VFX.prototype.onDocumentMouseUp = function(e) {
-
+VFX.prototype.activate = function(name) {
+    console.log('inside vfx activate');
+    var country = Countries[name];
+    TweenMax.to(country.material, 1, { opacity: 1 });
+    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
+
+VFX.prototype.deactivate = function(name) {
+    console.log('inside vfx deactive');
+    var country = Countries[name];
+    TweenMax.to(country.material, 1, { opacity: 0.95 });
+    TweenMax.to(country.scale, 1, { x : 1.1, y : 1.1, z : 1.1 });
+}
+
 
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
@@ -306,6 +280,8 @@ VFX.prototype.addObj = function(obj3d) {
     this.root.add(obj3d);
 }
 
+
+// NEEDS WORK. still using old state.
 VFX.prototype.renderState = function(data) {
     Countries.clearTroops();
     var i = data.length;
@@ -315,9 +291,9 @@ VFX.prototype.renderState = function(data) {
         for (var country in troops) {
             var n = troops[country]; // number of troops
             country = Countries[country]; // Mesh object for the country
-            // if (io.socket.playerid == player.id) {
-            //     country.material.color = 0xfafafa;
-            // }
+            if (io.socket.player.id == player.id) {
+                country.material.setHex(0xff0000);
+            }
             country.addTroops(player.id, n);
         }
     }

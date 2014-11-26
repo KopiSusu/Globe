@@ -59411,7 +59411,6 @@ Countries.clearTroops = function() {
       Countries[name].clear();
     }
   }
-  $("#playerTroops").html('');
 }
 
 
@@ -59544,7 +59543,6 @@ var convert = function(){
     this.renderer = null;
     this.scene = null;
     this.camera = null;
-    this.objects = [];
 
 }
 
@@ -59568,6 +59566,10 @@ $(document).ready(function(){
             Game.moveTroops(io.socket.playerid, from, to, newNum)
         }
     })
+
+    // $('standingArmies .army').on('click', function() {
+        
+    // })
 })
 
 VFX.prototype.init = function () {
@@ -59586,13 +59588,17 @@ VFX.prototype.init = function () {
     //scene.add( new THREE.AmbientLight( 0x505050 ) );
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
+
+    var directionalLight = new THREE.DirectionalLight(0xfafafa,  0.3);
+    directionalLight.position.set(20, 20, 5).normalize();
+
     scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
 
 
     // Put in a camera at a good default location
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10000 );
     camera.position.z = 650;
-
+    camera.add(directionalLight);
     scene.add(camera);
     
 
@@ -59602,7 +59608,7 @@ VFX.prototype.init = function () {
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
         wrapAround: true,
-        opacity     : 0.5,
+        opacity     : 0.6,
         transparent : true,
         depthWrite  : false,
 
@@ -59689,10 +59695,14 @@ VFX.prototype.init = function () {
         // var showTroops = document.getElementById("showTroops");
         var about = document.getElementById("about");
         var timer = document.getElementById("timer");
+        var top = document.getElementById("systemTop");
+        var bottom = document.getElementById("systemBottom");
         rightBar.style.right = '0%';
         // showTroops.style.opacity = '0.8';
         about.style.opacity = '1';
         timer.style.opacity = '0.8';
+        top.style.left = '10px';
+        bottom.style.left = '10px';
     }
 
 } // end init
@@ -59705,7 +59715,7 @@ VFX.prototype.run = function() {
     var that = this;
 
     this.scene.children[2].rotation.y += 0.0009; // cloud layer
-    this.scene.children[3].rotation.y += 0.0009; // star field
+    this.scene.children[3].rotation.y += 0.0003; // star field
     
 
     ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
@@ -59735,15 +59745,9 @@ VFX.prototype.initMouse = function() {
     var dom = this.renderer.domElement; 
     var that = this;
 
-    dom.addEventListener('mousemove', function(e) { 
-                                        that.onDocumentMouseMove(e); 
-                                    }, false);
     dom.addEventListener('mousedown', function(e) { 
                                         that.onDocumentMouseDown(e); 
                                     }, false);
-    dom.addEventListener('mouseup', function(e) { 
-                                        that.onDocumentMouseUp(e); 
-                                    }, false );
 
     
     this.overObject = null;
@@ -59764,67 +59768,36 @@ VFX.prototype.getIntersects = function(e, objs) {
     return raycaster.intersectObjects(objs);
 }
 
-VFX.prototype.onDocumentMouseMove = function(e) {
-
-
-    // not using
-    // var intersects = this.getIntersects(e, Countries.arr);
-    // if (intersects[ 0 ]) {
-    //     INTERSECTED = intersects[ 0 ];
-    //     INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-
-    //     this.container.style.cursor = 'pointer';
-    // }  else  {
-    //     INTERSECTED = null;
-
-    //     this.container.style.cursor = 'auto';
-    // }
-
-}
 
 
 VFX.prototype.onDocumentMouseDown = function(e) {
     e.preventDefault();
-    var that = this;
 
     var intersects = this.getIntersects(e, Countries.inPlay);
 
     // this is for the animation, not sure if we are going to use it
     if (intersects[ 0 ]) {
         var country = intersects[0].object;
-
-        // if no active country, set selected country to be active
-        if (!that.activeCountry) {
-            TweenMax.to(country.material, 1, { opacity: 0.95 });
-            TweenMax.to(country.scale, 1, { x : 1.1, y : 1.1, z : 1.1 });
-            that.activeCountry = country;
-            Game.updateActiveCountry(country);
-        }
-
-        // if selected country is currently active country, de-activate country
-        else if (that.activeCountry == country) {
-            // deactivate country
-            TweenMax.to(that.activeCountry.material, 1, { opacity: 1 });
-            TweenMax.to(that.activeCountry.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
-            that.activeCountry = null;
-            console.log('deactivated ' + country.name);
-            console.log('active country is now ' + that.activeCountry);
-            // Game.deactivate
-        }
-
-        // 
-        else if (that.activeCountry && country != that.activeCountry) {
-            console.log('target: ' + country.name);
-        }
-
-        // updateContinentScale(continent, 1.02);
+        console.log('handling click');
+        Game.handleClick(country.name);
     }
 
 } 
 
-VFX.prototype.onDocumentMouseUp = function(e) {
-
+VFX.prototype.activate = function(name) {
+    console.log('inside vfx activate');
+    var country = Countries[name];
+    TweenMax.to(country.material, 1, { opacity: 1 });
+    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
+
+VFX.prototype.deactivate = function(name) {
+    console.log('inside vfx deactive');
+    var country = Countries[name];
+    TweenMax.to(country.material, 1, { opacity: 0.95 });
+    TweenMax.to(country.scale, 1, { x : 1.1, y : 1.1, z : 1.1 });
+}
+
 
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
@@ -59847,6 +59820,8 @@ VFX.prototype.addObj = function(obj3d) {
     this.root.add(obj3d);
 }
 
+
+// NEEDS WORK. still using old state.
 VFX.prototype.renderState = function(data) {
     Countries.clearTroops();
     var i = data.length;
@@ -59856,81 +59831,73 @@ VFX.prototype.renderState = function(data) {
         for (var country in troops) {
             var n = troops[country]; // number of troops
             country = Countries[country]; // Mesh object for the country
-            // if (io.socket.playerid == player.id) {
-            //     country.material.color = 0xfafafa;
-            // }
+            if (io.socket.player.id == player.id) {
+                country.material.setHex(0xff0000);
+            }
             country.addTroops(player.id, n);
         }
     }
 }
-;var Game = (function() {
+;var domhandler = (function() {
 
-  var territories = [];
-  var turnLength = 5;
-  var timer = '';
-  
-  // see our animation.js file for details
-  var vfx = new VFX();
-  vfx.init(); // creates scenes, adds countries
-  vfx.run(); // sets up update loop
+ var _timer = '';
+ var _player = '';
 
-  var updateState = function(data) {
-    territories = data;
-    //vfx.renderState(territories);
-
-    // remove existing standing armies
-    $('div.standingArmies > .army').remove();
-    
-    // add own armies to standing armies
-    var id = io.socket.player.id;
-    var i = territories.length;
-    while (i--) {
-      var territory = territories[i];
-      if (territory.troops[id]) {
-        console.log('i have troops in ' + territory.name);
-        var name = territory.name;
-        var num = territory.troops[id];
-        $('<div>').text(name + ': ' + num + ' troops')
-                  .addClass('army')
-                  .appendTo('div.standingArmies')
-
-      }
+  function player(player) {
+    if (player) {
+      _player = player;
     }
-  };
+    return _player;
+  }
 
-  // takes a name and returns a territory object
-  var terrsFind = function(name) {
-    var i = territories.length;
-    while (i--) {
-      if ( territories[i].name == name ) {
-        return territories[i];
-      }
+  function timer(n) {
+    if (n) {
+      var _turnLength = n;
+    }
+
+    clearInterval(_timer);
+    $('#timer').text(_turnLength);
+    _timer = setInterval(triggerCountDown, 1000);
+
+  }
+  
+  function triggerCountDown() {
+    var current = $('#timer').text();
+    if (current > 0) {
+      current--;
+      $('#timer').text(current);
     }
   }
 
-  // this is called when a country is clicked (made active)
-  var updateActiveCountry = function(country) {
+  function standingArmies(armies) {
+    // remove existing standing armies
+    $('div.standingArmies > .army').remove();
+
+    var i = armies.length;
+    while (i--) {
+      army = armies[i]
+      $('<div>').text(army.name + ': ' + army.num + ' troops')
+                .addClass('army')
+                .attr('country', army.name)
+                .appendTo('div.standingArmies');
+    }
+  }
+
+  function activate(country) {
+    console.log('inside dom activate');
     $('div.activeCountry > .army').remove();
 
-    var name = country.name;
-    var pId = io.socket.player.id;
-    var terr = terrsFind(name);
+    var num = country.troops[_player.id] || 0;
 
-    // find own troops in territory
-    var num = 0;
-    if (terr.troops[pId]) {
-      num += terr.troops[pId];
-    }
-
-    // update active country info
-    $('div.activeCountry > .header').text(terr.name);
+    $('div.activeCountry').attr('data-name', country.name);
+    $('div.activeCountry > .header').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
-    $('div.activeCountry').attr('data-name', terr.name);
+
 
     // update enemy troops in active country
-    for (var id in terr.troops) {
-      if (id != pId) {
-        var num = terr.troops[id];
+    for (var id in country.troops) {
+      if (id != _player.id) {
+        var num = country.troops[id];
         $('<p>').text('Player ' + id + ': ' + num + ' troops')
               .appendTo('<div>')
               .addClass('army')
@@ -59939,58 +59906,335 @@ VFX.prototype.renderState = function(data) {
     }
   }
 
+  function deactivate() {
+    console.log('inside dom deactive');
+    $('div.activeCountry > .army').remove();
+    $('div.activeCountry > .header').empty();
+    $('div.activeCountry > .myArmy').text('');
+    $('div.activeCountry').attr('data-name', '');
+  }
 
-  var moveTroops = function(player, from, to, num) {
-    var id = player.id;
-    from = terrsFind(from);
-    to = terrsFind(to);
+  function target(country) {
+    console.log('inside dom target');
 
-    // remove troops from active territory
-    if (from.troops[id] < num){
-      return false;
-    }
-    from.troops[id] -= num;
-    if ( from.troops[id] == 0 ) {
-      delete from.troops[id];
-    }
+    $('div.targetCountry > .army').remove();
+    var num = country.troops[_player.id] || 0;
 
-    // add troops to target territory
-    if (!to.troops[id]) {
-      to.troops[id] = 0;
-    }
-    to.troops[id] += num;
+    $('div.targetCountry').attr('data-name', country.name);
+    $('div.targetCountry > .header').text(country.name);
+    $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
-    updateState(territories);
-}
-
-
-  var startTimer = function() {
-
-      clearInterval(timer);
-      $('#timer').text(turnLength);
-      timer = setInterval(triggerCountDown, 1000);
-
-
-      function triggerCountDown() {
-        var n = $('#timer').text();
-        if (n > 0) {
-          n--;
-          $('#timer').text(n);
-        }
+    // update enemy troops in active country
+    for (var id in country.troops) {
+      if (id != _player.id) {
+        var num = country.troops[id];
+        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+              .appendTo('<div>')
+              .addClass('army')
+              .appendTo('div.targetCountry');
       }
-  };
+    }
+  }
+
+
+  return {
+    timer : timer,
+    player : player,
+    standingArmies : standingArmies,
+    activate : activate,
+    deactivate : deactivate,
+    target : target
+  }
+
+
+})();
+
+$(document).ready(function(){
+
+  $('.deactivate').on('click', function() {
+    Game.handleClick();
+  });
+
+});;var Game = (function() {
+
+  var _territories = [];
+  var _turnLength = 5;
+  var _activeCountry = null;
+  var _targetCountry = null;
+  var _player = null;
+  var vfx = new VFX();
+
+  function player(player) {
+    if (name) {
+      _player = player;
+    }
+    return _player;
+  }
+
+  function targetCountry(country) {
+    if (country) {
+      _targetCountry = country.name;
+    }
+    return _targetCountry;
+  }
+
+  function activeCountry(country) {
+    if (country) {
+      _activeCountry = country.name;
+    }
+    return _activeCountry;
+  }
+
+  function turnLength(n) {
+    if (n) {
+      _turnLength = n;
+    }
+    return _turnLength;
+  }
+
+  function territories(data) {
+    if (data) {
+      _territories = data;
+    }
+    return _territories;
+  }
+
+  function armies(player) {
+    var results = [];
+    var i = _territories.length;
+    while (i--) {
+      var t = _territories[i];
+
+      // if there are troops belonging to the player
+      if (t.troops[player.id]) {
+        var army = {
+          name : t.name,
+          num : t.troops[player.id]
+        };
+        results.push(army);
+      }
+    }
+    return results;
+  }
+
+  function getTerritory(name) {
+    var i = _territories.length;
+    while (i--) {
+      if (_territories[i].name == name) {
+        return _territories[i];
+      }
+    }
+  }
+
+  // public
+  function handleClick(name) {
+
+    if (_activeCountry == name || !name) {
+      deactivate(name);
+    }
+
+    else if (!_activeCountry && name) {
+      activate(name);
+    }
+
+    else if (_activeCountry && _activeCountry != name) {
+      target(name);
+    }
+  }
+
+  function activate(name) {
+    console.log('inside activate');
+    _activeCountry = name;
+
+    var t = getTerritory(name);
+    domhandler.activate(t);
+
+    vfx.activate(name);
+  }
+
+  function deactivate(name) {
+    console.log('inside game deactive');
+    var name = name || _activeCountry;
+    _activeCountry = null;
+    vfx.deactivate(name);
+    domhandler.deactivate();
+  }
+
+  function target(name) {
+    console.log('inside game target');
+    _targetCountry = name;
+
+    var t = getTerritory(name);
+    domhandler.target(t);
+  }
+
+
+  // var updateState = function(player, data) {
+  //   territories = data;
+  //   //vfx.renderState(territories);
+
+  //   // remove existing standing armies
+  //   $('div.standingArmies > .army').remove();
+    
+  //   // add own armies to standing armies
+  //   var i = territories.length;
+  //   while (i--) {
+  //     var territory = territories[i];
+  //     if (territory.troops[player.id]) {
+  //       console.log('i have troops in ' + territory.name);
+  //       var name = territory.name;
+  //       var num = territory.troops[player.id];
+  //       $('<div>').text(name + ': ' + num + ' troops')
+  //                 .addClass('army')
+  //                 .appendTo('div.standingArmies')
+  //     }
+  //   }
+  // };
+
+  // // takes a name and returns a territory object
+  // var terrsFind = function(name) {
+  //   var i = territories.length;
+  //   while (i--) {
+  //     if ( territories[i].name == name ) {
+  //       return territories[i];
+  //     }
+  //   }
+  // }
+
+//   // this is called when a country is clicked (made active)
+//   var activeCountry = function(country) {
+
+//     if (country) {
+//       $('div.activeCountry > .army').remove();
+
+//       var name = country.name;
+//       var pId = socket.player.id;
+//       var terr = terrsFind(name);
+
+//       // find own troops in territory
+//       var num = 0;
+//       if (terr.troops[pId]) {
+//         num += terr.troops[pId];
+//       }
+
+//       // update active country info
+//       $('div.activeCountry > .header').text(terr.name);
+//       $('div.activeCountry > .myArmy').text('Your Troops: ' + num);
+//       $('div.activeCountry').attr('data-name', terr.name);
+
+//       // update enemy troops in active country
+//       for (var id in terr.troops) {
+//         if (id != pId) {
+//           var num = terr.troops[id];
+//           $('<p>').text('Player ' + id + ': ' + num + ' troops')
+//                 .appendTo('<div>')
+//                 .addClass('army')
+//                 .appendTo('div.activeCountry');
+//         }
+//       }
+//       this._activeCountry = country;
+//     }
+
+//     return this._activeCountry;
+//   }
+
+
+//   var moveTroops = function(player, from, to, num) {
+//     var id = player.id;
+//     from = terrsFind(from);
+//     to = terrsFind(to);
+
+//     // remove troops from active territory
+//     if (from.troops[id] < num){
+//       return false;
+//     }
+//     from.troops[id] -= num;
+//     if ( from.troops[id] == 0 ) {
+//       delete from.troops[id];
+//     }
+
+//     // add troops to target territory
+//     if (!to.troops[id]) {
+//       to.troops[id] = 0;
+//     }
+//     to.troops[id] += num;
+
+//     updateState(territories);
+// }
 
 
 
   return {
-    state : territories,
-    updateState : updateState,
-    updateActiveCountry : updateActiveCountry,
-    moveTroops : moveTroops,
-    startTimer : startTimer,
+    // state : territories,
+    // updateState : updateState,
+    // moveTroops : moveTroops,
+    territories : territories,
+    armies : armies,
+    handleClick : handleClick
+    // activeCountry : activeCountry,
+    // targetCountry : targetCountry
   };
 
-})();;
+})();;$(document).ready(function(){
+
+  // starts the animation
+  var vfx = new VFX();
+  vfx.init();
+  vfx.run();
+
+
+  var socket = io.connect(window.SOCKET);
+
+  socket.on('connect', function() {
+    console.log('connected');
+    //setTimeout(triggerMove, 6000);
+  });
+
+
+  // receive welcome info from server when first connected
+  socket.on('welcome', function(data) {
+    json = JSON.parse(data);
+
+    // set socket player
+    socket.player = json.player;
+    Game.player(socket.player);
+    domhandler.player(socket.player);
+
+    console.log("joined the game with id " + socket.player.id);
+  });
+
+
+  // receive game state from server
+  socket.on('game state', function(state) {
+
+    var state = JSON.parse(state);
+
+    Game.territories(state.territories);
+    domhandler.timer(state.turnLength);
+    domhandler.standingArmies(Game.armies(socket.player));
+
+  });
+
+  // // receive other players' moves from server
+  // socket.on('move', function(data) {
+  //   var json = JSON.parse(data);
+  //   Game.moveTroops(json.player, json.num, json.from, json.to);
+  // });
+
+  // // test code
+  // var move1 = 'Russia'
+  // var move2 = 'Brazil'
+
+  // function triggerMove() {
+  //   if (socket.player.id == 1) {
+  //     Game.moveTroops(socket.player, move1, 'Greenland', 10);
+  //   }
+  //   else {
+  //     Game.moveTroops(socket.player, move2, 'Greenland', 12);
+  //   }
+  // }
+
+});;
 
 // //     // Load any app-specific modules
 // //     // with a relative require call,
@@ -60013,91 +60257,91 @@ VFX.prototype.renderState = function(data) {
 // //     animation.run();
 
 // connect to server with socket
-io.socket = io.connect(window.SOCKET);
+// io.socket = io.connect(window.SOCKET);
 
 
-// do stuff when connected
-io.socket.on('connect', function() {
-    console.log('Im connected');
-    setTimeout(triggerMove, 6000);
-});
+// // do stuff when connected
+// io.socket.on('connect', function() {
+//     console.log('Im connected');
+//     setTimeout(triggerMove, 6000);
+// });
 
 
-// receive welcome info from server when first connected
-io.socket.on('welcome', function(data) {
-    json = JSON.parse(data);
+// // receive welcome info from server when first connected
+// io.socket.on('welcome', function(data) {
+//     json = JSON.parse(data);
 
-    // set socket playerid
-    io.socket.player = json.player;
+//     // set socket playerid
+//     io.socket.player = json.player;
 
-    console.log("i joined the game and my id is " + io.socket.player.id);
-})
-
-
-// receive game state from server
-io.socket.on('game state', function(data) {
-
-    var data = JSON.parse(data);
-    Game.updateState(data);
-
-    // ALSO MAKE THIS PLZ
-    Game.startTimer();
+//     console.log("i joined the game and my id is " + io.socket.player.id);
+// })
 
 
-    // MAKE THIS PLZZ! D:
-    //animation.renderTroops(game.state);
+// // receive game state from server
+// io.socket.on('game state', function(data) {
+
+//     var data = JSON.parse(data);
+//     Game.updateState(data);
+
+//     // ALSO MAKE THIS PLZ
+//     Game.startTimer();
 
 
-});
+//     // MAKE THIS PLZZ! D:
+//     //animation.renderTroops(game.state);
 
-// receive other players' moves from server
-io.socket.on('move', function(data) {
-   var json = JSON.parse(data);
-   Game.moveTroops(json.player, json.num, json.from, json.to);
-
-   /* at this point,`game.state` will be updated with the move, so
-      we could use `animation.renderTroops(game.state)`. but I have a 
-      feeling it will be better performance to just remove and add
-      what is needed */
-   // animation.removeTroops(json.playerid, json.num, json.from);
-   // animation.addTroops(json.playerid, json.num, json.to); 
-
-});
-
-var move1 = 'Russia'
-var move2 = 'Brazil'
-
-function triggerMove() {
-  if (io.socket.player.id == 1) {
-    Game.makeMove(10, move1, 'Greenland');
-  }
-  else {
-    Game.makeMove(12, move2, 'Greenland');
-  }
-}
-
-
-// use this function to move own troops
-// e.g. makeMove(5, 'Canada', 'Korea')
-Game.makeMove = function(num, from, to) {
-
-    // check if I am assigned a player
-    if (io.socket.player) {
-
-        // update my local game with my move immediately
-        Game.moveTroops(io.socket.player, from, to, num);
-        
-        // send my move to the server
-        io.socket.emit('move', {
-            player : io.socket.player, 
-            num : num, 
-            from : from, 
-            to : to
-        });
-    }
-}
 
 // });
+
+// // receive other players' moves from server
+// io.socket.on('move', function(data) {
+//    var json = JSON.parse(data);
+//    Game.moveTroops(json.player, json.num, json.from, json.to);
+
+//     at this point,`game.state` will be updated with the move, so
+//       we could use `animation.renderTroops(game.state)`. but I have a 
+//       feeling it will be better performance to just remove and add
+//       what is needed 
+//    // animation.removeTroops(json.playerid, json.num, json.from);
+//    // animation.addTroops(json.playerid, json.num, json.to); 
+
+// });
+
+// var move1 = 'Russia'
+// var move2 = 'Brazil'
+
+// function triggerMove() {
+//   if (io.socket.player.id == 1) {
+//     Game.makeMove(10, move1, 'Greenland');
+//   }
+//   else {
+//     Game.makeMove(12, move2, 'Greenland');
+//   }
+// }
+
+
+// // use this function to move own troops
+// // e.g. makeMove(5, 'Canada', 'Korea')
+// Game.makeMove = function(num, from, to) {
+
+//     // check if I am assigned a player
+//     if (io.socket.player) {
+
+//         // update my local game with my move immediately
+//         Game.moveTroops(io.socket.player, from, to, num);
+        
+//         // send my move to the server
+//         io.socket.emit('move', {
+//             player : io.socket.player, 
+//             num : num, 
+//             from : from, 
+//             to : to
+//         });
+//     }
+// }
+
+// // });
 ;var sphere = function() {
       var particles = new THREE.Geometry(),
         system,
