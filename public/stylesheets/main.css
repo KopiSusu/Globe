@@ -2,6 +2,7 @@ body {
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
   background: #fafafa;
+  cursor: progress;
 }
 
 #left {
@@ -114,17 +115,18 @@ body {
   /*margin: 5px;*/
   display: inline-block;
   opacity: 0.8;
-  width: 180px;
+  width: 200px;
   /*text-transform: uppercase;*/
   font-weight: bold;
+  cursor: pointer;
   transition: all 0.3s linear;
 }
-
+/*
 .army:hover {
   width: 200px;
   cursor: pointer;
   transition: all 0.3s linear;
-}
+}*/
 
 
 #title {
@@ -217,4 +219,35 @@ body {
   top: 39%;
   left: 93%;
 }
+
+#armyButton {
+  margin-left: 183px;
+  border: 1px solid #fafafa;
+  border-radius: 50%;
+  width: 5%;
+  height: 10px;
+  position: absolute;
+  /* margin-bottom: 10px; */
+  margin-top: -15px;
+}
+
+#insideButton {
+  background: green;
+  margin-left: 185.4px;
+  /* border: 1px solid #fafafa; */
+  border-radius: 50%;
+  width: 4%;
+  height: 8px;
+  position: absolute;
+  /* margin-bottom: 10px; */
+  margin-top: -13px;
+}
+
+
+
+
+
+
+
+
 

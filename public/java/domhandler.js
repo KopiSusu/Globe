@@ -181,6 +181,8 @@ var domhandler = (function() {
     else if (!num) {
       result = $('<div>').text(name);
     }
+    $('<div id="armyButton">').appendTo(result);
+    $('<div id="insideButton">').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
   }
 
