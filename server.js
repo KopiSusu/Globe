@@ -104,5 +104,4 @@ function endOfTurn() {
 
 start();
 
-// exports.start = start;
 

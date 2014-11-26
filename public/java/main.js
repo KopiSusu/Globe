@@ -16,6 +16,8 @@ $(document).ready(function(){
 
   // receive welcome info from server when first connected
   socket.on('welcome', function(data) {
+
+    console.log('received welcome');
     json = JSON.parse(data);
 
     // set socket player
