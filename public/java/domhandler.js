@@ -79,9 +79,8 @@ var domhandler = (function() {
         $(this).animate({height: '30%'});
         $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
 
-    // $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
         $('div.activeCountry > .army-enemy').remove();
-        $('div.activeCountry > .clickedCountry').empty();
+        $('div.activeCountry > .clickedCountry').empty().text('click any country to start');
         $('div.activeCountry > .myArmy').text('');
         $('div.activeCountry').attr('country', '');
 
