@@ -35,13 +35,14 @@ var Game = (function() {
     return _territories;
   }
 
+  // returns an array of armies belonging to the player
+  // e.g. [ {Canada: 10}, {Russia: 12} ]
   function armies(player) {
     var results = [];
     var i = _territories.length;
     while (i--) {
       var t = _territories[i];
 
-      // if there are troops belonging to the player
       if (t.troops[player.id]) {
         var army = {
           name : t.name,
@@ -53,6 +54,7 @@ var Game = (function() {
     return results;
   }
 
+  // takes name, returns territory object with associated armies
   function getTerritory(name) {
     var i = _territories.length;
     while (i--) {
@@ -62,7 +64,7 @@ var Game = (function() {
     }
   }
 
-  // public
+  // public function
   function handleClick(name) {
 
     if (_activeCountry == name || !name) {
@@ -79,7 +81,6 @@ var Game = (function() {
   }
 
   function activate(name) {
-    console.log('inside activate');
     _activeCountry = name;
 
     var t = getTerritory(name);
@@ -89,7 +90,6 @@ var Game = (function() {
   }
 
   function deactivate(name) {
-    console.log('inside game deactive');
     var name = name || _activeCountry;
     _activeCountry = null;
     vfx.deactivate(name);
@@ -97,7 +97,6 @@ var Game = (function() {
   }
 
   function target(name) {
-    console.log('inside game target');
     _targetCountry = name;
 
     var t = getTerritory(name);
@@ -106,6 +105,7 @@ var Game = (function() {
 
   function moveTroops(from, to, num, plyr) {
 
+    // TODO
     //vfx.moveUnits(from, to);
 
     var id = plyr.id;
