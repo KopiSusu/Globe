@@ -59441,25 +59441,6 @@ VFX.prototype.init = function () {
         bottom.style.opacity = '1';
     }
 
-
-    var geometry  = new THREE.SphereGeometry(7000, 50, 50);
-    // create the material, using a texture of starfield
-    var material  = new THREE.MeshBasicMaterial({
-        fog: false,
-        opacity: 0.5,
-         transparent : true,
-        depthWrite  : false,
-    });
-    material.map   = THREE.ImageUtils.loadTexture('images/starfield.png');
-    material.side  = THREE.BackSide;
-    material.wrapS = material.wrapT = THREE.RepeatWrapping;
-    // material.repeat.set( 2, 2 )
-    // create the mesh based on geometry and material
-    var mesh  = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-
-
     // making inner sphere layer
     var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
     var materialInner  = new THREE.MeshBasicMaterial({
