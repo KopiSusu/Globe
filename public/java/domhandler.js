@@ -55,22 +55,19 @@ var domhandler = (function() {
   function activate(country) {
     $('div.activeCountry > .army').remove();
 
-    var num = country.troops[_player.id] || 0;
     $('div.activeCountry').animate({
         height: '0%',
       }, function() {
+        var num = country.troops[_player.id] || 0;
         $(this).animate({height: '30%'});
         $('div.activeCountry').attr('country', country.name);
         $('div.activeCountry > .clickedCountry').text(country.name);
         $('div.activeCountry > .myArmy').text(num);
-    });
-
-
+  
     // dynamic deactivate button
-    $('div.activeCountry > h1').fadeOut(500, function() {
       $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
-    // update enemy troops in active country
+      // update enemy troops in active country
       for (var id in country.troops) {
         if (id != _player.id) {
           var num = country.troops[id];
@@ -84,39 +81,59 @@ var domhandler = (function() {
   }
 
   function deactivate() {
-    $('div.activeCountry > h1').fadeOut(500, function() {
-        $(this).text('Active').toggleClass('deactivate').fadeIn(500);
-    });
-    // $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
-    $('div.activeCountry > .army').remove();
-    $('div.activeCountry > .clickedCountry').empty();
-    $('div.activeCountry > .myArmy').text('');
-    $('div.activeCountry').attr('country', '');
+    $('#arrow-left').animate({opacity: '0'});
+    $('#arrow-right').animate({opacity: '0'});
+    $('div.activeCountry').animate({
+        height: '0%',
+      }, function() {
+        $(this).animate({height: '30%'});
+        $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
 
-    $('div.targetCountry > .army').remove();
-    $('div.targetCountry > .clickedCountry').empty();
-    $('div.targetCountry > .myArmy').text('');
-    $('div.targetCountry').attr('country', '');
+    // $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
+        $('div.activeCountry > .army').remove();
+        $('div.activeCountry > .clickedCountry').empty();
+        $('div.activeCountry > .myArmy').text('');
+        $('div.activeCountry').attr('country', '');
+
+        $('div.targetCountry > .army').remove();
+        $('div.targetCountry > .clickedCountry').empty();
+        $('div.targetCountry > .myArmy').text('');
+        $('div.targetCountry').attr('country', '');
+    });
+    $('div.targetCountry').animate({
+        height: '0%',
+      }, function() {
+      $(this).animate({height: '30%'});
+    });
   }
 
   function target(country) {
     $('div.targetCountry > .army').remove();
-    var num = country.troops[_player.id] || 0;
+    $('#arrow-left').animate({opacity: '0'});
+    $('#arrow-right').animate({opacity: '0'});
 
-    $('div.targetCountry').attr('country', country.name);
-    $('div.targetCountry > .clickedCountry').text(country.name);
-    $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
+    $('div.targetCountry').animate({
+        height: '0%',
+      }, function() {
+      $(this).animate({height: '30%'});
+      var num = country.troops[_player.id] || 0;
+      $('#arrow-left').animate({opacity: '1'});
+      $('#arrow-right').animate({opacity: '1'});
+      $('div.targetCountry').attr('country', country.name);
+      $('div.targetCountry > .clickedCountry').text(country.name);
+      $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
-    // update enemy troops in active country
-    for (var id in country.troops) {
-      if (id != _player.id) {
-        var num = country.troops[id];
-        $('<p>').text('P' + id + ' (' + num + ')')
-              .appendTo('<div>')
-              .addClass('army')
-              .appendTo('div.targetCountry');
+      // update enemy troops in active country
+      for (var id in country.troops) {
+        if (id != _player.id) {
+          var num = country.troops[id];
+          $('<p>').text('P' + id + ' (' + num + ')')
+                .appendTo('<div>')
+                .addClass('army')
+                .appendTo('div.targetCountry');
+        }
       }
-    }
+    });
   }
 
 

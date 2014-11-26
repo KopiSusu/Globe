@@ -4,6 +4,15 @@ body {
   background: #fafafa;
 }
 
+#left {
+  z-index: 1;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 200px;
+  height: 705px;
+  color: #7f8c8d;
+}
 
 #timer {
   height: 6%;
@@ -117,17 +126,6 @@ font-family: 'Inconsolata';
 }
 
 
-#left {
-  z-index: 1;
-  position: absolute;
-  top: 0%;
-  left: 5%;
-  width: 300px;
-  height: 705px;
-  color: #7f8c8d;
-}
-
-
 #title {
   position: relative;
   left: 0px;
@@ -182,29 +180,40 @@ font-family: 'Inconsolata';
 }
 
 
+#lside {
+  z-index: 1;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 200px;
+  height: 705px;
+  color: #7f8c8d;
+}
 
 #arrow-left {
   width: 0;
   height: 0;
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-right: 20px solid #ba0e0e;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 15px solid #ba0e0e;
   position: absolute;
   cursor: pointer;
+  opacity: 0;
   /*border-radius: 50%;*/
-  top: 38%;
+  top: 39%;
 }
 
 #arrow-right {
   width: 0; 
   height: 0; 
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-left: 20px solid #ba0e0e;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 15px solid #ba0e0e;
   position: absolute;
   cursor: pointer;
+  opacity: 0;
   /*border-radius: 50%;*/
-  top: 38%;
+  top: 39%;
   left: 93%;
 }
 
