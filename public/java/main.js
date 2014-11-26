@@ -43,7 +43,7 @@ $(document).ready(function(){
   // // receive other players' moves from server
   // socket.on('move', function(data) {
   //   var json = JSON.parse(data);
-  //   Game.moveTroops(json.player, json.num, json.from, json.to);
+  //   Game.moveTroops(json.from, json.to, json.num, json.player);
   // });
 
   // // test code
