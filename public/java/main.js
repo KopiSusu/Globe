@@ -42,4 +42,3 @@ socket.on('move', function(data) {
   var json = JSON.parse(data);
   Game.moveTroops(json.from, json.to, json.num, json.player);
 });
-

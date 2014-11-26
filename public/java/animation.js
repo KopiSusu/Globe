@@ -6,6 +6,27 @@ VFX = function() {
 
 }
 
+$(document).ready(function(){
+    $('div.targetCountry > .myArmy').blur(function(){
+        var oldVal = parseInt($(this).attr('data-orig-value'));
+        var val = parseInt($(this).html());
+        var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
+        var newNum = val - oldVal;
+            changeNumber -= newNum;
+        if (changeNumber < 0) {
+            console.log('You have run out of troops')
+            $('div.targetCountry > .myArmy').html(oldVal);
+        }
+        if (changeNumber > 0 ) {
+            $('div.activeCountry > .myArmy').text(changeNumber);
+            var oldVal = $(this).attr('data-orig-value', val);
+
+            var from = $('div.activeCountry').attr('data-name');
+            var to = $('div.activeCountry').attr('data-name');
+            Game.moveTroops(io.socket.playerid, from, to, newNum)
+        }
+    })
+})
 
 VFX.prototype.init = function () {
     var container = $('#scene');
@@ -36,8 +57,6 @@ VFX.prototype.init = function () {
     camera.add(directionalLight);
     scene.add(camera);
     
-
-
     // making cloud layer
     var geometryCloud   = new THREE.SphereGeometry(207, 50, 50)
     var materialCloud  = new THREE.MeshPhongMaterial({
@@ -71,18 +90,6 @@ VFX.prototype.init = function () {
     mesh.rotation.y += 1;
     scene.add(mesh);
 
-    // making inner sphere layer
-    var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
-    var materialInner  = new THREE.MeshBasicMaterial({
-        // map     : THREE.ImageUtils.loadTexture('images/fairInners.jpg'),
-        // wireframe: true,
-        color: 0x00688B,
-        transparent: true,
-        // depthWrite: false,
-    })
-    var innerMesh = new THREE.Mesh(geometryInner, materialInner)
-    scene.add(innerMesh)
-
     // Create a root object to contain all other scene objects
     var root = new THREE.Object3D();
     root.scale.set(205,205,205);
@@ -90,13 +97,14 @@ VFX.prototype.init = function () {
     // adding countries
     // countries is a collection {name: Mesh object}
     for (var name in Countries) {
-        root.add(Countries[name]);
+        if(Countries.hasOwnProperty(name) && Countries[name].geometry)
+        {
+            root.add(Countries[name]);
+        }
     }
-
 
     scene.add(root);
 
-    
     // Create a projector to handle picking
     var projector = new THREE.Projector();
 
@@ -123,28 +131,9 @@ VFX.prototype.init = function () {
 
     //starting animation when page is first loaded
     this.renderer.render(this.scene, this.camera);
-    for (var i = 0; i < Countries.arr.length; i++) {
-        var time = Math.random()+1+Math.random()+1;
-        TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-        TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
-        var rightBar = document.getElementById("right");
-        var timer = document.getElementById('timer');
-       
-        // var about = document.getElementById('');
-        // var timer = document.getElementById('');
-        // var top = document.getElementById('');
-        // var bottom = document.getElementById('');
-       
-       rightBar.style.right = '0%';
-        // about.style.opacity = '1';
-        timer.style.opacity = '0.8';
-        // top.style.opacity = '1';
-        // bottom.style.opacity = '1';
-    }
 
-
+    // creating starfield
     var geometry  = new THREE.SphereGeometry(7000, 50, 50);
-    // create the material, using a texture of starfield
     var material  = new THREE.MeshBasicMaterial({
         fog: false,
         opacity: 0.5,
@@ -154,12 +143,35 @@ VFX.prototype.init = function () {
     material.map   = THREE.ImageUtils.loadTexture('images/starfield.png');
     material.side  = THREE.BackSide;
     material.wrapS = material.wrapT = THREE.RepeatWrapping;
-    // material.repeat.set( 2, 2 )
-    // create the mesh based on geometry and material
     var mesh  = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
 
+    // starting animation for countries
+    for(var country in Countries)
+    {
+        if(Countries.hasOwnProperty(country))
+        {
+            if(country.scale && country.material)
+            {
+                var time = Math.random()+1+Math.random()+1;
+                TweenMax.to(country.scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+                TweenMax.to(country.material, time, { opacity: 1 });    
+            }
+        }
+    }
+
+    // starting animation for DOM elements
+    var rightBar = document.getElementById("rside");
+    var about = document.getElementById("about");
+    var timer = document.getElementById("timer");
+    var top = document.getElementById("systemTop");
+    var bottom = document.getElementById("systemBottom");
+    rightBar.style.right = '50px';
+    about.style.opacity = '1';
+    timer.style.opacity = '0.8';
+    top.style.opacity = '1';
+    bottom.style.opacity = '1';
 
     // making inner sphere layer
     var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
@@ -168,6 +180,8 @@ VFX.prototype.init = function () {
         transparent: true,
     })
     var innerMesh = new THREE.Mesh(geometryInner, materialInner)
+    innerMesh.receiveShadow = false;
+    innerMesh.castShadow = true;
     scene.add(innerMesh)
 
     // here we are making the moon
@@ -202,7 +216,8 @@ VFX.prototype.run = function() {
     var that = this;
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
     this.scene.children[3].rotation.y += 0.0001; // star field
-    this.scene.children[6].rotation.y += 0.0005; // moon
+    this.scene.children[6].rotation.y += 0.0003; // moon
+    // debugger
 
 
     ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
@@ -261,23 +276,19 @@ VFX.prototype.onDocumentMouseDown = function(e) {
 
     var intersects = this.getIntersects(e, Countries.inPlay);
 
-    // this is for the animation, not sure if we are going to use it
     if (intersects[ 0 ]) {
         var country = intersects[0].object;
-        console.log('got click from vfx! handling click');
         Game.handleClick(country.name);
     }
 } 
 
 VFX.prototype.deactivate = function(name) {
-    console.log('inside vfx activate');
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 1 });
     TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
 
 VFX.prototype.activate = function(name) {
-    console.log('inside vfx deactive');
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 0.95 });
     TweenMax.to(country.scale, 1, { x : 1.1, y : 1.1, z : 1.1 });
@@ -286,18 +297,21 @@ VFX.prototype.activate = function(name) {
 
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
+
     var material = new THREE.LineBasicMaterial({
         color: 0xfafafa
     });
     var geometry = new THREE.Geometry();
 
     // note! line is drawn between each consecutive pair of verticies
-    geometry.vertices.push(previousCountry);
-    geometry.vertices.push(newCountry);
+    geometry.vertices.push(Countries[previousCountry].geometry.getCentroid(Countries[previousCountry]));
+    geometry.vertices.push(Countries[newCountry].geometry.getCentroid(Countries[newCountry]));
+    geometry.verticesNeedUpdate = true;
 
     // now we draw the line
     var line = new THREE.Line(geometry, material);
-    scene.add(line);
+    this.scene.add(line);
+    console.log("Line: ", line);
 }
 
 
@@ -308,7 +322,7 @@ VFX.prototype.addObj = function(obj3d) {
 
 // NEEDS WORK. still using old state.
 VFX.prototype.renderState = function(data) {
-    Countries.clearTroops();
+//    Countries.clearTroops();
     var i = data.length;
     while (i--) {
         var player = data[i];

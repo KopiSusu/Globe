@@ -7,6 +7,27 @@ var Countries = (function(THREE) {
       var countryData = countriesData[name];
       var gdp = countryData.data.gdp;
       var geometry = new Map3DGeometry(countryData, 0.8);
+          geometry.verticesNeedUpdate = true;
+      // geometry.centroid = new THREE.Vector3();
+      // for ( var i = 0, 
+      //       l = geometry.vertices.length,
+      //       centroid = geometry.centroid,
+      //       vertices = geometry.vertices; 
+      //   i < l; i++) {
+      //   centroid.add(vertices[i]);
+      // }
+
+      // // convert centroid
+      // geometry.centroid.divideScalar(geometry.vertices.length);
+      // geometry.centroid.divideScalar(Math.sqrt(Math.pow(geometry.centroid.x, 2) +
+      //                                           Math.pow(geometry.centroid.y, 2) +
+      //                                           Math.pow(geometry.centroid.z, 2)));
+      // geometry.computeBoundingBox();
+
+      // var centroid = new THREE.Vector3();
+      // centroid.addVectors( geometry.boundingBox.min, geometry.boundingBox.max);
+      // centroid.multiplyScalar(-0.5);
+
       var colour = 0x666666; 
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
@@ -18,27 +39,34 @@ var Countries = (function(THREE) {
         opacity: 0.9
       });
       var mesh = new THREE.Mesh(geometry, material);
-      mesh.scale.x = 0.5;
-      mesh.scale.y = 0.5;
-      mesh.scale.z = 0.5; 
+      // geometry.centroid.applyMatrix4( mesh.matrixWorld );
+      // mesh.geometry.centroid.normalize();
+      mesh.scale.x = 1;
+      mesh.scale.y = 1;
+      mesh.scale.z = 1; 
       mesh.name = name;
       mesh.gdp = gdp;
       mesh.receiveShadow = false;
       mesh.castShadow = true;
       results[name] = mesh;
+      // mesh.centroid = centroid;
+      // var worldCentroid = mesh.localToWorld( centroid );
+
+      // //centroid.applyMatrix4(mesh.matrixWorld)
+      // console.log("Centroid: ", centroid, worldCentroid)
   };
 
   return results;
 
 })(THREE);
 
-Countries.clearTroops = function() {
-  for (var name in Countries) {
-    if (Countries[name].clear) {
-      Countries[name].clear();
-    }
-  }
-}
+// Countries.clearTroops = function() {
+//   for (var name in Countries) {
+//     if (Countries[name].clear) {
+//       Countries[name].clear();
+//     }
+//   }
+// }
 
 
 // each individual country Mesh object can addTroops to itself
@@ -61,6 +89,9 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
                                             Math.pow(geometry.centroid.y, 2) +
                                             Math.pow(geometry.centroid.z, 2)));
   var position = geometry.centroid;
+  debugger
+  console.log('inside troops')
+  console.log(position)
   position.applyMatrix4( this.matrixWorld );
 
 
@@ -100,14 +131,14 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   
 }
 
-Countries.arr = (function() {
-  var result = [];
-  for (var name in Countries) {
-    if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
-      result.push(Countries[name]);
-  }
-  return result;
-})();
+// Countries.arr = (function() {
+//   var result = [];
+//   for (var name in Countries) {
+//     if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
+//       result.push(Countries[name]);
+//   }
+//   return result;
+// })();
 
 // this is used to determine which countries are clickable
 Countries.inPlay = function() {
