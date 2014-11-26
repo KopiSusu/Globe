@@ -4,15 +4,8 @@ var Game = (function() {
   var _turnLength = 5;
   var _activeCountry = null;
   var _targetCountry = null;
-  var _player = null;
   var vfx = new VFX();
 
-  function player(player) {
-    if (name) {
-      _player = player;
-    }
-    return _player;
-  }
 
   function targetCountry(country) {
     if (country) {
@@ -114,15 +107,39 @@ var Game = (function() {
   function moveTroops(from, to, num, plyr) {
 
     //vfx.moveUnits(from, to);
-    console.log('calling move troops');
-    var id = plyr.id || _player.id
+
+    var id = plyr.id;
+    if (!getTerritory(from).troops[id]) {
+      getTerritory(from).troops[id] = 0;
+    }
+
+    if ( !getTerritory(to).troops[id] ) {
+      getTerritory(to).troops[id] = 0;
+    }
+
+    if (getTerritory(from).troops[id] < num) {
+      return false;
+    }
+
+    else {
+      getTerritory(from).troops[id] -= num;
+      getTerritory(to).troops[id] += num;
+
+      if (getTerritory(from).troops[id] <= 0) {
+        delete getTerritory(from).troops[id]
+      }
+      if (getTerritory(to).troops[id] <= 0) {
+        delete getTerritory(from).troops[id]
+      }
+    }
+
   }
 
   return {
     territories : territories,
     armies : armies,
     handleClick : handleClick,
-    player : player
+    moveTroops : moveTroops
   };
 
 })();

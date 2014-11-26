@@ -59253,7 +59253,6 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
                                             Math.pow(geometry.centroid.y, 2) +
                                             Math.pow(geometry.centroid.z, 2)));
   var position = geometry.centroid;
-  debugger
   console.log('inside troops')
   console.log(position)
   position.applyMatrix4( this.matrixWorld );
@@ -59312,30 +59311,8 @@ Countries.inPlay = function() {
 
 }
 
-$(document).ready(function(){
-    $('div.targetCountry > .myArmy').blur(function(){
-        var oldVal = parseInt($(this).attr('data-orig-value'));
-        var val = parseInt($(this).html());
-        var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
-        var newNum = val - oldVal;
-            changeNumber -= newNum;
-        if (changeNumber < 0) {
-            console.log('You have run out of troops')
-            $('div.targetCountry > .myArmy').html(oldVal);
-        }
-        if (changeNumber > 0 ) {
-            $('div.activeCountry > .myArmy').text(changeNumber);
-            var oldVal = $(this).attr('data-orig-value', val);
-
-            var from = $('div.activeCountry').attr('data-name');
-            var to = $('div.activeCountry').attr('data-name');
-            Game.moveTroops(io.socket.playerid, from, to, newNum)
-        }
-    })
-})
-
 VFX.prototype.init = function () {
-    var container = $('#container');
+    var container = $('#scene');
 
     // Create the Three.js renderer, add it to our div
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -59347,7 +59324,6 @@ VFX.prototype.init = function () {
 
     // Create a new Three.js scene
     var scene = new THREE.Scene();
-    //scene.add( new THREE.AmbientLight( 0x505050 ) );
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
 
@@ -59362,6 +59338,16 @@ VFX.prototype.init = function () {
     camera.position.z = 750;
     camera.add(directionalLight);
     scene.add(camera);
+
+    // here we are fucking with the controls, if you want to change some aspect of controls take a quick peek at the ORbit controls file, it lays out pretty well what you can change.
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.minDistance = 250,
+    controls.maxDistance = 750,
+    controls.zoomSpeed = 0.3,
+    controls.zoomDampingFactor = 0.3,
+    controls.momentumDampingFactor = 0.5,
+    controls.rotateSpeed = 0.6;
+
     
     // making cloud layer
     var geometryCloud   = new THREE.SphereGeometry(207, 50, 50)
@@ -59378,9 +59364,8 @@ VFX.prototype.init = function () {
     cloudMesh.castShadow = true;
     scene.add(cloudMesh)
 
-    // making star field
+    // creating starfield
     var geometry  = new THREE.SphereGeometry(7000, 50, 50);
-    // create the material, using a texture of startfield
     var material  = new THREE.MeshBasicMaterial({
         fog: false,
         opacity: 0.5,
@@ -59390,76 +59375,8 @@ VFX.prototype.init = function () {
     material.map   = THREE.ImageUtils.loadTexture('images/starfield.png');
     material.side  = THREE.BackSide;
     material.wrapS = material.wrapT = THREE.RepeatWrapping;
-    // material.repeat.set( 2, 2 )
-    // create the mesh based on geometry and material
     var mesh  = new THREE.Mesh(geometry, material);
-    mesh.rotation.y += 1;
     scene.add(mesh);
-
-    // Create a root object to contain all other scene objects
-    var root = new THREE.Object3D();
-    root.scale.set(205,205,205);
-
-    // adding countries
-    // countries is a collection {name: Mesh object}
-    for (var name in Countries) {
-        if(Countries.hasOwnProperty(name) && Countries[name].geometry)
-        {
-            root.add(Countries[name]);
-        }
-    }
-
-    scene.add(root);
-
-    // Create a projector to handle picking
-    var projector = new THREE.Projector();
-
-    // here we are fucking with the controls, if you want to change some aspect of controls take a quick peek at the ORbit controls file, it lays out pretty well what you can change.
-    var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.minDistance = 250,
-    controls.maxDistance = 750,
-    controls.zoomSpeed = 0.3,
-    controls.zoomDampingFactor = 0.3,
-    controls.momentumDampingFactor = 0.5,
-    controls.rotateSpeed = 0.6;
-
-    
-    // Save away a few things
-    this.container = container;
-    this.renderer = renderer;
-    this.scene = scene;
-    this.camera = camera;
-    this.projector = projector;
-    this.root = root;
-    this.controls = controls;
-
-    this.initMouse();
-
-    this.renderer.render(this.scene, this.camera);
-
-    //starting animation when page is first loaded
-
-    Object.keys(Countries).forEach(function (key) { 
-        if(Countries[key].scale && Countries[key].material)
-        {
-            var time = Math.random()+1+Math.random()+1;
-            TweenMax.to(Countries[key].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-            TweenMax.to(Countries[key].material, time, { opacity: 1 });    
-        }
-    });
-
-    var rightBar = document.getElementById("rside");
-    // var showTroops = document.getElementById("showTroops");
-    var about = document.getElementById("about");
-    var timer = document.getElementById("timer");
-    var top = document.getElementById("systemTop");
-    var bottom = document.getElementById("systemBottom");
-    rightBar.style.right = '50px';
-    // showTroops.style.opacity = '0.8';
-    about.style.opacity = '1';
-    timer.style.opacity = '0.8';
-    top.style.opacity = '1';
-    bottom.style.opacity = '1';
 
     // making inner sphere layer
     var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
@@ -59491,20 +59408,68 @@ VFX.prototype.init = function () {
       invisSphere.add(sphere);
       scene.add(invisSphere);
 
+    // Create a root object to contain all contry objects
+    var root = new THREE.Object3D();
+    root.scale.set(205,205,205);
 
-      // debugger;
+    // adding countries
+    // countries is a collection {name: Mesh object}
+    for (var name in Countries) {
+        if(Countries.hasOwnProperty(name) && Countries[name].geometry) {
+            root.add(Countries[name]);
+        }
+    }
+
+    scene.add(root);
+
+    // Create a projector to handle picking
+    var projector = new THREE.Projector();
+
+    
+    // Save away a few things
+    this.container = container;
+    this.renderer = renderer;
+    this.scene = scene;
+    this.camera = camera;
+    this.projector = projector;
+    this.root = root;
+    this.controls = controls;
+
+    this.initMouse();
+
+    this.renderer.render(this.scene, this.camera);
+
+    //starting animation when page is first loaded
+
+    Object.keys(Countries).forEach(function (key) { 
+        if(Countries[key].scale && Countries[key].material)
+        {
+            var time = Math.random()+1+Math.random()+1;
+            TweenMax.to(Countries[key].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+            TweenMax.to(Countries[key].material, time, { opacity: 1 });    
+        }
+    });
+
+    // starting animation for DOM elements
+    var rightBar = document.getElementById("right");
+    var timer = document.getElementById("timer");
+    var top = document.getElementById("systemTop");
+    var bottom = document.getElementById("systemBottom");
+    rightBar.style.right = '50px';
+    timer.style.opacity = '0.8';
+    top.style.opacity = '1';
+    bottom.style.opacity = '1';
 
 } // end init
 
-// var rotation = -0.0001;
 VFX.prototype.run = function() {
 
     this.renderer.render(this.scene, this.camera);
 
     var that = this;
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
-    this.scene.children[3].rotation.y += 0.0001; // star field
-    this.scene.children[6].rotation.y += 0.0003; // moon
+    this.scene.children[3].rotation.y += 0.0004; // star field
+    this.scene.children[5].rotation.y += 0.0003; // moon
     // debugger
 
 
@@ -59564,23 +59529,19 @@ VFX.prototype.onDocumentMouseDown = function(e) {
 
     var intersects = this.getIntersects(e, Countries.inPlay);
 
-    // this is for the animation, not sure if we are going to use it
     if (intersects[ 0 ]) {
         var country = intersects[0].object;
-        console.log('got click from vfx! handling click');
         Game.handleClick(country.name);
     }
 } 
 
 VFX.prototype.deactivate = function(name) {
-    console.log('inside vfx activate');
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 1 });
     TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
 
 VFX.prototype.activate = function(name) {
-    console.log('inside vfx deactive');
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 0.95 });
     TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
@@ -59668,7 +59629,7 @@ VFX.prototype.renderState = function(data) {
     var i = armies.length;
     while (i--) {
       army = armies[i]
-      $('<div>').text(army.name + ': ' + army.num + ' troops')
+      $('<div>').text(army.name + ' (' + army.num + ')')
                 .addClass('army')
                 .attr('country', army.name)
                 .appendTo('div.standingArmies');
@@ -59681,17 +59642,17 @@ VFX.prototype.renderState = function(data) {
     var num = country.troops[_player.id] || 0;
 
     $('div.activeCountry').attr('country', country.name);
-    $('div.activeCountry > .header').text(country.name);
+    $('div.activeCountry > .clickedCountry').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
 
-    // TODO: dynamically add button with class 'deactivate'
-
+    // dynamic deactivate button
+    $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate');
 
     // update enemy troops in active country
     for (var id in country.troops) {
       if (id != _player.id) {
         var num = country.troops[id];
-        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+        $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
               .addClass('army')
               .appendTo('div.activeCountry');
@@ -59700,33 +59661,31 @@ VFX.prototype.renderState = function(data) {
   }
 
   function deactivate() {
-    console.log('inside dom deactive');
+    $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
     $('div.activeCountry > .army').remove();
-    $('div.activeCountry > .header').empty();
+    $('div.activeCountry > .clickedCountry').empty();
     $('div.activeCountry > .myArmy').text('');
     $('div.activeCountry').attr('country', '');
 
     $('div.targetCountry > .army').remove();
-    $('div.targetCountry > .header').empty();
+    $('div.targetCountry > .clickedCountry').empty();
     $('div.targetCountry > .myArmy').text('');
     $('div.targetCountry').attr('country', '');
   }
 
   function target(country) {
-    console.log('inside dom target');
-
     $('div.targetCountry > .army').remove();
     var num = country.troops[_player.id] || 0;
 
     $('div.targetCountry').attr('country', country.name);
-    $('div.targetCountry > .header').text(country.name);
+    $('div.targetCountry > .clickedCountry').text(country.name);
     $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
     // update enemy troops in active country
     for (var id in country.troops) {
       if (id != _player.id) {
         var num = country.troops[id];
-        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+        $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
               .addClass('army')
               .appendTo('div.targetCountry');
@@ -59769,7 +59728,19 @@ $(function(){
 
           var from = $('div.activeCountry').attr('country');
           var to = $('div.targetCountry').attr('country');
-          Game.moveTroops(from, to, newNum);
+          var player = domhandler.player();
+          // send move to server
+          socket.emit('move', JSON.stringify({ player : player,
+                                                from : from,
+                                                to : to,
+                                                num : newNum }));
+
+          // updates local game
+          Game.moveTroops(from, to, newNum, player);
+
+          // updates standing armies for current player
+          domhandler.standingArmies(Game.armies(player));
+
       }
   });
 
@@ -59785,15 +59756,8 @@ $(function(){
   var _turnLength = 5;
   var _activeCountry = null;
   var _targetCountry = null;
-  var _player = null;
   var vfx = new VFX();
 
-  function player(player) {
-    if (name) {
-      _player = player;
-    }
-    return _player;
-  }
 
   function targetCountry(country) {
     if (country) {
@@ -59895,78 +59859,82 @@ $(function(){
   function moveTroops(from, to, num, plyr) {
 
     //vfx.moveUnits(from, to);
-    console.log('calling move troops');
-    var id = plyr.id || _player.id
+
+    var id = plyr.id;
+    if (!getTerritory(from).troops[id]) {
+      getTerritory(from).troops[id] = 0;
+    }
+
+    if ( !getTerritory(to).troops[id] ) {
+      getTerritory(to).troops[id] = 0;
+    }
+
+    if (getTerritory(from).troops[id] < num) {
+      return false;
+    }
+
+    else {
+      getTerritory(from).troops[id] -= num;
+      getTerritory(to).troops[id] += num;
+
+      if (getTerritory(from).troops[id] <= 0) {
+        delete getTerritory(from).troops[id]
+      }
+      if (getTerritory(to).troops[id] <= 0) {
+        delete getTerritory(from).troops[id]
+      }
+    }
+
   }
 
   return {
     territories : territories,
     armies : armies,
     handleClick : handleClick,
-    player : player
+    moveTroops : moveTroops
   };
 
-})();;$(document).ready(function(){
-
-  // starts the animation
-  var vfx = new VFX();
-  vfx.init();
-  vfx.run();
+})();;// starts the animation
+var vfx = new VFX();
+vfx.init();
+vfx.run();
 
 
-  var socket = io.connect(window.SOCKET);
+var socket = io.connect(window.SOCKET);
 
-  socket.on('connect', function() {
-    console.log('connected');
-    //setTimeout(triggerMove, 6000);
-  });
-
-
-  // receive welcome info from server when first connected
-  socket.on('welcome', function(data) {
-
-    console.log('received welcome');
-    json = JSON.parse(data);
-
-    // set socket player
-    socket.player = json.player;
-    Game.player(socket.player);
-    domhandler.player(socket.player);
-
-    console.log("joined the game with id " + socket.player.id);
-  });
-
-
-  // receive game state from server
-  socket.on('game state', function(state) {
-
-    var state = JSON.parse(state);
-
-    Game.territories(state.territories);
-    domhandler.timer(state.turnLength);
-    domhandler.standingArmies(Game.armies(socket.player));
-
-  });
-
-  // // receive other players' moves from server
-  // socket.on('move', function(data) {
-  //   var json = JSON.parse(data);
-  //   Game.moveTroops(json.from, json.to, json.num, json.player);
-  // });
-
-  // // test code
-  // var move1 = 'Russia'
-  // var move2 = 'Brazil'
-
-  // function triggerMove() {
-  //   if (socket.player.id == 1) {
-  //     Game.moveTroops(socket.player, move1, 'Greenland', 10);
-  //   }
-  //   else {
-  //     Game.moveTroops(socket.player, move2, 'Greenland', 12);
-  //   }
-  // }
-  setInterval(vfx.moveUnits('Canada', 'Russia'), 1100)
-  // vfx.moveUnits('Canada', 'Russia')
+socket.on('connect', function() {
+  console.log('connected');
+  //setTimeout(triggerMove, 6000);
 });
 
+
+// receive welcome info from server when first connected
+socket.on('welcome', function(data) {
+
+  console.log('received welcome');
+  json = JSON.parse(data);
+
+  // set socket player
+  socket.player = json.player;
+  domhandler.player(socket.player);
+
+  console.log("joined the game with id " + socket.player.id);
+});
+
+
+// receive game state from server
+socket.on('game state', function(state) {
+
+  var state = JSON.parse(state);
+
+  Game.territories(state.territories);
+  domhandler.timer(state.turnLength);
+  domhandler.standingArmies(Game.armies(socket.player));
+
+});
+
+// receive other players' moves from server
+socket.on('move', function(data) {
+  var json = JSON.parse(data);
+  Game.moveTroops(json.from, json.to, json.num, json.player);
+});
