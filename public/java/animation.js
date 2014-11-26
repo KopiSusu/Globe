@@ -30,7 +30,7 @@ VFX.prototype.init = function () {
 
     // Put in a camera at a good default location
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 10000 );
-    camera.position.z = 650;
+    camera.position.z = 750;
     camera.add(directionalLight);
     scene.add(camera);
 
@@ -119,6 +119,7 @@ VFX.prototype.init = function () {
 
     // Create a projector to handle picking
     var projector = new THREE.Projector();
+
     
     // Save away a few things
     this.container = container;
@@ -133,8 +134,6 @@ VFX.prototype.init = function () {
 
     //starting animation when page is first loaded
     this.renderer.render(this.scene, this.camera);
-
-
 
     // starting animation for countries
     for(var country in Countries)
