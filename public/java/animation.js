@@ -6,31 +6,6 @@ VFX = function() {
 
 }
 
-$(document).ready(function(){
-    $('div.targetCountry > .myArmy').blur(function(){
-        var oldVal = parseInt($(this).attr('data-orig-value'));
-        var val = parseInt($(this).html());
-        var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
-        var newNum = val - oldVal;
-            changeNumber -= newNum;
-        if (changeNumber < 0) {
-            console.log('You have run out of troops')
-            $('div.targetCountry > .myArmy').html(oldVal);
-        }
-        if (changeNumber > 0 ) {
-            $('div.activeCountry > .myArmy').text(changeNumber);
-            var oldVal = $(this).attr('data-orig-value', val);
-
-            var from = $('div.activeCountry').attr('data-name');
-            var to = $('div.activeCountry').attr('data-name');
-            Game.moveTroops(io.socket.playerid, from, to, newNum)
-        }
-    })
-
-    // $('standingArmies .army').on('click', function() {
-
-    // })
-})
 
 VFX.prototype.init = function () {
     var container = $('#container');
@@ -282,7 +257,6 @@ VFX.prototype.getIntersects = function(e, objs) {
 
 
 VFX.prototype.onDocumentMouseDown = function(e) {
-    e.preventDefault();
 
     var intersects = this.getIntersects(e, Countries.inPlay);
 

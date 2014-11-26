@@ -59281,31 +59281,6 @@ Countries.inPlay = function() {
 
 }
 
-$(document).ready(function(){
-    $('div.targetCountry > .myArmy').blur(function(){
-        var oldVal = parseInt($(this).attr('data-orig-value'));
-        var val = parseInt($(this).html());
-        var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
-        var newNum = val - oldVal;
-            changeNumber -= newNum;
-        if (changeNumber < 0) {
-            console.log('You have run out of troops')
-            $('div.targetCountry > .myArmy').html(oldVal);
-        }
-        if (changeNumber > 0 ) {
-            $('div.activeCountry > .myArmy').text(changeNumber);
-            var oldVal = $(this).attr('data-orig-value', val);
-
-            var from = $('div.activeCountry').attr('data-name');
-            var to = $('div.activeCountry').attr('data-name');
-            Game.moveTroops(io.socket.playerid, from, to, newNum)
-        }
-    })
-
-    // $('standingArmies .army').on('click', function() {
-
-    // })
-})
 
 VFX.prototype.init = function () {
     var container = $('#container');
@@ -59557,7 +59532,6 @@ VFX.prototype.getIntersects = function(e, objs) {
 
 
 VFX.prototype.onDocumentMouseDown = function(e) {
-    e.preventDefault();
 
     var intersects = this.getIntersects(e, Countries.inPlay);
 
@@ -59675,7 +59649,7 @@ VFX.prototype.renderState = function(data) {
 
     var num = country.troops[_player.id] || 0;
 
-    $('div.activeCountry').attr('data-name', country.name);
+    $('div.activeCountry').attr('country', country.name);
     $('div.activeCountry > .header').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
 
@@ -59697,12 +59671,12 @@ VFX.prototype.renderState = function(data) {
     $('div.activeCountry > .army').remove();
     $('div.activeCountry > .header').empty();
     $('div.activeCountry > .myArmy').text('');
-    $('div.activeCountry').attr('data-name', '');
+    $('div.activeCountry').attr('country', '');
 
     $('div.targetCountry > .army').remove();
     $('div.targetCountry > .header').empty();
     $('div.targetCountry > .myArmy').text('');
-    $('div.targetCountry').attr('data-name', '');
+    $('div.targetCountry').attr('country', '');
   }
 
   function target(country) {
@@ -59711,7 +59685,7 @@ VFX.prototype.renderState = function(data) {
     $('div.targetCountry > .army').remove();
     var num = country.troops[_player.id] || 0;
 
-    $('div.targetCountry').attr('data-name', country.name);
+    $('div.targetCountry').attr('country', country.name);
     $('div.targetCountry > .header').text(country.name);
     $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
@@ -59740,31 +59714,37 @@ VFX.prototype.renderState = function(data) {
 
 })();
 
-$(document).ready(function(){
+$(function(){
 
-  $('.deactivate').on('click', function() {
+  // button to deactivate active army
+  $('.activeCountry').on('click', '.deactivate', function() {
     Game.handleClick();
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
       var oldVal = parseInt($(this).attr('data-orig-value'));
       var val = parseInt($(this).html());
-      var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
+      var changeNumber = parseInt($('div.activeCountry > .myArmy').text());
       var newNum = val - oldVal;
           changeNumber -= newNum;
       if (changeNumber < 0) {
-          console.log('You have run out of troops')
           $('div.targetCountry > .myArmy').html(oldVal);
       }
-      if (changeNumber > 0 ) {
+      if (changeNumber >= 0 ) {
           $('div.activeCountry > .myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
-          var from = $('div.activeCountry').attr('data-name');
-          var to = $('div.activeCountry').attr('data-name');
-          Game.moveTroops(from, to, newNum)
+          var from = $('div.activeCountry').attr('country');
+          var to = $('div.targetCountry').attr('country');
+          Game.moveTroops(from, to, newNum);
       }
   });
+
+  // makes army divs click-able
+  $('.standingArmies').on('click', '.army', function(e) {
+    var name = $(e.target).attr('country');
+    Game.handleClick(name);
+  })
 
 });;var Game = (function() {
 
@@ -59881,7 +59861,8 @@ $(document).ready(function(){
 
   function moveTroops(from, to, num, plyr) {
 
-    vfx.moveUnits(from, to);
+    //vfx.moveUnits(from, to);
+    console.log('calling move troops');
     var id = plyr.id || _player.id
   }
 

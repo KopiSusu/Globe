@@ -45,14 +45,15 @@ var domhandler = (function() {
   }
 
   function activate(country) {
-    console.log('inside dom activate');
     $('div.activeCountry > .army').remove();
 
     var num = country.troops[_player.id] || 0;
 
-    $('div.activeCountry').attr('data-name', country.name);
+    $('div.activeCountry').attr('country', country.name);
     $('div.activeCountry > .header').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
+
+    // TODO: dynamically add button with class 'deactivate'
 
 
     // update enemy troops in active country
@@ -72,12 +73,12 @@ var domhandler = (function() {
     $('div.activeCountry > .army').remove();
     $('div.activeCountry > .header').empty();
     $('div.activeCountry > .myArmy').text('');
-    $('div.activeCountry').attr('data-name', '');
+    $('div.activeCountry').attr('country', '');
 
     $('div.targetCountry > .army').remove();
     $('div.targetCountry > .header').empty();
     $('div.targetCountry > .myArmy').text('');
-    $('div.targetCountry').attr('data-name', '');
+    $('div.targetCountry').attr('country', '');
   }
 
   function target(country) {
@@ -86,7 +87,7 @@ var domhandler = (function() {
     $('div.targetCountry > .army').remove();
     var num = country.troops[_player.id] || 0;
 
-    $('div.targetCountry').attr('data-name', country.name);
+    $('div.targetCountry').attr('country', country.name);
     $('div.targetCountry > .header').text(country.name);
     $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
@@ -115,30 +116,36 @@ var domhandler = (function() {
 
 })();
 
-$(document).ready(function(){
+$(function(){
 
-  $('.deactivate').on('click', function() {
+  // button to deactivate active army
+  $('.activeCountry').on('click', '.deactivate', function() {
     Game.handleClick();
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
       var oldVal = parseInt($(this).attr('data-orig-value'));
       var val = parseInt($(this).html());
-      var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
+      var changeNumber = parseInt($('div.activeCountry > .myArmy').text());
       var newNum = val - oldVal;
           changeNumber -= newNum;
       if (changeNumber < 0) {
-          console.log('You have run out of troops')
           $('div.targetCountry > .myArmy').html(oldVal);
       }
-      if (changeNumber > 0 ) {
+      if (changeNumber >= 0 ) {
           $('div.activeCountry > .myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
-          var from = $('div.activeCountry').attr('data-name');
-          var to = $('div.activeCountry').attr('data-name');
-          Game.moveTroops(from, to, newNum)
+          var from = $('div.activeCountry').attr('country');
+          var to = $('div.targetCountry').attr('country');
+          Game.moveTroops(from, to, newNum);
       }
   });
+
+  // makes army divs click-able
+  $('.standingArmies').on('click', '.army', function(e) {
+    var name = $(e.target).attr('country');
+    Game.handleClick(name);
+  })
 
 });

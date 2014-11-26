@@ -224,6 +224,7 @@ h2 {
   color: #fafafa;
   margin: 0px;
   padding-left: 20px;
+  border: 1px #fff dashed;
 }
 
 #title {
