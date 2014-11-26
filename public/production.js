@@ -59728,6 +59728,49 @@ VFX.prototype.renderState = function(data) {
     });
   }
 
+  function update(data) {
+    // TODO: implement infinite scroll in #systemBottom > .messages
+    $('#systemBottom > .messages').empty();
+    switch (data.type) {
+      case 'disconnect':
+        updateDisconnect(data.msg);
+        break;
+        case 'new player':
+        updateNewPlayer(data.msg);
+        break;
+        case 'move':
+        updateMove(data.msg);
+    }
+  }
+
+  function updateDisconnect(msg) {
+    var playerid = msg.player.id;
+    var armies = msg.armies;
+    $('<p>').text('P' + playerid + ' disconnected. Territories left empty: ')
+      .appendTo('#systemBottom > .messages');
+    for (var country in armies) {
+      $('<div>').text(country + ' (' + armies[country] + ')')
+                .addClass('army')
+                .attr('country', country)
+                .appendTo('#systemBottom > .messages')
+                .fadeIn(1000);
+    }
+  }
+
+  function updateNewPlayer(msg) {
+    var playerid = msg.player.id;
+    var armies = msg.armies;
+    $('<p>').text('P' + playerid + ' connected. Armies: ')
+      .appendTo('#systemBottom > .messages');
+    for (var country in armies) {
+      $('<div>').text(country + ' (' + armies[country] + ')')
+                .addClass('army')
+                .attr('country', country)
+                .appendTo('#systemBottom > .messages')
+                .fadeIn(1000);
+    }
+  }
+  
 
   return {
     timer : timer,
@@ -59735,7 +59778,8 @@ VFX.prototype.renderState = function(data) {
     standingArmies : standingArmies,
     activate : activate,
     deactivate : deactivate,
-    target : target
+    target : target,
+    update: update
   }
 
 
@@ -59777,17 +59821,11 @@ $(function(){
                                                 to : to,
                                                 num : newNum }));
 
-          // updates local game
-          Game.moveTroops(from, to, newNum, player);
-
-          // updates standing armies for current player
-          domhandler.standingArmies(Game.armies(player));
-
       }
   });
 
   // makes army divs click-able
-  $('.standingArmies').on('click', '.army', function(e) {
+  $('#scene').on('click', '.army', function(e) {
     var name = $(e.target).attr('country');
     Game.handleClick(name);
   })
@@ -59964,6 +60002,11 @@ socket.on('welcome', function(data) {
 });
 
 
+socket.on('game update', function(data) {
+    var data = JSON.parse(data);
+    domhandler.update(data);
+});
+
 // receive game state from server
 socket.on('game state', function(state) {
 
@@ -59979,4 +60022,5 @@ socket.on('game state', function(state) {
 socket.on('move', function(data) {
   var json = JSON.parse(data);
   Game.moveTroops(json.from, json.to, json.num, json.player);
+  domhandler.standingArmies(Game.armies(socket.player));
 });

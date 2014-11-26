@@ -26,6 +26,11 @@ socket.on('welcome', function(data) {
 });
 
 
+socket.on('game update', function(data) {
+    var data = JSON.parse(data);
+    domhandler.update(data);
+});
+
 // receive game state from server
 socket.on('game state', function(state) {
 
@@ -41,4 +46,5 @@ socket.on('game state', function(state) {
 socket.on('move', function(data) {
   var json = JSON.parse(data);
   Game.moveTroops(json.from, json.to, json.num, json.player);
+  domhandler.standingArmies(Game.armies(socket.player));
 });

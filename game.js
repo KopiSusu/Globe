@@ -67,13 +67,27 @@ function evaluateState() {
   }
 }
 
-function removePlayer(id) {
+function removePlayer(player) {
   var i = territories.length;
   while (i--) {
-    territories[i].removePlayer(id);
+    territories[i].removePlayer(player.id);
   }
 }
 
+function armies(player) {
+  var results = {};
+
+  var i = territories.length;
+  while (i--) {
+    if (territories[i].contains(player.id)) {
+      var country = territories[i].name;
+      var num = territories[i].troops[player.id];
+      results[country] = num;
+    }
+  }
+
+  return results;
+}
 
 // summarises all game info
 function state() {
@@ -89,5 +103,6 @@ module.exports = {
   evaluateState : evaluateState,
   state : state,
   moveTroops : moveTroops,
+  armies : armies
 }
 

@@ -19,13 +19,13 @@ Territory.prototype.isEmpty = function() {
   return true;
 }
 
-Territory.prototype.name = function(newName) {
-  if (newName) {
-    this.name = newName;
+Territory.prototype.contains = function(id) {
+  if (this.troops[id] && this.troops[id] > 0) {
+    return true;
   }
-
-  return this.name;
+  return false;
 }
+
 
 Territory.prototype.lastOneStanding = function() {
   var armies = this.troops;
