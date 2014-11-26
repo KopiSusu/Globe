@@ -111,14 +111,16 @@ var domhandler = (function() {
 
   function update(data) {
     // TODO: implement infinite scroll in #systemBottom > .messages
-    //$('#systemBottom > .messages').empty();
+    $('#systemBottom > .messages').empty();
     switch (data.type) {
       case 'disconnect':
         updateDisconnect(data.msg);
         break;
         case 'new player':
-        console.log('new player');
+        updateNewPlayer(data.msg);
         break;
+        case 'move':
+        updateMove(data.msg);
     }
   }
 
@@ -126,6 +128,20 @@ var domhandler = (function() {
     var playerid = msg.player.id;
     var armies = msg.armies;
     $('<p>').text('P' + playerid + ' disconnected. Territories left empty: ')
+      .appendTo('#systemBottom > .messages');
+    for (var country in armies) {
+      $('<div>').text(country + ' (' + armies[country] + ')')
+                .addClass('army')
+                .attr('country', country)
+                .appendTo('#systemBottom > .messages')
+                .fadeIn(1000);
+    }
+  }
+
+  function updateNewPlayer(msg) {
+    var playerid = msg.player.id;
+    var armies = msg.armies;
+    $('<p>').text('P' + playerid + ' connected. Armies: ')
       .appendTo('#systemBottom > .messages');
     for (var country in armies) {
       $('<div>').text(country + ' (' + armies[country] + ')')
@@ -178,12 +194,6 @@ $(function(){
                                                 from : from,
                                                 to : to,
                                                 num : newNum }));
-
-          // updates local game
-          Game.moveTroops(from, to, newNum, player);
-
-          // updates standing armies for current player
-          domhandler.standingArmies(Game.armies(player));
 
       }
   });

@@ -110,6 +110,17 @@ function endOfTurn() {
     socket.emit('welcome', JSON.stringify({
                               player : socket.player 
                             }));
+
+    // construct data object for new player update
+    var data = {
+      type: 'new player',
+      msg: {
+        player: socket.player,
+        armies: game.armies(socket.player)
+      }
+    };
+
+    io.emit('game update', JSON.stringify(data));
   }
 
   startTurn();
