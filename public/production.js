@@ -59648,28 +59648,38 @@ VFX.prototype.renderState = function(data) {
     $('div.activeCountry > .army').remove();
 
     var num = country.troops[_player.id] || 0;
+    $('div.activeCountry').animate({
+        height: '0%',
+      }, function() {
+        $(this).animate({height: '30%'});
+        $('div.activeCountry').attr('country', country.name);
+        $('div.activeCountry > .clickedCountry').text(country.name);
+        $('div.activeCountry > .myArmy').text(num);
+    });
 
-    $('div.activeCountry').attr('country', country.name);
-    $('div.activeCountry > .clickedCountry').text(country.name);
-    $('div.activeCountry > .myArmy').text(num);
 
     // dynamic deactivate button
-    $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate');
+    $('div.activeCountry > h1').fadeOut(500, function() {
+      $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
     // update enemy troops in active country
-    for (var id in country.troops) {
-      if (id != _player.id) {
-        var num = country.troops[id];
-        $('<p>').text('P' + id + ' (' + num + ')')
-              .appendTo('<div>')
-              .addClass('army')
-              .appendTo('div.activeCountry');
+      for (var id in country.troops) {
+        if (id != _player.id) {
+          var num = country.troops[id];
+          $('<p>').text('P' + id + ' (' + num + ')')
+                .appendTo('<div>')
+                .addClass('army')
+                .appendTo('div.activeCountry');
+        }
       }
-    }
+    });
   }
 
   function deactivate() {
-    $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
+    $('div.activeCountry > h1').fadeOut(500, function() {
+        $(this).text('Active').toggleClass('deactivate').fadeIn(500);
+    });
+    // $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
     $('div.activeCountry > .army').remove();
     $('div.activeCountry > .clickedCountry').empty();
     $('div.activeCountry > .myArmy').text('');
@@ -59719,6 +59729,13 @@ $(function(){
   // button to deactivate active army
   $('.activeCountry').on('click', '.deactivate', function() {
     Game.handleClick();
+  });
+
+  $('#arrow-left').on('click', function(){
+    console.log('inside arrow');
+    var number = parseInt($('div.targetCountry > .myArmy').text());
+        number -= 1;
+    $('div.activeCountry > .myArmy').text(number);
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
