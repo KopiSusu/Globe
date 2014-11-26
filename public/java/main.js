@@ -44,7 +44,15 @@ socket.on('game state', function(state) {
 
 // receive other players' moves from server
 socket.on('move', function(data) {
-  var json = JSON.parse(data);
-  Game.moveTroops(json.from, json.to, json.num, json.player);
+  var move = JSON.parse(data);
+
+  Game.moveTroops(move.from, move.to, move.num, move.player);
+
+  var data = {
+    type: 'move',
+    msg: move
+  }
+  
   domhandler.standingArmies(Game.armies(socket.player));
+  domhandler.update(data);
 });

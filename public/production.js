@@ -59630,19 +59630,11 @@ VFX.prototype.renderState = function(data) {
     var i = armies.length;
     while (i--) {
       army = armies[i]
-      $('<div>').fadeOut(1000, function() {
-          $(this).text(army.name + ' (' + army.num + ')')
-                .addClass('army')
-                .attr('country', army.name)
-                .appendTo('div.standingArmies')
-                .fadeIn(1000);
-              });
+      createArmy('div.standingArmies', army.name, army.num);
     } 
   }
 
-  $('#test').fadeOut(500, function() {
-        $(this).text('Some other text!').fadeIn(500);
-    });
+
 
   function activate(country) {
     $('div.activeCountry > .army').remove();
@@ -59662,7 +59654,7 @@ VFX.prototype.renderState = function(data) {
         var num = country.troops[id];
         $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
-              .addClass('army')
+              .addClass('army-enemy')
               .appendTo('div.activeCountry');
       }
     }
@@ -59695,7 +59687,7 @@ VFX.prototype.renderState = function(data) {
         var num = country.troops[id];
         $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
-              .addClass('army')
+              .addClass('army-enemy')
               .appendTo('div.targetCountry');
       }
     }
@@ -59708,11 +59700,12 @@ VFX.prototype.renderState = function(data) {
       case 'disconnect':
         updateDisconnect(data.msg);
         break;
-        case 'new player':
+      case 'new player':
         updateNewPlayer(data.msg);
         break;
-        case 'move':
+      case 'move':
         updateMove(data.msg);
+        break;
     }
   }
 
@@ -59722,11 +59715,7 @@ VFX.prototype.renderState = function(data) {
     $('<p>').text('P' + playerid + ' disconnected. Territories left empty: ')
       .appendTo('#systemBottom > .messages');
     for (var country in armies) {
-      $('<div>').text(country + ' (' + armies[country] + ')')
-                .addClass('army')
-                .attr('country', country)
-                .appendTo('#systemBottom > .messages')
-                .fadeIn(1000);
+      createArmy('#systemBottom > .messages', country, armies[country])
     }
   }
 
@@ -59736,14 +59725,29 @@ VFX.prototype.renderState = function(data) {
     $('<p>').text('P' + playerid + ' connected. Armies: ')
       .appendTo('#systemBottom > .messages');
     for (var country in armies) {
-      $('<div>').text(country + ' (' + armies[country] + ')')
-                .addClass('army')
-                .attr('country', country)
-                .appendTo('#systemBottom > .messages')
-                .fadeIn(1000);
+      createArmy('#systemBottom > .messages', country, armies[country])
     }
   }
+
+  function updateMove(msg) {
+    var id = msg.player.id;
+    $('<p>').text('P' + id + ' just moved ' + msg.num + ' troops from: ').appendTo('#systemBottom > .messages');
+    createArmy('#systemBottom > .messages', msg.from);
+    $('<p>').text('TO').appendTo('#systemBottom > .messages');
+    createArmy('#systemBottom > .messages', msg.to);
+  }
   
+  // use to append army object to any parent class in #scene
+  function createArmy(selector, name, num) {
+    var result = '';
+    if (num) {
+      result = $('<div>').text(name + ' (' + num + ')');
+    }
+    else if (!num) {
+      result = $('<div>').text(name);
+    }
+    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
+  }
 
   return {
     timer : timer,
@@ -59986,7 +59990,13 @@ socket.on('game state', function(state) {
 
 // receive other players' moves from server
 socket.on('move', function(data) {
-  var json = JSON.parse(data);
-  Game.moveTroops(json.from, json.to, json.num, json.player);
+  var move = JSON.parse(data);
+  Game.moveTroops(move.from, move.to, move.num, move.player);
   domhandler.standingArmies(Game.armies(socket.player));
+
+  var data = {
+    type: 'move',
+    msg: move
+  }
+  domhandler.update(data);
 });

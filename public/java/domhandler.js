@@ -38,19 +38,11 @@ var domhandler = (function() {
     var i = armies.length;
     while (i--) {
       army = armies[i]
-      $('<div>').fadeOut(1000, function() {
-          $(this).text(army.name + ' (' + army.num + ')')
-                .addClass('army')
-                .attr('country', army.name)
-                .appendTo('div.standingArmies')
-                .fadeIn(1000);
-              });
+      createArmy('div.standingArmies', army.name, army.num);
     } 
   }
 
-  $('#test').fadeOut(500, function() {
-        $(this).text('Some other text!').fadeIn(500);
-    });
+
 
   function activate(country) {
     $('div.activeCountry > .army').remove();
@@ -70,7 +62,7 @@ var domhandler = (function() {
         var num = country.troops[id];
         $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
-              .addClass('army')
+              .addClass('army-enemy')
               .appendTo('div.activeCountry');
       }
     }
@@ -103,7 +95,7 @@ var domhandler = (function() {
         var num = country.troops[id];
         $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
-              .addClass('army')
+              .addClass('army-enemy')
               .appendTo('div.targetCountry');
       }
     }
@@ -116,11 +108,12 @@ var domhandler = (function() {
       case 'disconnect':
         updateDisconnect(data.msg);
         break;
-        case 'new player':
+      case 'new player':
         updateNewPlayer(data.msg);
         break;
-        case 'move':
+      case 'move':
         updateMove(data.msg);
+        break;
     }
   }
 
@@ -130,11 +123,7 @@ var domhandler = (function() {
     $('<p>').text('P' + playerid + ' disconnected. Territories left empty: ')
       .appendTo('#systemBottom > .messages');
     for (var country in armies) {
-      $('<div>').text(country + ' (' + armies[country] + ')')
-                .addClass('army')
-                .attr('country', country)
-                .appendTo('#systemBottom > .messages')
-                .fadeIn(1000);
+      createArmy('#systemBottom > .messages', country, armies[country])
     }
   }
 
@@ -144,14 +133,29 @@ var domhandler = (function() {
     $('<p>').text('P' + playerid + ' connected. Armies: ')
       .appendTo('#systemBottom > .messages');
     for (var country in armies) {
-      $('<div>').text(country + ' (' + armies[country] + ')')
-                .addClass('army')
-                .attr('country', country)
-                .appendTo('#systemBottom > .messages')
-                .fadeIn(1000);
+      createArmy('#systemBottom > .messages', country, armies[country])
     }
   }
+
+  function updateMove(msg) {
+    var id = msg.player.id;
+    $('<p>').text('P' + id + ' just moved ' + msg.num + ' troops from: ').appendTo('#systemBottom > .messages');
+    createArmy('#systemBottom > .messages', msg.from);
+    $('<p>').text('TO').appendTo('#systemBottom > .messages');
+    createArmy('#systemBottom > .messages', msg.to);
+  }
   
+  // use to append army object to any parent class in #scene
+  function createArmy(selector, name, num) {
+    var result = '';
+    if (num) {
+      result = $('<div>').text(name + ' (' + num + ')');
+    }
+    else if (!num) {
+      result = $('<div>').text(name);
+    }
+    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
+  }
 
   return {
     timer : timer,
