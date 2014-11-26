@@ -8,7 +8,7 @@ VFX = function() {
 
 
 VFX.prototype.init = function () {
-    var container = $('#container');
+    var container = $('#scene');
 
     // Create the Three.js renderer, add it to our div
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -127,18 +127,19 @@ VFX.prototype.init = function () {
         var time = Math.random()+1+Math.random()+1;
         TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
         TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
-        var rightBar = document.getElementById("rside");
-        // var showTroops = document.getElementById("showTroops");
-        var about = document.getElementById("about");
-        var timer = document.getElementById("timer");
-        var top = document.getElementById("systemTop");
-        var bottom = document.getElementById("systemBottom");
-        rightBar.style.right = '0%';
-        // showTroops.style.opacity = '0.8';
-        about.style.opacity = '1';
+        var rightBar = document.getElementById("right");
+        var timer = document.getElementById('timer');
+       
+        // var about = document.getElementById('');
+        // var timer = document.getElementById('');
+        // var top = document.getElementById('');
+        // var bottom = document.getElementById('');
+       
+       rightBar.style.right = '0%';
+        // about.style.opacity = '1';
         timer.style.opacity = '0.8';
-        top.style.opacity = '1';
-        bottom.style.opacity = '1';
+        // top.style.opacity = '1';
+        // bottom.style.opacity = '1';
     }
 
 

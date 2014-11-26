@@ -59283,7 +59283,7 @@ Countries.inPlay = function() {
 
 
 VFX.prototype.init = function () {
-    var container = $('#container');
+    var container = $('#scene');
 
     // Create the Three.js renderer, add it to our div
     var renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -59402,18 +59402,19 @@ VFX.prototype.init = function () {
         var time = Math.random()+1+Math.random()+1;
         TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
         TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
-        var rightBar = document.getElementById("rside");
-        // var showTroops = document.getElementById("showTroops");
-        var about = document.getElementById("about");
-        var timer = document.getElementById("timer");
-        var top = document.getElementById("systemTop");
-        var bottom = document.getElementById("systemBottom");
-        rightBar.style.right = '0%';
-        // showTroops.style.opacity = '0.8';
-        about.style.opacity = '1';
+        var rightBar = document.getElementById("right");
+        var timer = document.getElementById('timer');
+       
+        // var about = document.getElementById('');
+        // var timer = document.getElementById('');
+        // var top = document.getElementById('');
+        // var bottom = document.getElementById('');
+       
+       rightBar.style.right = '0%';
+        // about.style.opacity = '1';
         timer.style.opacity = '0.8';
-        top.style.opacity = '1';
-        bottom.style.opacity = '1';
+        // top.style.opacity = '1';
+        // bottom.style.opacity = '1';
     }
 
 
@@ -59636,7 +59637,7 @@ VFX.prototype.renderState = function(data) {
     var i = armies.length;
     while (i--) {
       army = armies[i]
-      $('<div>').text(army.name + ': ' + army.num + ' troops')
+      $('<div>').text(army.name + ' (' + army.num + ')')
                 .addClass('army')
                 .attr('country', army.name)
                 .appendTo('div.standingArmies');
@@ -59649,7 +59650,7 @@ VFX.prototype.renderState = function(data) {
     var num = country.troops[_player.id] || 0;
 
     $('div.activeCountry').attr('country', country.name);
-    $('div.activeCountry > .header').text(country.name);
+    $('div.activeCountry > .clickedCountry').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
 
     // TODO: dynamically add button with class 'deactivate'
@@ -59659,7 +59660,7 @@ VFX.prototype.renderState = function(data) {
     for (var id in country.troops) {
       if (id != _player.id) {
         var num = country.troops[id];
-        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+        $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
               .addClass('army')
               .appendTo('div.activeCountry');
@@ -59670,12 +59671,12 @@ VFX.prototype.renderState = function(data) {
   function deactivate() {
     console.log('inside dom deactive');
     $('div.activeCountry > .army').remove();
-    $('div.activeCountry > .header').empty();
+    $('div.activeCountry > .clickedCountry').empty();
     $('div.activeCountry > .myArmy').text('');
     $('div.activeCountry').attr('country', '');
 
     $('div.targetCountry > .army').remove();
-    $('div.targetCountry > .header').empty();
+    $('div.targetCountry > .clickedCountry').empty();
     $('div.targetCountry > .myArmy').text('');
     $('div.targetCountry').attr('country', '');
   }
@@ -59687,14 +59688,14 @@ VFX.prototype.renderState = function(data) {
     var num = country.troops[_player.id] || 0;
 
     $('div.targetCountry').attr('country', country.name);
-    $('div.targetCountry > .header').text(country.name);
+    $('div.targetCountry > .clickedCountry').text(country.name);
     $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
     // update enemy troops in active country
     for (var id in country.troops) {
       if (id != _player.id) {
         var num = country.troops[id];
-        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+        $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
               .addClass('army')
               .appendTo('div.targetCountry');
@@ -59903,61 +59904,48 @@ $(function(){
     moveTroops : moveTroops
   };
 
-})();;  // starts the animation
-  var vfx = new VFX();
-  vfx.init();
-  vfx.run();
+})();;// starts the animation
+var vfx = new VFX();
+vfx.init();
+vfx.run();
 
 
-  var socket = io.connect(window.SOCKET);
+var socket = io.connect(window.SOCKET);
 
-  socket.on('connect', function() {
-    console.log('connected');
-    //setTimeout(triggerMove, 6000);
-  });
-
-
-  // receive welcome info from server when first connected
-  socket.on('welcome', function(data) {
-
-    console.log('received welcome');
-    json = JSON.parse(data);
-
-    // set socket player
-    socket.player = json.player;
-    domhandler.player(socket.player);
-
-    console.log("joined the game with id " + socket.player.id);
-  });
+socket.on('connect', function() {
+  console.log('connected');
+  //setTimeout(triggerMove, 6000);
+});
 
 
-  // receive game state from server
-  socket.on('game state', function(state) {
+// receive welcome info from server when first connected
+socket.on('welcome', function(data) {
 
-    var state = JSON.parse(state);
+  console.log('received welcome');
+  json = JSON.parse(data);
 
-    Game.territories(state.territories);
-    domhandler.timer(state.turnLength);
-    domhandler.standingArmies(Game.armies(socket.player));
+  // set socket player
+  socket.player = json.player;
+  domhandler.player(socket.player);
 
-  });
+  console.log("joined the game with id " + socket.player.id);
+});
 
-  // // receive other players' moves from server
-  // socket.on('move', function(data) {
-  //   var json = JSON.parse(data);
-  //   Game.moveTroops(json.from, json.to, json.num, json.player);
-  // });
 
-  // // test code
-  // var move1 = 'Russia'
-  // var move2 = 'Brazil'
+// receive game state from server
+socket.on('game state', function(state) {
 
-  // function triggerMove() {
-  //   if (socket.player.id == 1) {
-  //     Game.moveTroops(socket.player, move1, 'Greenland', 10);
-  //   }
-  //   else {
-  //     Game.moveTroops(socket.player, move2, 'Greenland', 12);
-  //   }
-  // }
+  var state = JSON.parse(state);
+
+  Game.territories(state.territories);
+  domhandler.timer(state.turnLength);
+  domhandler.standingArmies(Game.armies(socket.player));
+
+});
+
+// receive other players' moves from server
+socket.on('move', function(data) {
+  var json = JSON.parse(data);
+  Game.moveTroops(json.from, json.to, json.num, json.player);
+});
 

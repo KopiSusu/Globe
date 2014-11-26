@@ -37,7 +37,7 @@ var domhandler = (function() {
     var i = armies.length;
     while (i--) {
       army = armies[i]
-      $('<div>').text(army.name + ': ' + army.num + ' troops')
+      $('<div>').text(army.name + ' (' + army.num + ')')
                 .addClass('army')
                 .attr('country', army.name)
                 .appendTo('div.standingArmies');
@@ -50,7 +50,7 @@ var domhandler = (function() {
     var num = country.troops[_player.id] || 0;
 
     $('div.activeCountry').attr('country', country.name);
-    $('div.activeCountry > .header').text(country.name);
+    $('div.activeCountry > .clickedCountry').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
 
     // TODO: dynamically add button with class 'deactivate'
@@ -60,7 +60,7 @@ var domhandler = (function() {
     for (var id in country.troops) {
       if (id != _player.id) {
         var num = country.troops[id];
-        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+        $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
               .addClass('army')
               .appendTo('div.activeCountry');
@@ -71,12 +71,12 @@ var domhandler = (function() {
   function deactivate() {
     console.log('inside dom deactive');
     $('div.activeCountry > .army').remove();
-    $('div.activeCountry > .header').empty();
+    $('div.activeCountry > .clickedCountry').empty();
     $('div.activeCountry > .myArmy').text('');
     $('div.activeCountry').attr('country', '');
 
     $('div.targetCountry > .army').remove();
-    $('div.targetCountry > .header').empty();
+    $('div.targetCountry > .clickedCountry').empty();
     $('div.targetCountry > .myArmy').text('');
     $('div.targetCountry').attr('country', '');
   }
@@ -88,14 +88,14 @@ var domhandler = (function() {
     var num = country.troops[_player.id] || 0;
 
     $('div.targetCountry').attr('country', country.name);
-    $('div.targetCountry > .header').text(country.name);
+    $('div.targetCountry > .clickedCountry').text(country.name);
     $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
     // update enemy troops in active country
     for (var id in country.troops) {
       if (id != _player.id) {
         var num = country.troops[id];
-        $('<p>').text('Player ' + id + ': ' + num + ' troops')
+        $('<p>').text('P' + id + ' (' + num + ')')
               .appendTo('<div>')
               .addClass('army')
               .appendTo('div.targetCountry');
