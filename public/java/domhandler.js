@@ -177,6 +177,7 @@ var domhandler = (function() {
     else if (!num) {
       result = $('<div>').text(name);
     }
+
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
   }
 
