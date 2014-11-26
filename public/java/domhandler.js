@@ -7,6 +7,8 @@ var domhandler = (function() {
     if (player) {
       _player = player;
     }
+
+    $('div#title').text('Player ' + _player.id);
     return _player;
   }
 

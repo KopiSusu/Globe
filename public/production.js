@@ -59897,6 +59897,8 @@ VFX.prototype.renderState = function(data) {
     if (player) {
       _player = player;
     }
+
+    $('div#title').text('Player ' + _player.id);
     return _player;
   }
 
