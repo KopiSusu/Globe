@@ -59205,9 +59205,9 @@ var Countries = (function(THREE) {
       var mesh = new THREE.Mesh(geometry, material);
       // geometry.centroid.applyMatrix4( mesh.matrixWorld );
       // mesh.geometry.centroid.normalize();
-      mesh.scale.x = 1;
-      mesh.scale.y = 1;
-      mesh.scale.z = 1; 
+      mesh.scale.x = 0.5;
+      mesh.scale.y = 0.5;
+      mesh.scale.z = 0.5; 
       mesh.name = name;
       mesh.gdp = gdp;
       mesh.receiveShadow = false;
@@ -59435,26 +59435,18 @@ VFX.prototype.init = function () {
 
     this.initMouse();
 
-    //starting animation when page is first loaded
     this.renderer.render(this.scene, this.camera);
-    // for (var i = 0; i < Countries.arr.length; i++) {
-    //     var time = Math.random()+1+Math.random()+1;
-    //     TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-    //     TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
-    // }
 
-    for(var country in Countries)
-    {
-        if(Countries.hasOwnProperty(country))
+    //starting animation when page is first loaded
+
+    Object.keys(Countries).forEach(function (key) { 
+        if(Countries[key].scale && Countries[key].material)
         {
-            if(country.scale && country.material)
-            {
-                var time = Math.random()+1+Math.random()+1;
-                TweenMax.to(country.scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-                TweenMax.to(country.material, time, { opacity: 1 });    
-            }
+            var time = Math.random()+1+Math.random()+1;
+            TweenMax.to(Countries[key].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+            TweenMax.to(Countries[key].material, time, { opacity: 1 });    
         }
-    }
+    });
 
     var rightBar = document.getElementById("rside");
     // var showTroops = document.getElementById("showTroops");

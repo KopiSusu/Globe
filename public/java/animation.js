@@ -129,26 +129,18 @@ VFX.prototype.init = function () {
 
     this.initMouse();
 
-    //starting animation when page is first loaded
     this.renderer.render(this.scene, this.camera);
-    // for (var i = 0; i < Countries.arr.length; i++) {
-    //     var time = Math.random()+1+Math.random()+1;
-    //     TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-    //     TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
-    // }
 
-    for(var country in Countries)
-    {
-        if(Countries.hasOwnProperty(country))
+    //starting animation when page is first loaded
+
+    Object.keys(Countries).forEach(function (key) { 
+        if(Countries[key].scale && Countries[key].material)
         {
-            if(country.scale && country.material)
-            {
-                var time = Math.random()+1+Math.random()+1;
-                TweenMax.to(country.scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-                TweenMax.to(country.material, time, { opacity: 1 });    
-            }
+            var time = Math.random()+1+Math.random()+1;
+            TweenMax.to(Countries[key].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+            TweenMax.to(Countries[key].material, time, { opacity: 1 });    
         }
-    }
+    });
 
     var rightBar = document.getElementById("rside");
     // var showTroops = document.getElementById("showTroops");

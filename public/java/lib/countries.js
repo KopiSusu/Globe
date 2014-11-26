@@ -41,9 +41,9 @@ var Countries = (function(THREE) {
       var mesh = new THREE.Mesh(geometry, material);
       // geometry.centroid.applyMatrix4( mesh.matrixWorld );
       // mesh.geometry.centroid.normalize();
-      mesh.scale.x = 1;
-      mesh.scale.y = 1;
-      mesh.scale.z = 1; 
+      mesh.scale.x = 0.5;
+      mesh.scale.y = 0.5;
+      mesh.scale.z = 0.5; 
       mesh.name = name;
       mesh.gdp = gdp;
       mesh.receiveShadow = false;
