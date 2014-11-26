@@ -138,7 +138,19 @@ $(function(){
 
           var from = $('div.activeCountry').attr('country');
           var to = $('div.targetCountry').attr('country');
-          Game.moveTroops(from, to, newNum);
+          var player = domhandler.player();
+          // send move to server
+          socket.emit('move', JSON.stringify({ player : player,
+                                                from : from,
+                                                to : to,
+                                                num : newNum }));
+
+          // updates local game
+          Game.moveTroops(from, to, newNum, player);
+
+          // updates standing armies for current player
+          domhandler.standingArmies(Game.armies(player));
+
       }
   });
 

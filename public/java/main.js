@@ -1,5 +1,3 @@
-$(document).ready(function(){
-
   // starts the animation
   var vfx = new VFX();
   vfx.init();
@@ -22,7 +20,6 @@ $(document).ready(function(){
 
     // set socket player
     socket.player = json.player;
-    Game.player(socket.player);
     domhandler.player(socket.player);
 
     console.log("joined the game with id " + socket.player.id);
@@ -59,4 +56,3 @@ $(document).ready(function(){
   //   }
   // }
 
-});

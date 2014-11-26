@@ -40,7 +40,7 @@ io.on('connection', function(socket) {
   // this watches for a 'move' message from the socket
   socket.on('move', function(move) {
     if (!PAUSE) {
-
+      var move = JSON.parse(move);
       //move troops in server copy of the game
       game.moveTroops(move.player, move.from, move.to, move.num );
       console.log(move);

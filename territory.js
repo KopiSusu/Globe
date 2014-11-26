@@ -55,7 +55,12 @@ Territory.prototype.removePlayer = function(id) {
   }
 }
 Territory.prototype.remTroops = function(id, num) {
-  if (this.troops[id] < num || !this.troops[id] ){
+
+  if (!this.troops[id]) {
+    this.troops[id] = 0;
+  }
+  
+  if (this.troops[id] < num ){
     return false;
   }
   this.troops[id] -= num;

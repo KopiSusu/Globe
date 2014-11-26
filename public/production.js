@@ -59644,7 +59644,6 @@ VFX.prototype.renderState = function(data) {
   }
 
   function activate(country) {
-    console.log('inside dom activate');
     $('div.activeCountry > .army').remove();
 
     var num = country.troops[_player.id] || 0;
@@ -59652,6 +59651,8 @@ VFX.prototype.renderState = function(data) {
     $('div.activeCountry').attr('country', country.name);
     $('div.activeCountry > .header').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
+
+    // TODO: dynamically add button with class 'deactivate'
 
 
     // update enemy troops in active country
@@ -59736,7 +59737,19 @@ $(function(){
 
           var from = $('div.activeCountry').attr('country');
           var to = $('div.targetCountry').attr('country');
-          Game.moveTroops(from, to, newNum);
+          var player = domhandler.player();
+          // send move to server
+          socket.emit('move', JSON.stringify({ player : player,
+                                                from : from,
+                                                to : to,
+                                                num : newNum }));
+
+          // updates local game
+          Game.moveTroops(from, to, newNum, player);
+
+          // updates standing armies for current player
+          domhandler.standingArmies(Game.armies(player));
+
       }
   });
 
@@ -59752,15 +59765,8 @@ $(function(){
   var _turnLength = 5;
   var _activeCountry = null;
   var _targetCountry = null;
-  var _player = null;
   var vfx = new VFX();
 
-  function player(player) {
-    if (name) {
-      _player = player;
-    }
-    return _player;
-  }
 
   function targetCountry(country) {
     if (country) {
@@ -59862,20 +59868,42 @@ $(function(){
   function moveTroops(from, to, num, plyr) {
 
     //vfx.moveUnits(from, to);
-    console.log('calling move troops');
-    var id = plyr.id || _player.id
+
+    var id = plyr.id;
+    if (!getTerritory(from).troops[id]) {
+      getTerritory(from).troops[id] = 0;
+    }
+
+    if ( !getTerritory(to).troops[id] ) {
+      getTerritory(to).troops[id] = 0;
+    }
+
+    if (getTerritory(from).troops[id] < num) {
+      return false;
+    }
+
+    else {
+      getTerritory(from).troops[id] -= num;
+      getTerritory(to).troops[id] += num;
+
+      if (getTerritory(from).troops[id] <= 0) {
+        delete getTerritory(from).troops[id]
+      }
+      if (getTerritory(to).troops[id] <= 0) {
+        delete getTerritory(from).troops[id]
+      }
+    }
+
   }
 
   return {
     territories : territories,
     armies : armies,
     handleClick : handleClick,
-    player : player
+    moveTroops : moveTroops
   };
 
-})();;$(document).ready(function(){
-
-  // starts the animation
+})();;  // starts the animation
   var vfx = new VFX();
   vfx.init();
   vfx.run();
@@ -59897,7 +59925,6 @@ $(function(){
 
     // set socket player
     socket.player = json.player;
-    Game.player(socket.player);
     domhandler.player(socket.player);
 
     console.log("joined the game with id " + socket.player.id);
@@ -59934,4 +59961,3 @@ $(function(){
   //   }
   // }
 
-});
