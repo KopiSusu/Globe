@@ -59379,7 +59379,7 @@ var Countries = (function(THREE) {
   for (var name in countriesData) {
       var countryData = countriesData[name];
       var gdp = countryData.data.gdp;
-      var geometry = new Map3DGeometry(countryData, 0.99);
+      var geometry = new Map3DGeometry(countryData, 0.8);
       var colour = 0x666666; 
       var material = new THREE.MeshPhongMaterial({ 
         // wireframe: true,
@@ -59391,9 +59391,9 @@ var Countries = (function(THREE) {
         opacity: 0.9
       });
       var mesh = new THREE.Mesh(geometry, material);
-      mesh.scale.x = 20;
-      mesh.scale.y = 20;
-      mesh.scale.z = 20; 
+      mesh.scale.x = 0.5;
+      mesh.scale.y = 0.5;
+      mesh.scale.z = 0.5; 
       mesh.name = name;
       mesh.gdp = gdp;
       mesh.receiveShadow = false;
@@ -59568,7 +59568,7 @@ $(document).ready(function(){
     })
 
     // $('standingArmies .army').on('click', function() {
-        
+
     // })
 })
 
@@ -59589,7 +59589,7 @@ VFX.prototype.init = function () {
     scene.data = this;
     scene.add( new THREE.HemisphereLight( 0xffffff, 0x555555, 0.9 ) );
 
-    var directionalLight = new THREE.DirectionalLight(0xfafafa,  0.3);
+    var directionalLight = new THREE.DirectionalLight(0xfafafa,  0.6);
     directionalLight.position.set(20, 20, 5).normalize();
 
     scene.fog = new THREE.Fog( 0x111111, 40, 2000 );
@@ -59602,8 +59602,9 @@ VFX.prototype.init = function () {
     scene.add(camera);
     
 
+
     // making cloud layer
-    var geometryCloud   = new THREE.SphereGeometry(210, 50, 50)
+    var geometryCloud   = new THREE.SphereGeometry(207, 50, 50)
     var materialCloud  = new THREE.MeshPhongMaterial({
         map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
@@ -59701,9 +59702,59 @@ VFX.prototype.init = function () {
         // showTroops.style.opacity = '0.8';
         about.style.opacity = '1';
         timer.style.opacity = '0.8';
-        top.style.left = '10px';
-        bottom.style.left = '10px';
+        top.style.opacity = '1';
+        bottom.style.opacity = '1';
     }
+
+
+    var geometry  = new THREE.SphereGeometry(7000, 50, 50);
+    // create the material, using a texture of starfield
+    var material  = new THREE.MeshBasicMaterial({
+        fog: false,
+        opacity: 0.5,
+         transparent : true,
+        depthWrite  : false,
+    });
+    material.map   = THREE.ImageUtils.loadTexture('images/starfield.png');
+    material.side  = THREE.BackSide;
+    material.wrapS = material.wrapT = THREE.RepeatWrapping;
+    // material.repeat.set( 2, 2 )
+    // create the mesh based on geometry and material
+    var mesh  = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+
+
+    // making inner sphere layer
+    var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
+    var materialInner  = new THREE.MeshBasicMaterial({
+        color: 0x00688B,
+        transparent: true,
+    })
+    var innerMesh = new THREE.Mesh(geometryInner, materialInner)
+    scene.add(innerMesh)
+
+    // here we are making the moon
+    // lets make the invisiable sphere first
+    var invisSphere = new THREE.Mesh(new THREE.SphereGeometry(300, 10, 10), new THREE.MeshBasicMaterial({
+        transparent: true,
+        color: 0x111111,
+        opacity: 0.1,
+        depthWrite  : false,
+    }));
+    var moonMaterial = new THREE.MeshPhongMaterial({
+        map: THREE.ImageUtils.loadTexture('images/moonmap4k.jpg'),
+        bumpMap: THREE.ImageUtils.loadTexture('images/moonbump4k.jpg'),
+        bumpScale: 0.05
+    });
+    var sphere = new THREE.Mesh(new THREE.SphereGeometry(30, 32, 32), moonMaterial);
+      sphere.overdraw = true;
+      sphere.position.x = -300;
+      invisSphere.add(sphere);
+      scene.add(invisSphere);
+
+
+      // debugger;
 
 } // end init
 
@@ -59713,10 +59764,10 @@ VFX.prototype.run = function() {
     this.renderer.render(this.scene, this.camera);
 
     var that = this;
+    this.scene.children[2].rotation.y += 0.0005; // cloud layer
+    this.scene.children[3].rotation.y += 0.0001; // star field
+    this.scene.children[6].rotation.y += 0.0005; // moon
 
-    this.scene.children[2].rotation.y += 0.0009; // cloud layer
-    this.scene.children[3].rotation.y += 0.0003; // star field
-    
 
     ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
     ////// kinda like a screen saver. 
@@ -59778,10 +59829,9 @@ VFX.prototype.onDocumentMouseDown = function(e) {
     // this is for the animation, not sure if we are going to use it
     if (intersects[ 0 ]) {
         var country = intersects[0].object;
-        console.log('handling click');
+        console.log('got click from vfx! handling click');
         Game.handleClick(country.name);
     }
-
 } 
 
 VFX.prototype.activate = function(name) {
