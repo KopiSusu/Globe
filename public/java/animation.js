@@ -163,7 +163,7 @@ VFX.prototype.run = function() {
 
     var that = this;
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
-    this.scene.children[3].rotation.y += 0.0004; // star field
+    this.scene.children[3].rotation.y += 0.0002; // star field
     this.scene.children[5].rotation.y += 0.0003; // moon
     // debugger
 

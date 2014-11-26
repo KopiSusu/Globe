@@ -59468,7 +59468,7 @@ VFX.prototype.run = function() {
 
     var that = this;
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
-    this.scene.children[3].rotation.y += 0.0004; // star field
+    this.scene.children[3].rotation.y += 0.0002; // star field
     this.scene.children[5].rotation.y += 0.0003; // moon
     // debugger
 
@@ -59624,17 +59624,25 @@ VFX.prototype.renderState = function(data) {
 
   function standingArmies(armies) {
     // remove existing standing armies
+
     $('div.standingArmies > .army').remove();
 
     var i = armies.length;
     while (i--) {
       army = armies[i]
-      $('<div>').text(army.name + ' (' + army.num + ')')
+      $('<div>').fadeOut(1000, function() {
+          $(this).text(army.name + ' (' + army.num + ')')
                 .addClass('army')
                 .attr('country', army.name)
-                .appendTo('div.standingArmies');
-    }
+                .appendTo('div.standingArmies')
+                .fadeIn(1000);
+              });
+    } 
   }
+
+  $('#test').fadeOut(500, function() {
+        $(this).text('Some other text!').fadeIn(500);
+    });
 
   function activate(country) {
     $('div.activeCountry > .army').remove();

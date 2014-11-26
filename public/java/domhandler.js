@@ -32,17 +32,25 @@ var domhandler = (function() {
 
   function standingArmies(armies) {
     // remove existing standing armies
+
     $('div.standingArmies > .army').remove();
 
     var i = armies.length;
     while (i--) {
       army = armies[i]
-      $('<div>').text(army.name + ' (' + army.num + ')')
+      $('<div>').fadeOut(1000, function() {
+          $(this).text(army.name + ' (' + army.num + ')')
                 .addClass('army')
                 .attr('country', army.name)
-                .appendTo('div.standingArmies');
-    }
+                .appendTo('div.standingArmies')
+                .fadeIn(1000);
+              });
+    } 
   }
+
+  $('#test').fadeOut(500, function() {
+        $(this).text('Some other text!').fadeIn(500);
+    });
 
   function activate(country) {
     $('div.activeCountry > .army').remove();
