@@ -58,5 +58,6 @@ $(document).ready(function(){
   //     Game.moveTroops(socket.player, move2, 'Greenland', 12);
   //   }
   // }
-
+  // vfx.moveUnits('Canada', 'Russia')
 });
+

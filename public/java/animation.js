@@ -26,10 +26,6 @@ $(document).ready(function(){
             Game.moveTroops(io.socket.playerid, from, to, newNum)
         }
     })
-
-    // $('standingArmies .army').on('click', function() {
-
-    // })
 })
 
 VFX.prototype.init = function () {
@@ -207,7 +203,8 @@ VFX.prototype.run = function() {
     var that = this;
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
     this.scene.children[3].rotation.y += 0.0001; // star field
-    this.scene.children[6].rotation.y += 0.0005; // moon
+    this.scene.children[7].rotation.y += 0.0003; // moon
+    // debugger
 
 
     ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
@@ -298,12 +295,13 @@ VFX.prototype.moveUnits = function(previousCountry, newCountry) {
     var geometry = new THREE.Geometry();
 
     // note! line is drawn between each consecutive pair of verticies
-    geometry.vertices.push(previousCountry);
-    geometry.vertices.push(newCountry);
+    geometry.vertices.push(Countries[previousCountry].geometry.centroid);
+    geometry.vertices.push(Countries[newCountry].geometry.centroid);
 
     // now we draw the line
     var line = new THREE.Line(geometry, material);
-    scene.add(line);
+    console.log(line);
+    this.scene.add(line);
 }
 
 
