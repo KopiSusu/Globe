@@ -3,6 +3,7 @@ var domhandler = (function() {
  var _timer = '';
  var _player = '';
 
+  // set or read current player
   function player(player) {
     if (player) {
       _player = player;
@@ -12,12 +13,10 @@ var domhandler = (function() {
   }
 
   function timer(n) {
-    if (n) {
-      var _turnLength = n;
-    }
+    var turnLength = n || 0;
 
     clearInterval(_timer);
-    $('#timer').text(_turnLength);
+    $('#timer').text(turnLength);
     _timer = setInterval(triggerCountDown, 1000);
 
   }
@@ -30,8 +29,8 @@ var domhandler = (function() {
     }
   }
 
+  // populate armies belonging to current player
   function standingArmies(armies) {
-    // remove existing standing armies
 
     $('div.standingArmies > .army').remove();
 
@@ -126,6 +125,7 @@ var domhandler = (function() {
     });
   }
 
+  // public: handle game updates
   function update(data) {
     // TODO: implement infinite scroll in #systemBottom > .messages
     $('#systemBottom > .messages').empty();
