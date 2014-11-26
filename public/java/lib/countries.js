@@ -89,7 +89,6 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
                                             Math.pow(geometry.centroid.y, 2) +
                                             Math.pow(geometry.centroid.z, 2)));
   var position = geometry.centroid;
-  debugger
   console.log('inside troops')
   console.log(position)
   position.applyMatrix4( this.matrixWorld );
