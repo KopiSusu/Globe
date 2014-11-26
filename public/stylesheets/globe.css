@@ -37,8 +37,6 @@ h2 {
     transition: all 0.5s ease;
 }
 
-
-
 #title{
   position: absolute;
   color: #F3F2F2;
@@ -51,10 +49,10 @@ h2 {
 
 #coffee{
   position: absolute;
-  width: 35%;
+  width: 31%;
   height: 100%;
-  bottom: 13.7%;
-  left: 50%;
+  bottom: 15.7%;
+  left: 40%;
 }
 
 #timer {
@@ -89,15 +87,11 @@ h2 {
   right: -100%;
   border-right: none; 
   height: 600px;
-  width: 250px;
-  top: 50px;
+  width: 200px;
+  top: 90px;
   opacity: 0.8;
-
   transition: all 2s linear;
   transition-delay: 2.5s;
-
-  /*-webkit-transition: all 2s linear;*/
-  /*-webkit-transform:rotate(180deg);*/
 }
 
 #infoBox {
@@ -227,6 +221,14 @@ h2 {
 }
 
 #title {
+  position: relative;
+  left: 0px;
+  color: #2194CE;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+#titleLogo {
   position: relative;
   left: 0px;
   color: #2194CE;

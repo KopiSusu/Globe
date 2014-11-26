@@ -59147,12 +59147,22 @@ function toArray(list, index) {
     }
     
     //this.computeFaceNormals();
-    
     this.boundingSphere = new THREE.Sphere (new THREE.Vector3 (), 1);
   }
 
+
   Map3DGeometry.prototype = Object.create (THREE.Geometry.prototype);
-;// returns an object {'Canada' : THREE.Mesh(), 'Afghanistan' : THREE.Mesh()}
+  Map3DGeometry.prototype.getCentroid = function getCentroid(mesh, refresh)
+  {
+    if(this.__centroid && !refresh) { return this.__centroid; }
+    var centroid = new THREE.Vector3();
+
+    this.computeBoundingBox();
+    centroid.addVectors(this.boundingBox.min, this.boundingBox.max);
+    centroid.multiplyScalar(.5);
+    this.__centroid = mesh.localToWorld(centroid);
+    return this.__centroid;
+  };// returns an object {'Canada' : THREE.Mesh(), 'Afghanistan' : THREE.Mesh()}
 var Countries = (function(THREE) {
 
   var results = {};
@@ -59161,20 +59171,26 @@ var Countries = (function(THREE) {
       var countryData = countriesData[name];
       var gdp = countryData.data.gdp;
       var geometry = new Map3DGeometry(countryData, 0.8);
-      geometry.centroid = new THREE.Vector3();
-      for ( var i = 0, 
-            l = geometry.vertices.length,
-            centroid = geometry.centroid,
-            vertices = geometry.vertices; 
-        i < l; i++) {
-        centroid.add(vertices[i]);
-      }
+          geometry.verticesNeedUpdate = true;
+      // geometry.centroid = new THREE.Vector3();
+      // for ( var i = 0, 
+      //       l = geometry.vertices.length,
+      //       centroid = geometry.centroid,
+      //       vertices = geometry.vertices; 
+      //   i < l; i++) {
+      //   centroid.add(vertices[i]);
+      // }
 
-      // convert centroid
-      geometry.centroid.divideScalar(geometry.vertices.length);
-      geometry.centroid.divideScalar(Math.sqrt(Math.pow(geometry.centroid.x, 2) +
-                                                Math.pow(geometry.centroid.y, 2) +
-                                                Math.pow(geometry.centroid.z, 2)));
+      // // convert centroid
+      // geometry.centroid.divideScalar(geometry.vertices.length);
+      // geometry.centroid.divideScalar(Math.sqrt(Math.pow(geometry.centroid.x, 2) +
+      //                                           Math.pow(geometry.centroid.y, 2) +
+      //                                           Math.pow(geometry.centroid.z, 2)));
+      // geometry.computeBoundingBox();
+
+      // var centroid = new THREE.Vector3();
+      // centroid.addVectors( geometry.boundingBox.min, geometry.boundingBox.max);
+      // centroid.multiplyScalar(-0.5);
 
       var colour = 0x666666; 
       var material = new THREE.MeshPhongMaterial({ 
@@ -59187,29 +59203,34 @@ var Countries = (function(THREE) {
         opacity: 0.9
       });
       var mesh = new THREE.Mesh(geometry, material);
-      geometry.centroid.applyMatrix4( mesh.matrixWorld );
-      mesh.geometry.centroid.normalize();
-      mesh.scale.x = 0.5;
-      mesh.scale.y = 0.5;
-      mesh.scale.z = 0.5; 
+      // geometry.centroid.applyMatrix4( mesh.matrixWorld );
+      // mesh.geometry.centroid.normalize();
+      mesh.scale.x = 1;
+      mesh.scale.y = 1;
+      mesh.scale.z = 1; 
       mesh.name = name;
       mesh.gdp = gdp;
       mesh.receiveShadow = false;
       mesh.castShadow = true;
       results[name] = mesh;
+      // mesh.centroid = centroid;
+      // var worldCentroid = mesh.localToWorld( centroid );
+
+      // //centroid.applyMatrix4(mesh.matrixWorld)
+      // console.log("Centroid: ", centroid, worldCentroid)
   };
 
   return results;
 
 })(THREE);
 
-Countries.clearTroops = function() {
-  for (var name in Countries) {
-    if (Countries[name].clear) {
-      Countries[name].clear();
-    }
-  }
-}
+// Countries.clearTroops = function() {
+//   for (var name in Countries) {
+//     if (Countries[name].clear) {
+//       Countries[name].clear();
+//     }
+//   }
+// }
 
 
 // each individual country Mesh object can addTroops to itself
@@ -59274,14 +59295,14 @@ THREE.Mesh.prototype.addTroops = function(playerid, num) {
   
 }
 
-Countries.arr = (function() {
-  var result = [];
-  for (var name in Countries) {
-    if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
-      result.push(Countries[name]);
-  }
-  return result;
-})();
+// Countries.arr = (function() {
+//   var result = [];
+//   for (var name in Countries) {
+//     if ( Countries[name].addTroops ) // dirty check if Countries[name] is a Mesh obj
+//       result.push(Countries[name]);
+//   }
+//   return result;
+// })();
 
 // this is used to determine which countries are clickable
 Countries.inPlay = function() {
@@ -59352,8 +59373,6 @@ VFX.prototype.init = function () {
     camera.add(directionalLight);
     scene.add(camera);
     
-
-
     // making cloud layer
     var geometryCloud   = new THREE.SphereGeometry(207, 50, 50)
     var materialCloud  = new THREE.MeshPhongMaterial({
@@ -59387,18 +59406,6 @@ VFX.prototype.init = function () {
     mesh.rotation.y += 1;
     scene.add(mesh);
 
-    // making inner sphere layer
-    var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
-    var materialInner  = new THREE.MeshBasicMaterial({
-        // map     : THREE.ImageUtils.loadTexture('images/fairInners.jpg'),
-        // wireframe: true,
-        color: 0x00688B,
-        transparent: true,
-        // depthWrite: false,
-    })
-    var innerMesh = new THREE.Mesh(geometryInner, materialInner)
-    scene.add(innerMesh)
-
     // Create a root object to contain all other scene objects
     var root = new THREE.Object3D();
     root.scale.set(205,205,205);
@@ -59406,13 +59413,14 @@ VFX.prototype.init = function () {
     // adding countries
     // countries is a collection {name: Mesh object}
     for (var name in Countries) {
-        root.add(Countries[name]);
+        if(Countries.hasOwnProperty(name) && Countries[name].geometry)
+        {
+            root.add(Countries[name]);
+        }
     }
-
 
     scene.add(root);
 
-    
     // Create a projector to handle picking
     var projector = new THREE.Projector();
 
@@ -59439,23 +59447,37 @@ VFX.prototype.init = function () {
 
     //starting animation when page is first loaded
     this.renderer.render(this.scene, this.camera);
-    for (var i = 0; i < Countries.arr.length; i++) {
-        var time = Math.random()+1+Math.random()+1;
-        TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
-        TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
-        var rightBar = document.getElementById("rside");
-        // var showTroops = document.getElementById("showTroops");
-        var about = document.getElementById("about");
-        var timer = document.getElementById("timer");
-        var top = document.getElementById("systemTop");
-        var bottom = document.getElementById("systemBottom");
-        rightBar.style.right = '0%';
-        // showTroops.style.opacity = '0.8';
-        about.style.opacity = '1';
-        timer.style.opacity = '0.8';
-        top.style.opacity = '1';
-        bottom.style.opacity = '1';
+    // for (var i = 0; i < Countries.arr.length; i++) {
+    //     var time = Math.random()+1+Math.random()+1;
+    //     TweenMax.to(Countries.arr[i].scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+    //     TweenMax.to(Countries.arr[i].material, time, { opacity: 1 });
+    // }
+
+    for(var country in Countries)
+    {
+        if(Countries.hasOwnProperty(country))
+        {
+            if(country.scale && country.material)
+            {
+                var time = Math.random()+1+Math.random()+1;
+                TweenMax.to(country.scale, time, { x : 1.0, y : 1.0, z : 1.0 });
+                TweenMax.to(country.material, time, { opacity: 1 });    
+            }
+        }
     }
+
+    var rightBar = document.getElementById("rside");
+    // var showTroops = document.getElementById("showTroops");
+    var about = document.getElementById("about");
+    var timer = document.getElementById("timer");
+    var top = document.getElementById("systemTop");
+    var bottom = document.getElementById("systemBottom");
+    rightBar.style.right = '50px';
+    // showTroops.style.opacity = '0.8';
+    about.style.opacity = '1';
+    timer.style.opacity = '0.8';
+    top.style.opacity = '1';
+    bottom.style.opacity = '1';
 
     // making inner sphere layer
     var geometryInner   = new THREE.SphereGeometry(202, 32, 32)
@@ -59464,6 +59486,8 @@ VFX.prototype.init = function () {
         transparent: true,
     })
     var innerMesh = new THREE.Mesh(geometryInner, materialInner)
+    innerMesh.receiveShadow = false;
+    innerMesh.castShadow = true;
     scene.add(innerMesh)
 
     // here we are making the moon
@@ -59498,7 +59522,7 @@ VFX.prototype.run = function() {
     var that = this;
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
     this.scene.children[3].rotation.y += 0.0001; // star field
-    this.scene.children[7].rotation.y += 0.0003; // moon
+    this.scene.children[6].rotation.y += 0.0003; // moon
     // debugger
 
 
@@ -59555,7 +59579,6 @@ VFX.prototype.getIntersects = function(e, objs) {
 
 
 VFX.prototype.onDocumentMouseDown = function(e) {
-    e.preventDefault();
 
     var intersects = this.getIntersects(e, Countries.inPlay);
 
@@ -59584,19 +59607,21 @@ VFX.prototype.activate = function(name) {
 
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
+
     var material = new THREE.LineBasicMaterial({
         color: 0xfafafa
     });
     var geometry = new THREE.Geometry();
 
     // note! line is drawn between each consecutive pair of verticies
-    geometry.vertices.push(Countries[previousCountry].geometry.centroid);
-    geometry.vertices.push(Countries[newCountry].geometry.centroid);
+    geometry.vertices.push(Countries[previousCountry].geometry.getCentroid(Countries[previousCountry]));
+    geometry.vertices.push(Countries[newCountry].geometry.getCentroid(Countries[newCountry]));
+    geometry.verticesNeedUpdate = true;
 
     // now we draw the line
     var line = new THREE.Line(geometry, material);
-    console.log(line);
     this.scene.add(line);
+    console.log("Line: ", line);
 }
 
 
@@ -59607,7 +59632,7 @@ VFX.prototype.addObj = function(obj3d) {
 
 // NEEDS WORK. still using old state.
 VFX.prototype.renderState = function(data) {
-    Countries.clearTroops();
+//    Countries.clearTroops();
     var i = data.length;
     while (i--) {
         var player = data[i];
@@ -59669,14 +59694,15 @@ VFX.prototype.renderState = function(data) {
   }
 
   function activate(country) {
-    console.log('inside dom activate');
     $('div.activeCountry > .army').remove();
 
     var num = country.troops[_player.id] || 0;
 
-    $('div.activeCountry').attr('data-name', country.name);
+    $('div.activeCountry').attr('country', country.name);
     $('div.activeCountry > .header').text(country.name);
     $('div.activeCountry > .myArmy').text(num);
+
+    // TODO: dynamically add button with class 'deactivate'
 
 
     // update enemy troops in active country
@@ -59696,12 +59722,12 @@ VFX.prototype.renderState = function(data) {
     $('div.activeCountry > .army').remove();
     $('div.activeCountry > .header').empty();
     $('div.activeCountry > .myArmy').text('');
-    $('div.activeCountry').attr('data-name', '');
+    $('div.activeCountry').attr('country', '');
 
     $('div.targetCountry > .army').remove();
     $('div.targetCountry > .header').empty();
     $('div.targetCountry > .myArmy').text('');
-    $('div.targetCountry').attr('data-name', '');
+    $('div.targetCountry').attr('country', '');
   }
 
   function target(country) {
@@ -59710,7 +59736,7 @@ VFX.prototype.renderState = function(data) {
     $('div.targetCountry > .army').remove();
     var num = country.troops[_player.id] || 0;
 
-    $('div.targetCountry').attr('data-name', country.name);
+    $('div.targetCountry').attr('country', country.name);
     $('div.targetCountry > .header').text(country.name);
     $('div.targetCountry > .myArmy').attr('data-orig-value', num).text(num);
 
@@ -59739,31 +59765,37 @@ VFX.prototype.renderState = function(data) {
 
 })();
 
-$(document).ready(function(){
+$(function(){
 
-  $('.deactivate').on('click', function() {
+  // button to deactivate active army
+  $('.activeCountry').on('click', '.deactivate', function() {
     Game.handleClick();
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
       var oldVal = parseInt($(this).attr('data-orig-value'));
       var val = parseInt($(this).html());
-      var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
+      var changeNumber = parseInt($('div.activeCountry > .myArmy').text());
       var newNum = val - oldVal;
           changeNumber -= newNum;
       if (changeNumber < 0) {
-          console.log('You have run out of troops')
           $('div.targetCountry > .myArmy').html(oldVal);
       }
-      if (changeNumber > 0 ) {
+      if (changeNumber >= 0 ) {
           $('div.activeCountry > .myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
-          var from = $('div.activeCountry').attr('data-name');
-          var to = $('div.activeCountry').attr('data-name');
-          Game.moveTroops(from, to, newNum)
+          var from = $('div.activeCountry').attr('country');
+          var to = $('div.targetCountry').attr('country');
+          Game.moveTroops(from, to, newNum);
       }
   });
+
+  // makes army divs click-able
+  $('.standingArmies').on('click', '.army', function(e) {
+    var name = $(e.target).attr('country');
+    Game.handleClick(name);
+  })
 
 });;var Game = (function() {
 
@@ -59880,7 +59912,8 @@ $(document).ready(function(){
 
   function moveTroops(from, to, num, plyr) {
 
-    vfx.moveUnits(from, to);
+    //vfx.moveUnits(from, to);
+    console.log('calling move troops');
     var id = plyr.id || _player.id
   }
 
@@ -59951,6 +59984,7 @@ $(document).ready(function(){
   //     Game.moveTroops(socket.player, move2, 'Greenland', 12);
   //   }
   // }
+  setInterval(vfx.moveUnits('Canada', 'Russia'), 1100)
   // vfx.moveUnits('Canada', 'Russia')
 });
 

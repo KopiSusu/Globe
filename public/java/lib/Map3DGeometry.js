@@ -108,8 +108,19 @@
     }
     
     //this.computeFaceNormals();
-    
     this.boundingSphere = new THREE.Sphere (new THREE.Vector3 (), 1);
   }
 
+
   Map3DGeometry.prototype = Object.create (THREE.Geometry.prototype);
+  Map3DGeometry.prototype.getCentroid = function getCentroid(mesh, refresh)
+  {
+    if(this.__centroid && !refresh) { return this.__centroid; }
+    var centroid = new THREE.Vector3();
+
+    this.computeBoundingBox();
+    centroid.addVectors(this.boundingBox.min, this.boundingBox.max);
+    centroid.multiplyScalar(.5);
+    this.__centroid = mesh.localToWorld(centroid);
+    return this.__centroid;
+  }

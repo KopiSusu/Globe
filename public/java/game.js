@@ -113,7 +113,8 @@ var Game = (function() {
 
   function moveTroops(from, to, num, plyr) {
 
-    vfx.moveUnits(from, to);
+    //vfx.moveUnits(from, to);
+    console.log('calling move troops');
     var id = plyr.id || _player.id
   }
 
