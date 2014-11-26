@@ -111,11 +111,15 @@ var Game = (function() {
     domhandler.target(t);
   }
 
+  function moveTroops(from, to, num, plyr) {
+    var id = plyr.id || _player.id
+  }
 
   return {
     territories : territories,
     armies : armies,
-    handleClick : handleClick
+    handleClick : handleClick,
+    player : player
   };
 
 })();

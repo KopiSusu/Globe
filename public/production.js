@@ -59610,10 +59610,10 @@ VFX.prototype.renderState = function(data) {
  var _player = '';
 
   function player(player) {
-    console.log('inside domhandler player');
     if (player) {
       _player = player;
     }
+    $('div#title').text('Player ' + _player.id);
     return _player;
   }
 
@@ -59720,6 +59720,26 @@ $(document).ready(function(){
 
   $('.deactivate').on('click', function() {
     Game.handleClick();
+  });
+
+  $('div.targetCountry > .myArmy').blur(function(){
+      var oldVal = parseInt($(this).attr('data-orig-value'));
+      var val = parseInt($(this).html());
+      var changeNumber = parseInt($('div.activeCountry > .myArmy').html());
+      var newNum = val - oldVal;
+          changeNumber -= newNum;
+      if (changeNumber < 0) {
+          console.log('You have run out of troops')
+          $('div.targetCountry > .myArmy').html(oldVal);
+      }
+      if (changeNumber > 0 ) {
+          $('div.activeCountry > .myArmy').text(changeNumber);
+          var oldVal = $(this).attr('data-orig-value', val);
+
+          var from = $('div.activeCountry').attr('data-name');
+          var to = $('div.activeCountry').attr('data-name');
+          Game.moveTroops(from, to, newNum)
+      }
   });
 
 });;var Game = (function() {
@@ -59835,11 +59855,15 @@ $(document).ready(function(){
     domhandler.target(t);
   }
 
+  function moveTroops(from, to, num, plyr) {
+    var id = plyr.id || _player.id
+  }
 
   return {
     territories : territories,
     armies : armies,
-    handleClick : handleClick
+    handleClick : handleClick,
+    player : player
   };
 
 })();;$(document).ready(function(){
@@ -59887,7 +59911,7 @@ $(document).ready(function(){
   // // receive other players' moves from server
   // socket.on('move', function(data) {
   //   var json = JSON.parse(data);
-  //   Game.moveTroops(json.player, json.num, json.from, json.to);
+  //   Game.moveTroops(json.from, json.to, json.num, json.player);
   // });
 
   // // test code
