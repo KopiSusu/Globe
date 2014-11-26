@@ -80,12 +80,12 @@ var domhandler = (function() {
         $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
 
     // $('div.activeCountry > h1').text('Active').toggleClass('deactivate');
-        $('div.activeCountry > .army').remove();
+        $('div.activeCountry > .army-enemy').remove();
         $('div.activeCountry > .clickedCountry').empty();
         $('div.activeCountry > .myArmy').text('');
         $('div.activeCountry').attr('country', '');
 
-        $('div.targetCountry > .army').remove();
+        $('div.targetCountry > .army-enemy').remove();
         $('div.targetCountry > .clickedCountry').empty();
         $('div.targetCountry > .myArmy').text('');
         $('div.targetCountry').attr('country', '');
