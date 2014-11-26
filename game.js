@@ -1,15 +1,16 @@
 var STARTING_TROOPS = 50;
 var STARTING_TERRITORIES = 4;
+var TURN_LENGTH = 5;
 var Territory = require('./territory');
 var Player = require('./player');
 
 var territoriesInPlay = require('./public/java/lib/0_countriesdata');
 
-var state = [];
+var territories = [];
 for (var i in territoriesInPlay) {
   var name = territoriesInPlay[i]
   var t = new Territory(name);
-  state.push(t);
+  territories.push(t);
 }
 
 function addNewPlayer() {
@@ -27,12 +28,12 @@ function initTroops(player) {
 
 // if x is undefined, returns all empty territories
 function emptyTerritories(x) {
-  x = x || state.length;
+  x = x || territories.length;
   var terrs = [];
   var i = 0;
-  while ( i < state.length && x > 0) {
-    if ( state[i].isEmpty() ) {
-      terrs.push(state[i]);
+  while ( i < territories.length && x > 0) {
+    if ( territories[i].isEmpty() ) {
+      terrs.push(territories[i]);
       x--;
     }
     i++;
@@ -41,15 +42,15 @@ function emptyTerritories(x) {
 }
 
 function moveTroops(player, from, to, num) {
-    var i = state.length;
+    var i = territories.length;
 
     // grabbing territory objects from names
     while (i--) {
-        if (state[i].name == from) {
-          from = state[i];
+        if (territories[i].name == from) {
+          from = territories[i];
         };
-        if (state[i].name == to) {
-          to = state[i];
+        if (territories[i].name == to) {
+          to = territories[i];
         };
     }
     // moving the troops
@@ -59,20 +60,28 @@ function moveTroops(player, from, to, num) {
 };
 
 function evaluateState() {
-  var i = state.length;
+  var i = territories.length;
   while (i--) {
-    var terr = state[i];
+    var terr = territories[i];
     terr.lastOneStanding(terr.troops);
   }
 }
 
 function removePlayer(id) {
-  var i = state.length;
+  var i = territories.length;
   while (i--) {
-    state[i].removePlayer(id);
+    territories[i].removePlayer(id);
   }
 }
 
+
+// summarises all game info
+function state() {
+  var _state = {};
+  _state.territories = territories;
+  _state.turnLength = TURN_LENGTH;
+  return _state;
+}
 
 module.exports = {
   removePlayer : removePlayer,

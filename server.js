@@ -70,7 +70,7 @@ function start() {
 function startTurn() {
 
   // this emits the game state to every connected socket
-  io.emit('game state', JSON.stringify(game.state));
+  io.emit('game state', JSON.stringify(game.state()));
 
   // start accepting moves
   PAUSE = false;

@@ -38,7 +38,6 @@ Countries.clearTroops = function() {
       Countries[name].clear();
     }
   }
-  $("#playerTroops").html('');
 }
 
 
