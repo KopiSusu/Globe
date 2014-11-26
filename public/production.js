@@ -59679,6 +59679,11 @@ VFX.prototype.renderState = function(data) {
     $('div.activeCountry > .header').empty();
     $('div.activeCountry > .myArmy').text('');
     $('div.activeCountry').attr('data-name', '');
+
+    $('div.targetCountry > .army').remove();
+    $('div.targetCountry > .header').empty();
+    $('div.targetCountry > .myArmy').text('');
+    $('div.targetCountry').attr('data-name', '');
   }
 
   function target(country) {
@@ -59856,6 +59861,8 @@ $(document).ready(function(){
   }
 
   function moveTroops(from, to, num, plyr) {
+
+    vfx.moveUnits(from, to);
     var id = plyr.id || _player.id
   }
 

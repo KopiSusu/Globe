@@ -112,6 +112,8 @@ var Game = (function() {
   }
 
   function moveTroops(from, to, num, plyr) {
+
+    vfx.moveUnits(from, to);
     var id = plyr.id || _player.id
   }
 
