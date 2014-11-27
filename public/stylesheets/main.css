@@ -17,11 +17,11 @@ body {
 #timer {
   height: 6%;
   width: 52%;
-  margin-left: 50px;
-  margin-top: 10px;
+  margin-left: 40px;
+  margin-top: 13px;
   background: linear-gradient(to left, rgba(245,245,245, 0.2), rgba(0,0,0,0), rgba(245,245,245, 0.2));
   color: #F3F2F2;
-  border: 1px solid;
+  border: 10px solid;
   border-bottom: none;
   border-top: none;
   font-size: 28px;
@@ -55,9 +55,9 @@ body {
   padding-left: 3px;
   font-family: 'Inconsolata';
   overflow: auto;
+  border-bottom: 1px solid;
+  position: absolute;
 }
-
-
 
 .section > h1 {
   color: #E57C09;

@@ -278,6 +278,11 @@ $(function(){
     }
   } );
 
+  // what the fuck, where di dthis code go
+  $('.section > h1.deactivate').on('click', function() {
+    
+  })
+
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
     var name = $(e.target).attr('country');
