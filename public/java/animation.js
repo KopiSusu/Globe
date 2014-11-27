@@ -233,6 +233,11 @@ VFX.prototype.deactivate = function(name) {
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 1 });
     TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+
+    // if (this.targetCountry) {
+    //     this.deactivate(this.targetCountry);
+    //     this.targetCountry = null;
+    // }
 }
 
 VFX.prototype.activate = function(name) {

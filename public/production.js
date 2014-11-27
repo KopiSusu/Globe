@@ -59998,6 +59998,11 @@ VFX.prototype.deactivate = function(name) {
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 1 });
     TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+
+    // if (this.targetCountry) {
+    //     this.deactivate(this.targetCountry);
+    //     this.targetCountry = null;
+    // }
 }
 
 VFX.prototype.activate = function(name) {
@@ -60105,7 +60110,7 @@ VFX.prototype.renderState = function(data) {
     $('div.activeCountry > .army').remove();
 
     $('.army').removeClass('active');
-    console.log("activate", $('.army[country="'+country.name+'"]').addClass('active'));
+    $('.army[country="'+country.name+'"]').addClass('active');
 
     $('div.activeCountry').animate({height: '0%'}, function() {
         var num = country.troops[_player.id] || 0;
@@ -60175,7 +60180,7 @@ VFX.prototype.renderState = function(data) {
     $('#arrow-right').animate({opacity: '0'});
 
     $('.army').removeClass('target');
-    console.log("target", $('.army[country="'+country.name+'"]').addClass('target'));
+    $('.army[country="'+country.name+'"]').addClass('target');
 
     $('div.targetCountry').animate({ height: '0%'}, function() {
         $(this).animate({height: '30%'});
@@ -60278,19 +60283,10 @@ VFX.prototype.renderState = function(data) {
     else if (!num) {
       result = $('<div>').text(name);
     }
-<<<<<<< HEAD
-    $('<div id="armyButton">').appendTo(result);
-    $('<div>').addClass('insideButton neutralButton').appendTo(result);
-    result.addClass('army').data('country', name).appendTo(selector).fadeIn(1000);
-||||||| merged common ancestors
-    $('<div id="armyButton">').appendTo(result);
-    $('<div id="insideButton">').appendTo(result);
-    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
-=======
+
     $('<div class="armyButton">').appendTo(result);
     $('<div class="insideButton">').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
->>>>>>> b14674d64df2e66e625e4b9fe912e5296f6ac631
   }
 
   return {
