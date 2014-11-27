@@ -233,6 +233,15 @@ $(function(){
         activeNumber += 1;
     $('div.targetCountry > .myArmy').text(targetNumber);
     $('div.activeCountry > .myArmy').text(activeNumber);
+
+    // send move to server
+    var from = $('div.activeCountry').attr('country');
+    var to = $('div.targetCountry').attr('country');
+    var player = domhandler.player();
+    socket.emit('move', JSON.stringify({ player : player,
+                                          from : from,
+                                          to : to,
+                                          num : -1 }));
   });
 
   $('#arrow-right').on('click', function(){
@@ -243,6 +252,15 @@ $(function(){
         activeNumber -= 1;
     $('div.targetCountry > .myArmy').text(targetNumber);
     $('div.activeCountry > .myArmy').text(activeNumber);
+    
+    // send move to server
+    var from = $('div.activeCountry').attr('country');
+    var to = $('div.targetCountry').attr('country');
+    var player = domhandler.player();
+    socket.emit('move', JSON.stringify({ player : player,
+                                          from : from,
+                                          to : to,
+                                          num : 1 }));
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
@@ -258,10 +276,10 @@ $(function(){
           $('div.activeCountry > .myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
+          // send move to server
           var from = $('div.activeCountry').attr('country');
           var to = $('div.targetCountry').attr('country');
           var player = domhandler.player();
-          // send move to server
           socket.emit('move', JSON.stringify({ player : player,
                                                 from : from,
                                                 to : to,
