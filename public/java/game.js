@@ -31,6 +31,8 @@ var Game = (function() {
   function territories(data) {
     if (data) {
       _territories = data;
+      activate();
+      target();
     }
     return _territories;
   }
@@ -81,12 +83,17 @@ var Game = (function() {
   }
 
   function activate(name) {
-    _activeCountry = name;
+    if (name) {
+      _activeCountry = name;
+    }
 
-    var t = getTerritory(name);
-    domhandler.activate(t);
+    if (_activeCountry) {
 
-    vfx.activate(String(name));
+      var t = getTerritory(_activeCountry);
+      domhandler.activate(t);
+
+      vfx.activate(_activeCountry);
+    }
   }
 
   function deactivate() {
@@ -96,11 +103,15 @@ var Game = (function() {
   }
 
   function target(name) {
-    _targetCountry = name;
 
-    var t = getTerritory(name);
-    domhandler.target(t);
-    vfx.target(String(name));
+    if (name) {
+      _targetCountry = name;
+    }
+    if (_targetCountry) {
+      var t = getTerritory(_targetCountry);
+      domhandler.target(t);
+      vfx.target(_targetCountry);
+    }
   }
 
   function moveTroops(from, to, num, plyr) {

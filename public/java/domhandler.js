@@ -44,7 +44,7 @@ var domhandler = (function() {
 
 
   function activate(country) {
-    $('div.activeCountry > .army').remove();
+    $('div.activeCountry > .army-enemy').remove();
 
     $('.army').removeClass('active');
     $('.army[country="'+country.name+'"]').addClass('active');
@@ -105,7 +105,7 @@ var domhandler = (function() {
   }
 
   function target(country) {
-    $('div.targetCountry > .army').remove();
+    $('div.targetCountry > .army-enemy').remove();
     $('#arrow-left').animate({opacity: '0'});
     $('#arrow-right').animate({opacity: '0'});
 
@@ -233,6 +233,15 @@ $(function(){
         activeNumber += 1;
     $('div.targetCountry > .myArmy').text(targetNumber);
     $('div.activeCountry > .myArmy').text(activeNumber);
+
+    // send move to server
+    var from = $('div.activeCountry').attr('country');
+    var to = $('div.targetCountry').attr('country');
+    var player = domhandler.player();
+    socket.emit('move', JSON.stringify({ player : player,
+                                          from : from,
+                                          to : to,
+                                          num : -1 }));
   });
 
   $('#arrow-right').on('click', function(){
@@ -243,6 +252,15 @@ $(function(){
         activeNumber -= 1;
     $('div.targetCountry > .myArmy').text(targetNumber);
     $('div.activeCountry > .myArmy').text(activeNumber);
+    
+    // send move to server
+    var from = $('div.activeCountry').attr('country');
+    var to = $('div.targetCountry').attr('country');
+    var player = domhandler.player();
+    socket.emit('move', JSON.stringify({ player : player,
+                                          from : from,
+                                          to : to,
+                                          num : 1 }));
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
@@ -258,10 +276,10 @@ $(function(){
           $('div.activeCountry > .myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
+          // send move to server
           var from = $('div.activeCountry').attr('country');
           var to = $('div.targetCountry').attr('country');
           var player = domhandler.player();
-          // send move to server
           socket.emit('move', JSON.stringify({ player : player,
                                                 from : from,
                                                 to : to,

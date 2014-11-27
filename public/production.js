@@ -60300,6 +60300,15 @@ $(function(){
         activeNumber += 1;
     $('div.targetCountry > .myArmy').text(targetNumber);
     $('div.activeCountry > .myArmy').text(activeNumber);
+
+    // send move to server
+    var from = $('div.activeCountry').attr('country');
+    var to = $('div.targetCountry').attr('country');
+    var player = domhandler.player();
+    socket.emit('move', JSON.stringify({ player : player,
+                                          from : from,
+                                          to : to,
+                                          num : -1 }));
   });
 
   $('#arrow-right').on('click', function(){
@@ -60310,6 +60319,15 @@ $(function(){
         activeNumber -= 1;
     $('div.targetCountry > .myArmy').text(targetNumber);
     $('div.activeCountry > .myArmy').text(activeNumber);
+    
+    // send move to server
+    var from = $('div.activeCountry').attr('country');
+    var to = $('div.targetCountry').attr('country');
+    var player = domhandler.player();
+    socket.emit('move', JSON.stringify({ player : player,
+                                          from : from,
+                                          to : to,
+                                          num : 1 }));
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
@@ -60325,10 +60343,10 @@ $(function(){
           $('div.activeCountry > .myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
+          // send move to server
           var from = $('div.activeCountry').attr('country');
           var to = $('div.targetCountry').attr('country');
           var player = domhandler.player();
-          // send move to server
           socket.emit('move', JSON.stringify({ player : player,
                                                 from : from,
                                                 to : to,
@@ -60391,6 +60409,8 @@ $(function(){
   function territories(data) {
     if (data) {
       _territories = data;
+      activate();
+      target();
     }
     return _territories;
   }
@@ -60441,12 +60461,17 @@ $(function(){
   }
 
   function activate(name) {
-    _activeCountry = name;
+    if (name) {
+      _activeCountry = name;
+    }
 
-    var t = getTerritory(name);
-    domhandler.activate(t);
+    if (_activeCountry) {
 
-    vfx.activate(String(name));
+      var t = getTerritory(_activeCountry);
+      domhandler.activate(t);
+
+      vfx.activate(_activeCountry);
+    }
   }
 
   function deactivate() {
@@ -60456,11 +60481,15 @@ $(function(){
   }
 
   function target(name) {
-    _targetCountry = name;
 
-    var t = getTerritory(name);
-    domhandler.target(t);
-    vfx.target(String(name));
+    if (name) {
+      _targetCountry = name;
+    }
+    if (_targetCountry) {
+      var t = getTerritory(_targetCountry);
+      domhandler.target(t);
+      vfx.target(_targetCountry);
+    }
   }
 
   function moveTroops(from, to, num, plyr) {
@@ -60511,7 +60540,7 @@ vfx.run();
 var socket = io.connect(window.SOCKET);
 
 socket.on('connect', function() {
-  console.log('connected');
+
 });
 
 
@@ -60523,6 +60552,9 @@ socket.on('welcome', function(data) {
   // set socket player
   socket.player = json.player;
   domhandler.player(socket.player);
+
+  // test code
+  //setTimeout(triggerMove, 2000);
 
 });
 
@@ -60557,3 +60589,22 @@ socket.on('game update', function(data) {
     var data = JSON.parse(data);
     domhandler.update(data);
 });
+
+
+// test code
+function triggerMove() {
+  if (socket.player.id == 1) {
+    socket.emit('move', JSON.stringify({ player : socket.player,
+                                          from : 'Russia',
+                                          to : 'Australia',
+                                          num : 10 }));
+  }
+  else {
+    socket.emit('move', JSON.stringify({
+      player: socket.player,
+      from: 'Brazil',
+      to: 'Australia',
+      num: 12
+    }));
+  }
+}
