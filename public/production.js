@@ -59995,31 +59995,18 @@ VFX.prototype.onDocumentMouseDown = function(e) {
 } 
 
 VFX.prototype.deactivate = function(name) {
-<<<<<<< HEAD
-    var country = Countries[name];
-    TweenMax.to(country.material, 1, { opacity: 1 });
-    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 
-    // if (this.targetCountry) {
-    //     this.deactivate(this.targetCountry);
-    //     this.targetCountry = null;
-    // }
-||||||| merged common ancestors
-    var country = Countries[name];
-    TweenMax.to(country.material, 1, { opacity: 1 });
-    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
-=======
-    // var country = Countries[name];
-    // TweenMax.to(country.material, 1, { opacity: 1 });
-    // TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
-    Object.keys(Countries).forEach(function (key) { 
-        if(Countries[key].scale && Countries[key].material)
-        {
-            TweenMax.to(Countries[key].scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
-            TweenMax.to(Countries[key].material, 1, { opacity: 1 });    
-        }
-    });
->>>>>>> 670fe19c784191d10513a38608041205360e7c17
+    if (name) {
+        var country = Countries[name];
+        TweenMax.to(country.material, 1, { opacity: 1 });
+        TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+    }
+    
+    if (this.targetCountry != name) {
+        name = this.targetCountry;
+        this.targetCountry = null;
+        this.deactivate(name);
+    }
 }
 
 VFX.prototype.activate = function(name) {
@@ -60030,17 +60017,11 @@ VFX.prototype.activate = function(name) {
 
 VFX.prototype.target = function(name) {
     if (this.targetCountry) {
-        this.targetDeactivate(this.targetCountry);
+        this.deactivate(this.targetCountry);
     }
 
     this.activate(name);
     this.targetCountry = name;
-}
-
-VFX.prototype.targetDeactivate = function(name) {
-    var country = Countries[name];
-    TweenMax.to(country.material, 1, { opacity: 1 });
-    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
@@ -60290,20 +60271,6 @@ VFX.prototype.renderState = function(data) {
     else if (!num) {
       result = $('<div>').text(name);
     }
-<<<<<<< HEAD
-
-||||||| merged common ancestors
-<<<<<<< HEAD
-    $('<div id="armyButton">').appendTo(result);
-    $('<div>').addClass('insideButton neutralButton').appendTo(result);
-    result.addClass('army').data('country', name).appendTo(selector).fadeIn(1000);
-||||||| merged common ancestors
-    $('<div id="armyButton">').appendTo(result);
-    $('<div id="insideButton">').appendTo(result);
-    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
-=======
-=======
->>>>>>> 670fe19c784191d10513a38608041205360e7c17
     $('<div class="armyButton">').appendTo(result);
     $('<div class="insideButton">').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
@@ -60323,7 +60290,7 @@ VFX.prototype.renderState = function(data) {
 })();
 
 $(function(){
-  // button to deactivate active army
+
 
   $('#arrow-left').on('click', function(){
     console.log('inside arrow');
@@ -60360,6 +60327,8 @@ $(function(){
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
     var name = $(e.target).attr('country');
+    console.log(e.target);
+    console.log(name);
     Game.handleClick(name);
   })
 
@@ -60433,7 +60402,7 @@ $(function(){
   function handleClick(name) {
 
     if (_activeCountry == name || !name) {
-      deactivate(name);
+      deactivate();
     }
 
     else if (!_activeCountry && name) {
@@ -60451,14 +60420,13 @@ $(function(){
     var t = getTerritory(name);
     domhandler.activate(t);
 
-    vfx.activate(name);
+    vfx.activate(String(name));
   }
 
-  function deactivate(name) {
-    var name = name || _activeCountry;
-    _activeCountry = null;
-    vfx.deactivate(name);
+  function deactivate() {
     domhandler.deactivate();
+    vfx.deactivate(_activeCountry);
+    _activeCountry = null;
   }
 
   function target(name) {
@@ -60466,7 +60434,7 @@ $(function(){
 
     var t = getTerritory(name);
     domhandler.target(t);
-    vfx.target(name);
+    vfx.target(String(name));
   }
 
   function moveTroops(from, to, num, plyr) {

@@ -68,7 +68,7 @@ var Game = (function() {
   function handleClick(name) {
 
     if (_activeCountry == name || !name) {
-      deactivate(name);
+      deactivate();
     }
 
     else if (!_activeCountry && name) {
@@ -86,14 +86,13 @@ var Game = (function() {
     var t = getTerritory(name);
     domhandler.activate(t);
 
-    vfx.activate(name);
+    vfx.activate(String(name));
   }
 
-  function deactivate(name) {
-    var name = name || _activeCountry;
-    _activeCountry = null;
-    vfx.deactivate(name);
+  function deactivate() {
     domhandler.deactivate();
+    vfx.deactivate(_activeCountry);
+    _activeCountry = null;
   }
 
   function target(name) {
@@ -101,7 +100,7 @@ var Game = (function() {
 
     var t = getTerritory(name);
     domhandler.target(t);
-    vfx.target(name);
+    vfx.target(String(name));
   }
 
   function moveTroops(from, to, num, plyr) {

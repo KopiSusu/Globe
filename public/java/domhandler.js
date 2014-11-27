@@ -223,7 +223,7 @@ var domhandler = (function() {
 })();
 
 $(function(){
-  // button to deactivate active army
+
 
   $('#arrow-left').on('click', function(){
     console.log('inside arrow');
@@ -260,6 +260,8 @@ $(function(){
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
     var name = $(e.target).attr('country');
+    console.log(e.target);
+    console.log(name);
     Game.handleClick(name);
   })
 

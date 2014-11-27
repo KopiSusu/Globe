@@ -230,13 +230,17 @@ VFX.prototype.onDocumentMouseDown = function(e) {
 } 
 
 VFX.prototype.deactivate = function(name) {
-    var country = Countries[name];
-    TweenMax.to(country.material, 1, { opacity: 1 });
-    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 
-    if (this.targetCountry) {
-        this.deactivate(this.targetCountry);
+    if (name) {
+        var country = Countries[name];
+        TweenMax.to(country.material, 1, { opacity: 1 });
+        TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+    }
+    
+    if (this.targetCountry != name) {
+        name = this.targetCountry;
         this.targetCountry = null;
+        this.deactivate(name);
     }
 }
 
@@ -248,7 +252,7 @@ VFX.prototype.activate = function(name) {
 
 VFX.prototype.target = function(name) {
     if (this.targetCountry) {
-        this.targetDeactivate(this.targetCountry);
+        this.deactivate(this.targetCountry);
     }
 
     this.activate(name);
