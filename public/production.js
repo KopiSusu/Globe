@@ -60111,7 +60111,7 @@ VFX.prototype.renderState = function(data) {
 
 
   function activate(country) {
-    $('div.activeCountry > .army').remove();
+    $('div.activeCountry > .army-enemy').remove();
 
     $('.army').removeClass('active');
     $('.army[country="'+country.name+'"]').addClass('active');
@@ -60172,7 +60172,7 @@ VFX.prototype.renderState = function(data) {
   }
 
   function target(country) {
-    $('div.targetCountry > .army').remove();
+    $('div.targetCountry > .army-enemy').remove();
     $('#arrow-left').animate({opacity: '0'});
     $('#arrow-right').animate({opacity: '0'});
 
