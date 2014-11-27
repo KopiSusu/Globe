@@ -1,6 +1,6 @@
-var STARTING_TROOPS = 50;
+var STARTING_TROOPS = 60;
 var STARTING_TERRITORIES = 4;
-var TURN_LENGTH = 5;
+var TURN_LENGTH = 10;
 var Territory = require('./territory');
 var Player = require('./player');
 
@@ -103,6 +103,7 @@ module.exports = {
   evaluateState : evaluateState,
   state : state,
   moveTroops : moveTroops,
-  armies : armies
+  armies : armies,
+  turnLength : TURN_LENGTH
 }
 

@@ -59967,7 +59967,6 @@ VFX.prototype.initMouse = function() {
     
     this.overObject = null;
     this.clickedObject = null;
-    this.activeCountry = null;
     this.targetCountry = null;
 }
 
@@ -60007,7 +60006,14 @@ VFX.prototype.activate = function(name) {
     TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
 }
 
+VFX.prototype.target = function(name) {
+    if (this.targetCountry) {
+        this.deactivate(this.targetCountry);
+    }
 
+    this.activate(name);
+    this.targetCountry = name;
+}
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
 
@@ -60200,6 +60206,8 @@ VFX.prototype.renderState = function(data) {
       case 'move':
         updateMove(data.msg);
         break;
+      default:
+      break;
     }
   }
 
@@ -60225,11 +60233,25 @@ VFX.prototype.renderState = function(data) {
 
   function updateMove(msg) {
     var id = msg.player.id;
-    $('<p>').text('P' + id + ' just moved ' + msg.num + ' troops from: ').appendTo('#systemBottom > .messages');
-    createArmy('#systemBottom > .messages', msg.from);
+
+    if (msg.num < 0) {
+      var from = msg.to;
+      var to = msg.from;
+    }
+    else {
+      var from = msg.from;
+      var to = msg.to;
+    }
+
+    var num = Math.abs(Number(msg.num));
+
+    $('<p>').text('P' + id + ' just moved ' + num + ' troops from: ').appendTo('#systemBottom > .messages');
+    createArmy('#systemBottom > .messages', from);
     $('<p>').text('TO').appendTo('#systemBottom > .messages');
-    createArmy('#systemBottom > .messages', msg.to);
+    createArmy('#systemBottom > .messages', to);
   }
+
+
   
   // use to append army object to any parent class in #scene
   function createArmy(selector, name, num) {
@@ -60252,7 +60274,7 @@ VFX.prototype.renderState = function(data) {
     activate : activate,
     deactivate : deactivate,
     target : target,
-    update: update
+    update: update,
   }
 
 
@@ -60402,6 +60424,7 @@ $(function(){
 
     var t = getTerritory(name);
     domhandler.target(t);
+    vfx.target(name);
   }
 
   function moveTroops(from, to, num, plyr) {
