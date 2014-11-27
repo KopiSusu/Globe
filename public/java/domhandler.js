@@ -174,6 +174,11 @@ var domhandler = (function() {
       default:
       break;
     }
+
+    //scroll to bottom of messages
+    var divs = $('#systemBottom > .messages');
+    divs.scrollTop(divs[0].scrollHeight);
+
   }
 
   function updateDisconnect(msg) {
@@ -214,14 +219,6 @@ var domhandler = (function() {
     createArmy('#systemBottom > .messages', from);
     $('<p>').text('TO').appendTo('#systemBottom > .messages');
     createArmy('#systemBottom > .messages', to);
-
-    (function() {
-      var div = $('#systemBottom > .messages');
-      console.log(div[0]);
-      console.log(div.scrollTop(div[0].scrollHeight) + ' called function');
-
-    })();
-
   }
 
 
