@@ -26,6 +26,10 @@ var domhandler = (function() {
     if (current > 0) {
       current--;
       $('#timer').text(current);
+      $('#timer').css('color', '#fafafa');
+      if (current <= 2) {
+        $('#timer').css('color', 'red');
+      }
     }
   }
 
@@ -137,7 +141,7 @@ var domhandler = (function() {
   // public: handle game updates
   function update(data) {
     // TODO: implement infinite scroll in #systemBottom > .messages
-    $('#systemBottom > .messages').empty();
+    // $('#systemBottom > .messages').empty();
     switch (data.type) {
       case 'disconnect':
         updateDisconnect(data.msg);
@@ -157,7 +161,7 @@ var domhandler = (function() {
     var playerid = msg.player.id;
     var armies = msg.armies;
     $('<p>').text('P' + playerid + ' disconnected. Territories left empty: ')
-      .appendTo('#systemBottom > .messages');
+      .prependTo('#systemBottom > .messages');
     for (var country in armies) {
       createArmy('#systemBottom > .messages', country, armies[country])
     }
@@ -167,7 +171,7 @@ var domhandler = (function() {
     var playerid = msg.player.id;
     var armies = msg.armies;
     $('<p>').text('P' + playerid + ' connected. Armies: ')
-      .appendTo('#systemBottom > .messages');
+      .prependTo('#systemBottom > .messages');
     for (var country in armies) {
       createArmy('#systemBottom > .messages', country, armies[country])
     }
@@ -187,10 +191,11 @@ var domhandler = (function() {
 
     var num = Math.abs(Number(msg.num));
 
-    $('<p>').text('P' + id + ' just moved ' + num + ' troops from: ').appendTo('#systemBottom > .messages');
-    createArmy('#systemBottom > .messages', from);
-    $('<p>').text('TO').appendTo('#systemBottom > .messages');
     createArmy('#systemBottom > .messages', to);
+    $('<p>').text('TO').prependTo('#systemBottom > .messages');
+    createArmy('#systemBottom > .messages', from);
+    $('<p>').text('P' + id + ' just moved ' + num + ' troops from: ').prependTo('#systemBottom > .messages');
+
   }
 
 
@@ -206,7 +211,7 @@ var domhandler = (function() {
     }
     $('<div class="armyButton">').appendTo(result);
     $('<div class="insideButton">').appendTo(result);
-    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
+    result.addClass('army').attr('country', name).prependTo(selector).fadeIn(1000);
   }
 
   return {
@@ -226,41 +231,43 @@ $(function(){
 
 
   $('#arrow-left').on('click', function(){
-    console.log('inside arrow');
     var targetNumber = parseInt($('div.targetCountry > .myArmy').text());
         targetNumber -= 1;
-    var activeNumber = parseInt($('div.activeCountry > .myArmy').text());
-        activeNumber += 1;
-    $('div.targetCountry > .myArmy').text(targetNumber);
-    $('div.activeCountry > .myArmy').text(activeNumber);
+    if (targetNumber >= 0) {
+      var activeNumber = parseInt($('div.activeCountry > .myArmy').text());
+          activeNumber += 1;
+      $('div.targetCountry > .myArmy').text(targetNumber);
+      $('div.activeCountry > .myArmy').text(activeNumber);
 
-    // send move to server
-    var from = $('div.activeCountry').attr('country');
-    var to = $('div.targetCountry').attr('country');
-    var player = domhandler.player();
-    socket.emit('move', JSON.stringify({ player : player,
-                                          from : from,
-                                          to : to,
-                                          num : -1 }));
+      // send move to server
+      var from = $('div.activeCountry').attr('country');
+      var to = $('div.targetCountry').attr('country');
+      var player = domhandler.player();
+      socket.emit('move', JSON.stringify({ player : player,
+                                            from : from,
+                                            to : to,
+                                            num : -1 }));
+    }
   });
 
   $('#arrow-right').on('click', function(){
-    console.log('inside arrow');
     var targetNumber = parseInt($('div.targetCountry > .myArmy').text());
         targetNumber += 1;
     var activeNumber = parseInt($('div.activeCountry > .myArmy').text());
         activeNumber -= 1;
-    $('div.targetCountry > .myArmy').text(targetNumber);
-    $('div.activeCountry > .myArmy').text(activeNumber);
-    
-    // send move to server
-    var from = $('div.activeCountry').attr('country');
-    var to = $('div.targetCountry').attr('country');
-    var player = domhandler.player();
-    socket.emit('move', JSON.stringify({ player : player,
-                                          from : from,
-                                          to : to,
-                                          num : 1 }));
+    if (activeNumber >= 0) {
+      $('div.targetCountry > .myArmy').text(targetNumber);
+      $('div.activeCountry > .myArmy').text(activeNumber);
+      
+      // send move to server
+      var from = $('div.activeCountry').attr('country');
+      var to = $('div.targetCountry').attr('country');
+      var player = domhandler.player();
+      socket.emit('move', JSON.stringify({ player : player,
+                                            from : from,
+                                            to : to,
+                                            num : 1 }));
+    }
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
@@ -297,10 +304,9 @@ $(function(){
   } );
 
   // what the fuck, where di dthis code go
-  $('.section > h1.deactivate').on('click', function() {
-    
+  $('.activeCountry').on('click', function(e) {
+    Game.handleClick();
   })
-
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
     var name = $(e.target).attr('country');
@@ -310,3 +316,4 @@ $(function(){
   })
 
 });
+

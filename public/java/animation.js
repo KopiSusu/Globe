@@ -154,8 +154,20 @@ VFX.prototype.init = function () {
     timer.style.opacity = '0.8';
     top.style.opacity = '1';
     bottom.style.opacity = '1';
+    window.addEventListener( 'resize', onWindowResize, false );
 
-} // end init
+    function onWindowResize() {
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(   window.innerWidth, window.innerHeight);
+
+}
+
+}
+
+
 
 VFX.prototype.run = function() {
 
