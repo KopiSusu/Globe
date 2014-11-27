@@ -60,11 +60,13 @@ function moveTroops(player, from, to, num) {
 };
 
 function evaluateState() {
+  var results = ['A new turn begins.'];
   var i = territories.length;
   while (i--) {
     var terr = territories[i];
-    terr.lastOneStanding(terr.troops);
+    results.push(terr.lastOneStanding(terr.troops));
   }
+  return results.filter(function(n){ return n != null });
 }
 
 function removePlayer(player) {

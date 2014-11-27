@@ -60197,8 +60197,17 @@ VFX.prototype.renderState = function(data) {
       case 'move':
         updateMove(data.msg);
         break;
-      default:
+      case 'messages':
+        updateMessages(data.msg);
+        break;
       break;
+    }
+  }
+
+  function updateMessages(msgs) {
+    var i = msgs.length;
+    while (i--) {
+      $('<p>').text(msgs[i]).appendTo('#systemBottom > .messages');
     }
   }
 

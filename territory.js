@@ -28,17 +28,28 @@ Territory.prototype.contains = function(id) {
 
 
 Territory.prototype.lastOneStanding = function() {
+
+  var data = {};
+
   var armies = this.troops;
-  var keys = Object.keys(armies);
+  var ids = Object.keys(armies);
 
   // base case
-  if (keys.length <= 1) {
-    return keys[0];
+  if (ids.length <= 1) {
+
+    // if there has been conflict, return a victorious player
+    if ( Object.keys(data)[0] ) {
+      data.victorious = ids[0];
+      return data;
+    }
+    // else return null
+    return null;
   }
 
   // recursive case 
   else {
-    var min = keys.reduce(function(m, k){ return armies[k] < m ? armies[k] : m }, +Infinity);
+    data.name = this.name;
+    var min = ids.reduce(function(m, k){ return armies[k] < m ? armies[k] : m }, +Infinity);
     for (var id in armies) {
       armies[id] -= min;
       if (armies[id] <= 0) {
@@ -47,6 +58,7 @@ Territory.prototype.lastOneStanding = function() {
     }
     this.lastOneStanding();
   }
+
 }
 
 Territory.prototype.removePlayer = function(id) {
