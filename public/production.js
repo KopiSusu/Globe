@@ -59995,7 +59995,7 @@ VFX.prototype.init = function () {
 
 }
 
-}
+
 
 
 
@@ -60081,8 +60081,8 @@ VFX.prototype.deactivate = function(name) {
     
     if (this.targetCountry != name) {
         name = this.targetCountry;
-        this.targetCountry = null;
         this.deactivate(name);
+        this.targetCountry = null;
     }
 }
 
@@ -60097,8 +60097,8 @@ VFX.prototype.target = function(name) {
         this.deactivate(this.targetCountry);
     }
 
-    this.activate(name);
     this.targetCountry = name;
+    this.activate(name);
 }
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {

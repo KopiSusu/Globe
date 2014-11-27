@@ -98,14 +98,14 @@ body {
 }
 
 .section > h3 {
-  font-size: 2em;
-  text-transform: uppercase;
-  text-align: center;
-  margin: 0px;
-  padding: 0px;
-  transition: all 1s linear;
-  width: 150px;
-  margin-left: 25px;
+font-size: 2em;
+text-transform: uppercase;
+text-align: center;
+margin: 0px;
+padding: 0px;
+transition: all 1s linear;
+width: 75px;
+margin-left: 60px;
 }
 
 .army {
@@ -260,5 +260,26 @@ body {
   height: 100%;
   margin: 0px;
 }
+
+.army:first-child {
+  margin-top: 25px;
+}
+
+#standing {
+  position: absolute;
+  top:5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
