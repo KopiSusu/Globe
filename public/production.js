@@ -60204,7 +60204,7 @@ VFX.prototype.renderState = function(data) {
           }
 
           // fade in activeCountry section
-          $('div.activeCountry > .wrapper').animate({height: '30%'}, function() {
+          $('div.activeCountry > .wrapper').animate({height: '88%'}, function() {
               // update enemy troops in active country
               for (var id in country.troops) {
                   if (id != _player.id) {
@@ -60224,6 +60224,7 @@ VFX.prototype.renderState = function(data) {
 
       $('.army').removeClass('active').removeClass('target');
 
+      // hide section while making changes
       $('div.activeCountry > .wrapper').animate({height: '0%'}, function() {
           $('div.activeCountry .deactivate').remove();
           $('div.activeCountry').find('.army-enemy').remove();
@@ -60231,16 +60232,24 @@ VFX.prototype.renderState = function(data) {
           $('div.activeCountry .clickedCountry').text('click any country to start');
           $('div.activeCountry .myArmy').text('');
           $('div.activeCountry').attr('country', '');
-          $('div.activeCountry > .wrapper').animate({height: '30%'});
+          // show section
+          $('div.activeCountry > .wrapper').animate({height: '88%'});
       });
 
-      $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
-        $('div.targetCountry').find('.army-enemy').remove();
-        $('div.targetCountry .clickedCountry').empty();
-        $('div.targetCountry .myArmy').text('');
-        $('div.targetCountry').attr('country', ''); 
-      });
+      // fade out arrows
+      $('.inc-arrow').animate({opacity: 0});
+      $('.dec-arrow').animate({opacity: 0}, function() {
 
+        // then hide section while making changes
+        $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
+          $('div.targetCountry').find('.army-enemy').remove();
+          $('div.targetCountry .clickedCountry').empty();
+          $('div.targetCountry .myArmy').text('');
+          $('div.targetCountry').attr('country', '');
+          // show section
+          $('div.targetCountry > .wrapper').animate({height: '88%'});
+        });
+      });
   }
 
   function target(country) {
@@ -60268,7 +60277,7 @@ VFX.prototype.renderState = function(data) {
           .text(num);
 
         // fade in target country section
-        $('div.targetCountry > .wrapper').animate({height: '30%'}, function() {
+        $('div.targetCountry > .wrapper').animate({height: '88%'}, function() {
 
             // initialises arrows when target is clicked for the first time
             $('.inc-arrow').animate({opacity: '1'});
@@ -60571,6 +60580,7 @@ $(function(){
     domhandler.deactivate();
     vfx.deactivate(_activeCountry);
     _activeCountry = null;
+    _targetCountry = null;
   }
 
   function target(name) {

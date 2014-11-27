@@ -101,6 +101,7 @@ var Game = (function() {
     domhandler.deactivate();
     vfx.deactivate(_activeCountry);
     _activeCountry = null;
+    _targetCountry = null;
   }
 
   function target(name) {
