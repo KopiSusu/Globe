@@ -314,17 +314,17 @@ $(function(){
   });
 
   $('div.targetCountry').find('.myArmy').blur(function(){
-      var oldVal = parseInt($(this).attr('data-orig-value'));
-      var val = parseInt($(this).html());
-      var changeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
-      var newNum = val - oldVal;
-          changeNumber -= newNum;
-      if (changeNumber < 0) {
-          $('div.targetCountry').find('.myArmy').html(oldVal);
+      var orig = parseInt($(this).attr('data-orig-value'));
+      var input = parseInt($(this).html());
+      var fromTroops = parseInt($('div.activeCountry').find('.myArmy').text());
+      var movement = input - orig;
+          fromTroops -= movement;
+      if (fromTroops < 0) {
+          $('div.targetCountry').find('.myArmy').html(orig);
       }
-      if (changeNumber >= 0 ) {
-          $('div.targetCountry').find('.myArmy').text(changeNumber);
-          var oldVal = $(this).attr('data-orig-value', val);
+      if (fromTroops >= 0 ) {
+          $('div.targetCountry > .wraper').find('.myArmy').text(input);
+          var orig = $(this).attr('data-orig-value', input);
 
           // send move to server
           var from = $('div.activeCountry').attr('country');
@@ -333,7 +333,7 @@ $(function(){
           socket.emit('move', JSON.stringify({ player : player,
                                                 from : from,
                                                 to : to,
-                                                num : newNum }));
+                                                num : movement }));
 
       }
   });
