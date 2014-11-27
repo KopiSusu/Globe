@@ -231,7 +231,7 @@ body {
 }
 
 .insideButton {
-  background: green;
+  background-color: green;
   margin-left: 185.4px;
   /* border: 1px solid #fafafa; */
   border-radius: 50%;
@@ -243,18 +243,10 @@ body {
   transition: all 0.4s linear;
 }
 
-
-
-.insideButton {
-  background-color: green;
-}
 .active .insideButton {
   background-color: red;
 }
 .target .insideButton {
   background-color: yellow;
 }
-
-
-
 

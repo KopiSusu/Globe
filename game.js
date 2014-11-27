@@ -1,6 +1,6 @@
 var STARTING_TROOPS = 60;
 var STARTING_TERRITORIES = 4;
-var TURN_LENGTH = 10;
+var TURN_LENGTH = 5;
 var Territory = require('./territory');
 var Player = require('./player');
 
@@ -60,11 +60,13 @@ function moveTroops(player, from, to, num) {
 };
 
 function evaluateState() {
+  var results = ['A new turn begins.'];
   var i = territories.length;
   while (i--) {
     var terr = territories[i];
     terr.lastOneStanding(terr.troops);
   }
+  return results;
 }
 
 function removePlayer(player) {

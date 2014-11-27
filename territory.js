@@ -28,17 +28,18 @@ Territory.prototype.contains = function(id) {
 
 
 Territory.prototype.lastOneStanding = function() {
+
   var armies = this.troops;
-  var keys = Object.keys(armies);
+  var ids = Object.keys(armies);
 
   // base case
-  if (keys.length <= 1) {
-    return keys[0];
+  if (ids.length <= 1) {
+    return ids[0];
   }
 
   // recursive case 
   else {
-    var min = keys.reduce(function(m, k){ return armies[k] < m ? armies[k] : m }, +Infinity);
+    var min = ids.reduce(function(m, k){ return armies[k] < m ? armies[k] : m }, +Infinity);
     for (var id in armies) {
       armies[id] -= min;
       if (armies[id] <= 0) {
@@ -47,6 +48,7 @@ Territory.prototype.lastOneStanding = function() {
     }
     this.lastOneStanding();
   }
+
 }
 
 Territory.prototype.removePlayer = function(id) {

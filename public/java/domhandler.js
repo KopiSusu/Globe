@@ -59,6 +59,13 @@ var domhandler = (function() {
         // dynamic deactivate button
         $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
+
+        // var button = $('.army').filter(function(obj) {
+        //   return $(obj).data('country') == String(country.name);
+        //   //return $(div).data('country') == country.name;
+        // });
+        // $(button).find('.insideButton').toggleClass('activeButton');
+
         // update enemy troops in active country
         for (var id in country.troops) {
           if (id != _player.id) {
@@ -148,8 +155,17 @@ var domhandler = (function() {
       case 'move':
         updateMove(data.msg);
         break;
-      default:
+      case 'messages':
+        updateMessages(data.msg);
+        break;
       break;
+    }
+  }
+
+  function updateMessages(msgs) {
+    var i = msgs.length;
+    while (i--) {
+      $('<p>').text(msgs[i]).appendTo('#systemBottom > .messages');
     }
   }
 
@@ -204,6 +220,7 @@ var domhandler = (function() {
     else if (!num) {
       result = $('<div>').text(name);
     }
+
     $('<div class="armyButton">').appendTo(result);
     $('<div class="insideButton">').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
@@ -259,7 +276,7 @@ $(function(){
 
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
-    var name = $(e.target).attr('country');
+    var name = $(e.target).data('country');
     Game.handleClick(name);
   })
 

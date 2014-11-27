@@ -60117,6 +60117,13 @@ VFX.prototype.renderState = function(data) {
         // dynamic deactivate button
         $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
+
+        // var button = $('.army').filter(function(obj) {
+        //   return $(obj).data('country') == String(country.name);
+        //   //return $(div).data('country') == country.name;
+        // });
+        // $(button).find('.insideButton').toggleClass('activeButton');
+
         // update enemy troops in active country
         for (var id in country.troops) {
           if (id != _player.id) {
@@ -60206,8 +60213,17 @@ VFX.prototype.renderState = function(data) {
       case 'move':
         updateMove(data.msg);
         break;
-      default:
+      case 'messages':
+        updateMessages(data.msg);
+        break;
       break;
+    }
+  }
+
+  function updateMessages(msgs) {
+    var i = msgs.length;
+    while (i--) {
+      $('<p>').text(msgs[i]).appendTo('#systemBottom > .messages');
     }
   }
 
@@ -60262,9 +60278,19 @@ VFX.prototype.renderState = function(data) {
     else if (!num) {
       result = $('<div>').text(name);
     }
+<<<<<<< HEAD
+    $('<div id="armyButton">').appendTo(result);
+    $('<div>').addClass('insideButton neutralButton').appendTo(result);
+    result.addClass('army').data('country', name).appendTo(selector).fadeIn(1000);
+||||||| merged common ancestors
+    $('<div id="armyButton">').appendTo(result);
+    $('<div id="insideButton">').appendTo(result);
+    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
+=======
     $('<div class="armyButton">').appendTo(result);
     $('<div class="insideButton">').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
+>>>>>>> b14674d64df2e66e625e4b9fe912e5296f6ac631
   }
 
   return {
@@ -60317,7 +60343,7 @@ $(function(){
 
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
-    var name = $(e.target).attr('country');
+    var name = $(e.target).data('country');
     Game.handleClick(name);
   })
 

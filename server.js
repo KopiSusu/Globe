@@ -100,9 +100,13 @@ function endOfTurn() {
   // stop accepting moves
   PAUSE = true;
 
-  // evaluate state of the board, remove troops as needed
-  game.evaluateState();
+  var data = {
+    type: 'messages',
+    msg: game.evaluateState()
+  }
 
+  //io.emit('game update', JSON.stringify(data));
+  console.dir(data);
   /* add queue of new players.
     do this after evaluating state as there 
     will be new empty/occupied territories */
