@@ -60258,44 +60258,51 @@ VFX.prototype.renderState = function(data) {
     $('.army').removeClass('target');
     $('.army[country="'+country.name+'"]').addClass('target');
 
-    // hide target country section while making changes
-    $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
+    // fade out arrows first
+    $('.inc-arrow').animate({opacity: '0'});
+    $('.dec-arrow').animate({opacity: '0'}, function() {
 
-        // remove existing enemy armies
-        $('div.targetCountry').find('.army-enemy').remove();
+      // hide target country section while making changes
+      $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
 
-        // updating country name
-        $('div.targetCountry')
-          .attr('country', country.name);
-        $('div.targetCountry .clickedCountry')
-          .text(country.name);
+          // remove existing enemy armies
+          $('div.targetCountry').find('.army-enemy').remove();
 
-        // updating number of troops in country
-        var num = country.troops[_player.id] || 0;
-        $('div.targetCountry .myArmy')
-          .attr('data-orig-value', num)
-          .text(num);
+          // updating country name
+          $('div.targetCountry')
+            .attr('country', country.name);
+          $('div.targetCountry .clickedCountry')
+            .text(country.name);
 
-        // fade in target country section
-        $('div.targetCountry > .wrapper').animate({height: '88%'}, function() {
+          // updating number of troops in country
+          var num = country.troops[_player.id] || 0;
+          $('div.targetCountry .myArmy')
+            .attr('data-orig-value', num)
+            .text(num);
 
-            // initialises arrows when target is clicked for the first time
-            $('.inc-arrow').animate({opacity: '1'});
-            $('.dec-arrow').animate({opacity: '1'});
+          // show target country section
+          $('div.targetCountry > .wrapper').animate({height: '88%'}, function() {
 
-            // update enemy troops in active country
-            for (var id in country.troops) {
-              if (id != _player.id) {
-                var num = country.troops[id];
-                $('<p>').text('P' + id + ' (' + num + ')')
-                      .appendTo('<div>')
-                      .addClass('army-enemy')
-                      .appendTo('div.targetCountry > .wrapper')
-                      .fadeIn(1000);
-                }
-            }
-        });
+              // fade in arrows
+              $('.inc-arrow').animate({opacity: '1'});
+              $('.dec-arrow').animate({opacity: '1'});
+
+              // update enemy troops in active country
+              for (var id in country.troops) {
+                if (id != _player.id) {
+                  var num = country.troops[id];
+                  $('<p>').text('P' + id + ' (' + num + ')')
+                        .appendTo('<div>')
+                        .addClass('army-enemy')
+                        .appendTo('div.targetCountry > .wrapper')
+                        .fadeIn(1000);
+                  }
+              }
+          });
+      });
+
     });
+
   }
 
   // public: handle game updates
