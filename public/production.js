@@ -60105,7 +60105,7 @@ VFX.prototype.renderState = function(data) {
     $('div.activeCountry > .army').remove();
 
     $('.army').removeClass('active');
-    console.log("activate", $('.army[country="'+country.name+'"]').addClass('active'));
+    $('.army[country="'+country.name+'"]').addClass('active');
 
     $('div.activeCountry').animate({height: '0%'}, function() {
         var num = country.troops[_player.id] || 0;
@@ -60168,7 +60168,7 @@ VFX.prototype.renderState = function(data) {
     $('#arrow-right').animate({opacity: '0'});
 
     $('.army').removeClass('target');
-    console.log("target", $('.army[country="'+country.name+'"]').addClass('target'));
+    $('.army[country="'+country.name+'"]').addClass('target');
 
     $('div.targetCountry').animate({ height: '0%'}, function() {
         $(this).animate({height: '30%'});
