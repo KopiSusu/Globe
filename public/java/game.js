@@ -31,6 +31,7 @@ var Game = (function() {
   function territories(data) {
     if (data) {
       _territories = data;
+      domhandler.standingArmies(data);
       activate();
       target();
     }

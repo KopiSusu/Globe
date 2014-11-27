@@ -60161,16 +60161,19 @@ VFX.prototype.renderState = function(data) {
     }
   }
 
-  // populate armies belonging to current player
-  function standingArmies(armies) {
-
+  // populate armies for current player
+  function standingArmies(territories) {
     $('div.standingArmies > .army').remove();
 
-    var i = armies.length;
+    var i = territories.length;
     while (i--) {
-      army = armies[i]
-      createArmy('div.standingArmies', army.name, army.num);
-    } 
+      var t = territories[i];
+      if (t.troops[_player.id]) {
+          var name = t.name;
+          var num = t.troops[_player.id];
+          createArmy('div.standingArmies', name, num);
+        }
+    }
   }
 
 
@@ -60492,6 +60495,7 @@ $(function(){
   function territories(data) {
     if (data) {
       _territories = data;
+      domhandler.standingArmies(data);
       activate();
       target();
     }
@@ -60552,6 +60556,7 @@ $(function(){
 
       var t = getTerritory(_activeCountry);
       domhandler.activate(t);
+      console.dir(t);
 
       vfx.activate(_activeCountry);
     }
@@ -60648,7 +60653,7 @@ socket.on('game state', function(state) {
 
   Game.territories(state.territories);
   domhandler.timer(state.turnLength);
-  domhandler.standingArmies(Game.armies(socket.player));
+  domhandler.standingArmies(state.territories);
 
 });
 
@@ -60663,7 +60668,7 @@ socket.on('move', function(data) {
     msg: move
   }
 
-  domhandler.standingArmies(Game.armies(socket.player));
+  domhandler.standingArmies(Game.territories());
   domhandler.update(data);
 });
 

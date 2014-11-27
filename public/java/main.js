@@ -32,7 +32,7 @@ socket.on('game state', function(state) {
 
   Game.territories(state.territories);
   domhandler.timer(state.turnLength);
-  domhandler.standingArmies(Game.armies(socket.player));
+  domhandler.standingArmies(state.territories);
 
 });
 
@@ -47,7 +47,7 @@ socket.on('move', function(data) {
     msg: move
   }
 
-  domhandler.standingArmies(Game.armies(socket.player));
+  domhandler.standingArmies(Game.territories());
   domhandler.update(data);
 });
 

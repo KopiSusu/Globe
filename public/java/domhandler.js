@@ -29,16 +29,19 @@ var domhandler = (function() {
     }
   }
 
-  // populate armies belonging to current player
-  function standingArmies(armies) {
-
+  // populate armies for current player
+  function standingArmies(territories) {
     $('div.standingArmies > .army').remove();
 
-    var i = armies.length;
+    var i = territories.length;
     while (i--) {
-      army = armies[i]
-      createArmy('div.standingArmies', army.name, army.num);
-    } 
+      var t = territories[i];
+      if (t.troops[_player.id]) {
+          var name = t.name;
+          var num = t.troops[_player.id];
+          createArmy('div.standingArmies', name, num);
+        }
+    }
   }
 
 
