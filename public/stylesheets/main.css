@@ -1,8 +1,27 @@
 body {
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
-  background: #fafafa;
+  background: #111;
 }
+
+
+#timer {
+  border: 2px solid #7f8c8d;
+  display: inline-block;
+  width: 100px;
+  margin: 25px 315%;
+  background: linear-gradient(to left, rgba(245,245,245, 0.2), rgba(0,0,0,0), rgba(245,245,245, 0.2));
+
+  color: #ff0000;
+  font-size: 2em;
+  font-family: 'Inconsolata';
+  text-align: center;
+
+  opacity: 0;
+  transition: all 1s linear;
+  transition-delay: 2.5s;*/
+}
+
 
 #left {
   z-index: 1;
@@ -13,114 +32,6 @@ body {
   height: 705px;
   color: #7f8c8d;
 }
-
-#timer {
-  height: 6%;
-  width: 52%;
-  margin-left: 50px;
-  margin-top: 10px;
-  background: linear-gradient(to left, rgba(245,245,245, 0.2), rgba(0,0,0,0), rgba(245,245,245, 0.2));
-  color: #F3F2F2;
-  border: 1px solid;
-  border-bottom: none;
-  border-top: none;
-  font-size: 28px;
-  text-align: center;
-  font-size: 30px;
-  font-family: 'Inconsolata';
-  opacity: 0;
-  transition: all 1s linear;
-  transition-delay: 4.5s;
-}
-
-
-#right {
-  position: absolute;
-  right: -100%;
-  height: 600px;
-  width: 200px;
-  top: 50px;
-  opacity: 0.8;
-  transition: all 2s linear;
-  transition-delay: 2.5s;
-}
-
-#right > .section {
-  border-top: 1px solid;
-  width: 100%;
-  height: 30%;
-  top: 8%;
-  color: #fafafa;
-  padding-top: 3px;
-  padding-left: 3px;
-  font-family: 'Inconsolata';
-  overflow: auto;
-}
-
-
-
-.section > h1 {
-  color: #E57C09;
-  font-size: 1em;
-  text-transform: uppercase;
-  text-align: left;
-  font-weight: normal;
-  margin: 0px;
-  padding: 0px;
-  padding-bottom: 5px;
-}
-
-.section > h1.deactivate {
-  color: red;
-  text-align: center;
-  width: 2em;
-  cursor: pointer;
-}
-
-
-.section > h2 {
-  color: #2194CE;
-  font-size: 1.2em;
-  text-transform: uppercase;
-  text-align: center;
-  margin: 0px;
-  padding: 0px;
-  transition: all 1s linear;
-}
-
-.section > h3 {
-  font-size: 2em;
-  text-transform: uppercase;
-  text-align: center;
-  margin: 0px;
-  padding: 0px;
-  transition: all 1s linear;
-  width: 150px;
-  margin-left: 25px;
-}
-
-.army {
-  padding: 4px;
-  margin: 5px;
-  margin-right: 5px;
-  margin-left: -5px;
-  background: linear-gradient(to left, rgba(0,0,0,0), rgba(245,245,245, 0.2));
-  color: #7f8c8d;
-  display: inline-block;
-  opacity: 0.8;
-  width: 200px;
-  font-family: 'Inconsolata';
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s linear;
-}
-
-.army:hover {
-  color: #fafafa;
-  cursor: pointer;
-  transition: all 0.3s linear;
-}
-
 
 #title {
   position: relative;
@@ -163,7 +74,7 @@ body {
   overflow: auto;
 }
 
-#gif {
+.avatar {
   position: absolute;
   padding: 5%;
   margin-top: 10%;
@@ -176,66 +87,114 @@ body {
   top: 23px;
 }
 
-
-#lside {
-  z-index: 1;
+#right {
   position: absolute;
-  top: 0%;
-  left: 0%;
+  right: -100%;
+  height: 600px;
   width: 200px;
-  height: 705px;
-  color: #7f8c8d;
+  top: 50px;
+  opacity: 0.8;
+  transition: all 2s linear;
+  transition-delay: 2.5s;
+}
+
+#right > .section {
+  border-top: 1px solid;
+  width: 110%;
+  height: 30%;
+  top: 8%;
+  color: #fafafa;
+  padding-top: 3px;
+  padding-left: 3px;
+  font-family: 'Inconsolata';
   overflow: auto;
 }
 
-#arrow-left {
-  width: 0;
-  height: 0;
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  border-right: 15px solid #ba0e0e;
-  position: absolute;
-  cursor: pointer;
-  opacity: 0;
-  /*border-radius: 50%;*/
-  top: 39%;
+.section > h1 {
+  color: #E57C09;
+  font-size: 1em;
+  font-family: 'Inconsolata';
+  text-transform: uppercase;
+  text-align: left;
+  font-weight: normal;
+  margin: 0px;
+  padding: 0px;
+  padding-bottom: 5px;
 }
 
-#arrow-right {
-  width: 0; 
-  height: 0; 
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  border-left: 15px solid #ba0e0e;
-  position: absolute;
+.deactivate {
+
   cursor: pointer;
-  opacity: 0;
-  /*border-radius: 50%;*/
-  top: 39%;
-  left: 93%;
+  border: 1px solid #7f8c8d;
+  display: inline-block;
+  width: 5em;
+  padding: 0px 0.5em 0px 0.5em;
+  margin-left: 25%;
+  background: linear-gradient(to left, rgba(245,245,245, 0.2), rgba(0,0,0,0), rgba(245,245,245, 0.2));
+
+  font-size: 1em;
+  font-family: 'Inconsolata';
+  text-transform: uppercase;
+  color: #ff0000;
+  text-align: center;
+  font-weight: bold;
+
 }
 
-.armyButton {
-  margin-left: 183px;
-  border: 1px solid #fafafa;
-  border-radius: 50%;
-  width: 5%;
-  height: 10px;
-  position: absolute;
-  /* margin-bottom: 10px; */
-  margin-top: -15px;
+.section h2 {
+  color: #2194CE;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+  transition: all 1s linear;
+
+}
+
+.section h3 {
+  font-size: 2em;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+  transition: all 1s linear;
+  width: 150px;
+  margin-left: 25px;
+}
+
+.army {
+  padding: 4px;
+  margin: 5px;
+  margin-right: 5px;
+  margin-left: -5px;
+  background: linear-gradient(to left, rgba(0,0,0,0), rgba(245,245,245, 0.2));
+  color: #7f8c8d;
+  display: inline-block;
+  opacity: 0.8;
+  width: 200px;
+  font-family: 'Inconsolata';
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s linear;
+}
+
+.army:hover {
+  color: #fafafa;
+  cursor: pointer;
+  transition: all 0.3s linear;
 }
 
 .insideButton {
+  border: 1px solid #fafafa;
   background-color: green;
+  margin-top: -13px;
   margin-left: 185.4px;
-  /* border: 1px solid #fafafa; */
   border-radius: 50%;
   width: 4%;
   height: 8px;
   position: absolute;
-  /* margin-bottom: 10px; */
-  margin-top: -13px;
   transition: all 0.4s linear;
 }
 
@@ -244,5 +203,34 @@ body {
 }
 .target .insideButton {
   background-color: yellow;
+}
+
+
+.down-arrow {
+  cursor: pointer;
+  margin-top: -20px;
+  margin-left: 175px;
+  position: absolute;
+
+  width: 0; 
+  height: 0; 
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 20px solid #ba0e0e;
+  opacity: 0;
+}
+
+.up-arrow {
+  cursor: pointer;
+  margin-top: -50px;
+  margin-left: 175px;
+  position: absolute;
+
+  width: 0; 
+  height: 0; 
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid #ba0e0e;
+  opacity: 0;
 }
 
