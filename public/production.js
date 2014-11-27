@@ -60294,9 +60294,22 @@ $(function(){
 
   $('#arrow-left').on('click', function(){
     console.log('inside arrow');
-    var number = parseInt($('div.targetCountry > .myArmy').text());
-        number -= 1;
-    $('div.activeCountry > .myArmy').text(number);
+    var targetNumber = parseInt($('div.targetCountry > .myArmy').text());
+        targetNumber -= 1;
+    var activeNumber = parseInt($('div.activeCountry > .myArmy').text());
+        activeNumber += 1;
+    $('div.targetCountry > .myArmy').text(targetNumber);
+    $('div.activeCountry > .myArmy').text(activeNumber);
+  });
+
+  $('#arrow-right').on('click', function(){
+    console.log('inside arrow');
+    var targetNumber = parseInt($('div.targetCountry > .myArmy').text());
+        targetNumber += 1;
+    var activeNumber = parseInt($('div.activeCountry > .myArmy').text());
+        activeNumber -= 1;
+    $('div.targetCountry > .myArmy').text(targetNumber);
+    $('div.activeCountry > .myArmy').text(activeNumber);
   });
 
   $('div.targetCountry > .myArmy').blur(function(){
@@ -60323,6 +60336,14 @@ $(function(){
 
       }
   });
+
+  // prevent enter key on content editable
+  $('.myArmy').on( 'keydown', function( e ) {
+    if( e.which == 13 && e.shiftKey == false ) {
+        $(this).blur();
+        return false;
+    }
+  } );
 
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
