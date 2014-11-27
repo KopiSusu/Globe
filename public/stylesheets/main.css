@@ -2,7 +2,6 @@ body {
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
   background: #fafafa;
-  cursor: progress;
 }
 
 #left {
@@ -220,7 +219,7 @@ body {
   left: 93%;
 }
 
-#armyButton {
+.armyButton {
   margin-left: 183px;
   border: 1px solid #fafafa;
   border-radius: 50%;
@@ -231,7 +230,7 @@ body {
   margin-top: -15px;
 }
 
-#insideButton {
+.insideButton {
   background: green;
   margin-left: 185.4px;
   /* border: 1px solid #fafafa; */
@@ -241,12 +240,20 @@ body {
   position: absolute;
   /* margin-bottom: 10px; */
   margin-top: -13px;
+  transition: all 0.4s linear;
 }
 
 
 
-
-
+.insideButton {
+  background-color: green;
+}
+.active .insideButton {
+  background-color: red;
+}
+.target .insideButton {
+  background-color: yellow;
+}
 
 
 

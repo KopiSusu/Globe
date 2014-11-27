@@ -60098,13 +60098,16 @@ VFX.prototype.renderState = function(data) {
   function activate(country) {
     $('div.activeCountry > .army').remove();
 
+    $('.army').removeClass('active');
+    console.log("activate", $('.army[country="'+country.name+'"]').addClass('active'));
+
     $('div.activeCountry').animate({height: '0%'}, function() {
         var num = country.troops[_player.id] || 0;
         $(this).animate({height: '30%'});
         $('div.activeCountry').attr('country', country.name);
         $('div.activeCountry > .clickedCountry').text(country.name);
         $('div.activeCountry > .myArmy').text(num);
-  
+
         // dynamic deactivate button
         $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
@@ -60124,6 +60127,9 @@ VFX.prototype.renderState = function(data) {
   function deactivate() {
     $('#arrow-left').animate({opacity: '0'});
     $('#arrow-right').animate({opacity: '0'});
+
+    $('.army').removeClass('active').removeClass('target');
+
     $('div.activeCountry').animate({
         height: '0%',
       }, function() {
@@ -60154,6 +60160,9 @@ VFX.prototype.renderState = function(data) {
     $('div.targetCountry > .army').remove();
     $('#arrow-left').animate({opacity: '0'});
     $('#arrow-right').animate({opacity: '0'});
+
+    $('.army').removeClass('target');
+    console.log("target", $('.army[country="'+country.name+'"]').addClass('target'));
 
     $('div.targetCountry').animate({ height: '0%'}, function() {
         $(this).animate({height: '30%'});
@@ -60231,8 +60240,8 @@ VFX.prototype.renderState = function(data) {
     else if (!num) {
       result = $('<div>').text(name);
     }
-    $('<div id="armyButton">').appendTo(result);
-    $('<div id="insideButton">').appendTo(result);
+    $('<div class="armyButton">').appendTo(result);
+    $('<div class="insideButton">').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
   }
 
@@ -60250,11 +60259,7 @@ VFX.prototype.renderState = function(data) {
 })();
 
 $(function(){
-
   // button to deactivate active army
-  $('.activeCountry').on('click', '.deactivate', function() {
-    Game.handleClick();
-  });
 
   $('#arrow-left').on('click', function(){
     console.log('inside arrow');
