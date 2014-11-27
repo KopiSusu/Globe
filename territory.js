@@ -29,26 +29,16 @@ Territory.prototype.contains = function(id) {
 
 Territory.prototype.lastOneStanding = function() {
 
-  var data = {};
-
   var armies = this.troops;
   var ids = Object.keys(armies);
 
   // base case
   if (ids.length <= 1) {
-
-    // if there has been conflict, return a victorious player
-    if ( Object.keys(data)[0] ) {
-      data.victorious = ids[0];
-      return data;
-    }
-    // else return null
-    return null;
+    return ids[0];
   }
 
   // recursive case 
   else {
-    data.name = this.name;
     var min = ids.reduce(function(m, k){ return armies[k] < m ? armies[k] : m }, +Infinity);
     for (var id in armies) {
       armies[id] -= min;

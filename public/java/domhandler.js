@@ -56,6 +56,13 @@ var domhandler = (function() {
         // dynamic deactivate button
         $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
+
+        // var button = $('.army').filter(function(obj) {
+        //   return $(obj).data('country') == String(country.name);
+        //   //return $(div).data('country') == country.name;
+        // });
+        // $(button).find('.insideButton').toggleClass('activeButton');
+
         // update enemy troops in active country
         for (var id in country.troops) {
           if (id != _player.id) {
@@ -205,8 +212,8 @@ var domhandler = (function() {
       result = $('<div>').text(name);
     }
     $('<div id="armyButton">').appendTo(result);
-    $('<div id="insideButton">').appendTo(result);
-    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
+    $('<div>').addClass('insideButton neutralButton').appendTo(result);
+    result.addClass('army').data('country', name).appendTo(selector).fadeIn(1000);
   }
 
   return {
@@ -263,7 +270,7 @@ $(function(){
 
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
-    var name = $(e.target).attr('country');
+    var name = $(e.target).data('country');
     Game.handleClick(name);
   })
 

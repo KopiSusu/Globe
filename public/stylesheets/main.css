@@ -231,8 +231,20 @@ body {
   margin-top: -15px;
 }
 
-#insideButton {
-  background: green;
+
+.neutralButton {
+  background-color: green;
+}
+
+.targetButton {
+  background-color: yellow;
+}
+
+.activeButton {
+  background-color: red;
+}
+
+.insideButton {
   margin-left: 185.4px;
   /* border: 1px solid #fafafa; */
   border-radius: 50%;
@@ -242,9 +254,6 @@ body {
   /* margin-bottom: 10px; */
   margin-top: -13px;
 }
-
-
-
 
 
 

@@ -1,6 +1,6 @@
 var STARTING_TROOPS = 60;
 var STARTING_TERRITORIES = 4;
-var TURN_LENGTH = 10;
+var TURN_LENGTH = 5;
 var Territory = require('./territory');
 var Player = require('./player');
 
@@ -64,9 +64,9 @@ function evaluateState() {
   var i = territories.length;
   while (i--) {
     var terr = territories[i];
-    results.push(terr.lastOneStanding(terr.troops));
+    terr.lastOneStanding(terr.troops);
   }
-  return results.filter(function(n){ return n != null });
+  return results;
 }
 
 function removePlayer(player) {
