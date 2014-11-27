@@ -234,10 +234,10 @@ VFX.prototype.deactivate = function(name) {
     TweenMax.to(country.material, 1, { opacity: 1 });
     TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 
-    // if (this.targetCountry) {
-    //     this.deactivate(this.targetCountry);
-    //     this.targetCountry = null;
-    // }
+    if (this.targetCountry) {
+        this.deactivate(this.targetCountry);
+        this.targetCountry = null;
+    }
 }
 
 VFX.prototype.activate = function(name) {
@@ -248,7 +248,7 @@ VFX.prototype.activate = function(name) {
 
 VFX.prototype.target = function(name) {
     if (this.targetCountry) {
-        this.deactivate(this.targetCountry);
+        this.targetDeactivate(this.targetCountry);
     }
 
     this.activate(name);

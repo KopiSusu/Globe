@@ -59995,6 +59995,7 @@ VFX.prototype.onDocumentMouseDown = function(e) {
 } 
 
 VFX.prototype.deactivate = function(name) {
+<<<<<<< HEAD
     var country = Countries[name];
     TweenMax.to(country.material, 1, { opacity: 1 });
     TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
@@ -60003,6 +60004,22 @@ VFX.prototype.deactivate = function(name) {
     //     this.deactivate(this.targetCountry);
     //     this.targetCountry = null;
     // }
+||||||| merged common ancestors
+    var country = Countries[name];
+    TweenMax.to(country.material, 1, { opacity: 1 });
+    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+=======
+    // var country = Countries[name];
+    // TweenMax.to(country.material, 1, { opacity: 1 });
+    // TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+    Object.keys(Countries).forEach(function (key) { 
+        if(Countries[key].scale && Countries[key].material)
+        {
+            TweenMax.to(Countries[key].scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+            TweenMax.to(Countries[key].material, 1, { opacity: 1 });    
+        }
+    });
+>>>>>>> 670fe19c784191d10513a38608041205360e7c17
 }
 
 VFX.prototype.activate = function(name) {
@@ -60013,11 +60030,17 @@ VFX.prototype.activate = function(name) {
 
 VFX.prototype.target = function(name) {
     if (this.targetCountry) {
-        this.deactivate(this.targetCountry);
+        this.targetDeactivate(this.targetCountry);
     }
 
     this.activate(name);
     this.targetCountry = name;
+}
+
+VFX.prototype.targetDeactivate = function(name) {
+    var country = Countries[name];
+    TweenMax.to(country.material, 1, { opacity: 1 });
+    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
@@ -60122,13 +60145,6 @@ VFX.prototype.renderState = function(data) {
         // dynamic deactivate button
         $('div.activeCountry > h1').text('deactivate').toggleClass('deactivate').fadeIn(500);
 
-
-        // var button = $('.army').filter(function(obj) {
-        //   return $(obj).data('country') == String(country.name);
-        //   //return $(div).data('country') == country.name;
-        // });
-        // $(button).find('.insideButton').toggleClass('activeButton');
-
         // update enemy troops in active country
         for (var id in country.troops) {
           if (id != _player.id) {
@@ -60218,17 +60234,8 @@ VFX.prototype.renderState = function(data) {
       case 'move':
         updateMove(data.msg);
         break;
-      case 'messages':
-        updateMessages(data.msg);
-        break;
+      default:
       break;
-    }
-  }
-
-  function updateMessages(msgs) {
-    var i = msgs.length;
-    while (i--) {
-      $('<p>').text(msgs[i]).appendTo('#systemBottom > .messages');
     }
   }
 
@@ -60283,7 +60290,20 @@ VFX.prototype.renderState = function(data) {
     else if (!num) {
       result = $('<div>').text(name);
     }
+<<<<<<< HEAD
 
+||||||| merged common ancestors
+<<<<<<< HEAD
+    $('<div id="armyButton">').appendTo(result);
+    $('<div>').addClass('insideButton neutralButton').appendTo(result);
+    result.addClass('army').data('country', name).appendTo(selector).fadeIn(1000);
+||||||| merged common ancestors
+    $('<div id="armyButton">').appendTo(result);
+    $('<div id="insideButton">').appendTo(result);
+    result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
+=======
+=======
+>>>>>>> 670fe19c784191d10513a38608041205360e7c17
     $('<div class="armyButton">').appendTo(result);
     $('<div class="insideButton">').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
@@ -60339,7 +60359,7 @@ $(function(){
 
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {
-    var name = $(e.target).data('country');
+    var name = $(e.target).attr('country');
     Game.handleClick(name);
   })
 
