@@ -10378,7 +10378,13 @@ if ( typeof noGlobal === strundefined ) {
 return jQuery;
 
 }));
-;// File:src/Three.js
+;/**
+ * Copyright (c) 2007-2014 Ariel Flesler - aflesler<a>gmail<d>com | http://flesler.blogspot.com
+ * Licensed under MIT
+ * @author Ariel Flesler
+ * @version 1.4.14
+ */
+;(function(k){'use strict';k(['jquery'],function($){var j=$.scrollTo=function(a,b,c){return $(window).scrollTo(a,b,c)};j.defaults={axis:'xy',duration:0,limit:!0};j.window=function(a){return $(window)._scrollable()};$.fn._scrollable=function(){return this.map(function(){var a=this,isWin=!a.nodeName||$.inArray(a.nodeName.toLowerCase(),['iframe','#document','html','body'])!=-1;if(!isWin)return a;var b=(a.contentWindow||a).document||a.ownerDocument||a;return/webkit/i.test(navigator.userAgent)||b.compatMode=='BackCompat'?b.body:b.documentElement})};$.fn.scrollTo=function(f,g,h){if(typeof g=='object'){h=g;g=0}if(typeof h=='function')h={onAfter:h};if(f=='max')f=9e9;h=$.extend({},j.defaults,h);g=g||h.duration;h.queue=h.queue&&h.axis.length>1;if(h.queue)g/=2;h.offset=both(h.offset);h.over=both(h.over);return this._scrollable().each(function(){if(f==null)return;var d=this,$elem=$(d),targ=f,toff,attr={},win=$elem.is('html,body');switch(typeof targ){case'number':case'string':if(/^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(targ)){targ=both(targ);break}targ=win?$(targ):$(targ,this);if(!targ.length)return;case'object':if(targ.is||targ.style)toff=(targ=$(targ)).offset()}var e=$.isFunction(h.offset)&&h.offset(d,targ)||h.offset;$.each(h.axis.split(''),function(i,a){var b=a=='x'?'Left':'Top',pos=b.toLowerCase(),key='scroll'+b,old=d[key],max=j.max(d,a);if(toff){attr[key]=toff[pos]+(win?0:old-$elem.offset()[pos]);if(h.margin){attr[key]-=parseInt(targ.css('margin'+b))||0;attr[key]-=parseInt(targ.css('border'+b+'Width'))||0}attr[key]+=e[pos]||0;if(h.over[pos])attr[key]+=targ[a=='x'?'width':'height']()*h.over[pos]}else{var c=targ[pos];attr[key]=c.slice&&c.slice(-1)=='%'?parseFloat(c)/100*max:c}if(h.limit&&/^\d+$/.test(attr[key]))attr[key]=attr[key]<=0?0:Math.min(attr[key],max);if(!i&&h.queue){if(old!=attr[key])animate(h.onAfterFirst);delete attr[key]}});animate(h.onAfter);function animate(a){$elem.animate(attr,g,h.easing,a&&function(){a.call(this,targ,h)})}}).end()};j.max=function(a,b){var c=b=='x'?'Width':'Height',scroll='scroll'+c;if(!$(a).is('html,body'))return a[scroll]-$(a)[c.toLowerCase()]();var d='client'+c,html=a.ownerDocument.documentElement,body=a.ownerDocument.body;return Math.max(html[scroll],body[scroll])-Math.min(html[d],body[d])};function both(a){return $.isFunction(a)||$.isPlainObject(a)?a:{top:a,left:a}}return j})}(typeof define==='function'&&define.amd?define:function(a,b){if(typeof module!=='undefined'&&module.exports){module.exports=b(require('jquery'))}else{b(jQuery)}}));;// File:src/Three.js
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -60163,7 +60169,7 @@ VFX.prototype.renderState = function(data) {
 
   // populate armies for current player
   function standingArmies(territories) {
-    $('div.standingArmies > .army').remove();
+    $('div.standingArmies').find('.army').remove();
 
     var i = territories.length;
     while (i--) {
@@ -60171,7 +60177,7 @@ VFX.prototype.renderState = function(data) {
       if (t.troops[_player.id]) {
           var name = t.name;
           var num = t.troops[_player.id];
-          createArmy('div.standingArmies', name, num);
+          createArmy('div.standingArmies > .wrapper', name, num);
         }
     }
   }
@@ -60184,9 +60190,9 @@ VFX.prototype.renderState = function(data) {
       $('.army[country="'+country.name+'"]').addClass('active');
 
       // hide activeCountry section while making changes
-      $('div.activeCountry > .wrapper').animate({opacity: '0'}, function() {
+      $('div.activeCountry > .wrapper').animate({height: '0%'}, function() {
           // removing existing enemy armies
-          $('div.activeCountry .army-enemy').remove();
+          $('div.activeCountry').find('.army-enemy').remove();
 
           // updating country name
           $('div.activeCountry').attr('country', country.name);
@@ -60204,7 +60210,7 @@ VFX.prototype.renderState = function(data) {
           }
 
           // fade in activeCountry section
-          $('div.activeCountry > .wrapper').animate({opacity: '1'}, function() {
+          $('div.activeCountry > .wrapper').animate({height: '30%'}, function() {
               // update enemy troops in active country
               for (var id in country.troops) {
                   if (id != _player.id) {
@@ -60224,18 +60230,18 @@ VFX.prototype.renderState = function(data) {
 
       $('.army').removeClass('active').removeClass('target');
 
-      $('div.activeCountry > .wrapper').animate({opacity: '0'}, function() {
+      $('div.activeCountry > .wrapper').animate({height: '0%'}, function() {
           $('div.activeCountry .deactivate').remove();
-          $('div.activeCountry .army-enemy').remove();
+          $('div.activeCountry').find('.army-enemy').remove();
           $('div.activeCountry .clickedCountry').empty();
           $('div.activeCountry .clickedCountry').text('click any country to start');
           $('div.activeCountry .myArmy').text('');
           $('div.activeCountry').attr('country', '');
-          $('div.activeCountry > .wrapper').animate({opacity: '1'});
+          $('div.activeCountry > .wrapper').animate({height: '30%'});
       });
 
-      $('div.targetCountry > .wrapper').animate({opacity: '0'}, function() {
-        $('div.targetCountry .army-enemy').remove();
+      $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
+        $('div.targetCountry').find('.army-enemy').remove();
         $('div.targetCountry .clickedCountry').empty();
         $('div.targetCountry .myArmy').text('');
         $('div.targetCountry').attr('country', ''); 
@@ -60250,10 +60256,10 @@ VFX.prototype.renderState = function(data) {
     $('.army[country="'+country.name+'"]').addClass('target');
 
     // hide target country section while making changes
-    $('div.targetCountry > .wrapper').animate({opacity: '0'}, function() {
+    $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
 
         // remove existing enemy armies
-        $('div.targetCountry > .army-enemy').remove();
+        $('div.targetCountry').find('.army-enemy').remove();
 
         // updating country name
         $('div.targetCountry')
@@ -60268,11 +60274,11 @@ VFX.prototype.renderState = function(data) {
           .text(num);
 
         // fade in target country section
-        $('div.targetCountry > .wrapper').animate({opacity: '1'}, function() {
+        $('div.targetCountry > .wrapper').animate({height: '30%'}, function() {
 
             // initialises arrows when target is clicked for the first time
-            $('.up-arrow').animate({opacity: '1'});
-            $('.down-arrow').animate({opacity: '1'});
+            $('.inc-arrow').animate({opacity: '1'});
+            $('.dec-arrow').animate({opacity: '1'});
 
             // update enemy troops in active country
             for (var id in country.troops) {
@@ -60292,7 +60298,7 @@ VFX.prototype.renderState = function(data) {
   // public: handle game updates
   function update(data) {
     // TODO: implement infinite scroll in #systemBottom > .messages
-    $('#systemBottom > .messages').empty();
+    //$('#systemBottom > .messages').empty();
     switch (data.type) {
       case 'disconnect':
         updateDisconnect(data.msg);
@@ -60346,6 +60352,14 @@ VFX.prototype.renderState = function(data) {
     createArmy('#systemBottom > .messages', from);
     $('<p>').text('TO').appendTo('#systemBottom > .messages');
     createArmy('#systemBottom > .messages', to);
+
+    (function() {
+      var div = $('#systemBottom > .messages');
+      console.log(div[0]);
+      console.log(div.scrollTop(div[0].scrollHeight) + ' called function');
+
+    })();
+
   }
 
 
@@ -60378,16 +60392,17 @@ VFX.prototype.renderState = function(data) {
 
 $(function(){
 
+
   // deactivate button when there is active country
   $('.activeCountry').on('click', '.deactivate', function(e) {
     Game.handleClick();
   })
 
-  $('.down-arrow').on('click', function(){
-    var targetNumber = parseInt($('div.targetCountry .myArmy').text());
+  $('.dec-arrow').on('click', function(){
+    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text());
         targetNumber -= 1;
      if (targetNumber >= 0) {
-      var activeNumber = parseInt($('div.activeCountry .myArmy').text());
+      var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
           activeNumber += 1;
       $('div.targetCountry .myArmy').text(targetNumber);
       $('div.activeCountry .myArmy').text(activeNumber);
@@ -60403,10 +60418,10 @@ $(function(){
      }
   });
 
-  $('.up-arrow').on('click', function(){
-    var targetNumber = parseInt($('div.targetCountry .myArmy').text());
+  $('.inc-arrow').on('click', function(){
+    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text());
         targetNumber += 1;
-    var activeNumber = parseInt($('div.activeCountry .myArmy').text());
+    var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
         activeNumber -= 1;
     if (activeNumber >= 0) {
       $('div.targetCountry .myArmy').text(targetNumber);
@@ -60423,17 +60438,17 @@ $(function(){
     }
   });
 
-  $('div.targetCountry > .myArmy').blur(function(){
+  $('div.targetCountry').find('.myArmy').blur(function(){
       var oldVal = parseInt($(this).attr('data-orig-value'));
       var val = parseInt($(this).html());
-      var changeNumber = parseInt($('div.activeCountry > .myArmy').text());
+      var changeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
       var newNum = val - oldVal;
           changeNumber -= newNum;
       if (changeNumber < 0) {
-          $('div.targetCountry > .myArmy').html(oldVal);
+          $('div.targetCountry').find('.myArmy').html(oldVal);
       }
       if (changeNumber >= 0 ) {
-          $('div.activeCountry > .myArmy').text(changeNumber);
+          $('div.targetCountry').find('.myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
           // send move to server
@@ -60556,7 +60571,6 @@ $(function(){
 
       var t = getTerritory(_activeCountry);
       domhandler.activate(t);
-      console.dir(t);
 
       vfx.activate(_activeCountry);
     }

@@ -31,7 +31,7 @@ var domhandler = (function() {
 
   // populate armies for current player
   function standingArmies(territories) {
-    $('div.standingArmies > .army').remove();
+    $('div.standingArmies').find('.army').remove();
 
     var i = territories.length;
     while (i--) {
@@ -39,7 +39,7 @@ var domhandler = (function() {
       if (t.troops[_player.id]) {
           var name = t.name;
           var num = t.troops[_player.id];
-          createArmy('div.standingArmies', name, num);
+          createArmy('div.standingArmies > .wrapper', name, num);
         }
     }
   }
@@ -52,9 +52,9 @@ var domhandler = (function() {
       $('.army[country="'+country.name+'"]').addClass('active');
 
       // hide activeCountry section while making changes
-      $('div.activeCountry > .wrapper').animate({opacity: '0'}, function() {
+      $('div.activeCountry > .wrapper').animate({height: '0%'}, function() {
           // removing existing enemy armies
-          $('div.activeCountry .army-enemy').remove();
+          $('div.activeCountry').find('.army-enemy').remove();
 
           // updating country name
           $('div.activeCountry').attr('country', country.name);
@@ -72,7 +72,7 @@ var domhandler = (function() {
           }
 
           // fade in activeCountry section
-          $('div.activeCountry > .wrapper').animate({opacity: '1'}, function() {
+          $('div.activeCountry > .wrapper').animate({height: '30%'}, function() {
               // update enemy troops in active country
               for (var id in country.troops) {
                   if (id != _player.id) {
@@ -92,18 +92,18 @@ var domhandler = (function() {
 
       $('.army').removeClass('active').removeClass('target');
 
-      $('div.activeCountry > .wrapper').animate({opacity: '0'}, function() {
+      $('div.activeCountry > .wrapper').animate({height: '0%'}, function() {
           $('div.activeCountry .deactivate').remove();
-          $('div.activeCountry .army-enemy').remove();
+          $('div.activeCountry').find('.army-enemy').remove();
           $('div.activeCountry .clickedCountry').empty();
           $('div.activeCountry .clickedCountry').text('click any country to start');
           $('div.activeCountry .myArmy').text('');
           $('div.activeCountry').attr('country', '');
-          $('div.activeCountry > .wrapper').animate({opacity: '1'});
+          $('div.activeCountry > .wrapper').animate({height: '30%'});
       });
 
-      $('div.targetCountry > .wrapper').animate({opacity: '0'}, function() {
-        $('div.targetCountry .army-enemy').remove();
+      $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
+        $('div.targetCountry').find('.army-enemy').remove();
         $('div.targetCountry .clickedCountry').empty();
         $('div.targetCountry .myArmy').text('');
         $('div.targetCountry').attr('country', ''); 
@@ -118,10 +118,10 @@ var domhandler = (function() {
     $('.army[country="'+country.name+'"]').addClass('target');
 
     // hide target country section while making changes
-    $('div.targetCountry > .wrapper').animate({opacity: '0'}, function() {
+    $('div.targetCountry > .wrapper').animate({height: '0%'}, function() {
 
         // remove existing enemy armies
-        $('div.targetCountry > .army-enemy').remove();
+        $('div.targetCountry').find('.army-enemy').remove();
 
         // updating country name
         $('div.targetCountry')
@@ -136,11 +136,11 @@ var domhandler = (function() {
           .text(num);
 
         // fade in target country section
-        $('div.targetCountry > .wrapper').animate({opacity: '1'}, function() {
+        $('div.targetCountry > .wrapper').animate({height: '30%'}, function() {
 
             // initialises arrows when target is clicked for the first time
-            $('.up-arrow').animate({opacity: '1'});
-            $('.down-arrow').animate({opacity: '1'});
+            $('.inc-arrow').animate({opacity: '1'});
+            $('.dec-arrow').animate({opacity: '1'});
 
             // update enemy troops in active country
             for (var id in country.troops) {
@@ -160,7 +160,7 @@ var domhandler = (function() {
   // public: handle game updates
   function update(data) {
     // TODO: implement infinite scroll in #systemBottom > .messages
-    $('#systemBottom > .messages').empty();
+    //$('#systemBottom > .messages').empty();
     switch (data.type) {
       case 'disconnect':
         updateDisconnect(data.msg);
@@ -214,6 +214,14 @@ var domhandler = (function() {
     createArmy('#systemBottom > .messages', from);
     $('<p>').text('TO').appendTo('#systemBottom > .messages');
     createArmy('#systemBottom > .messages', to);
+
+    (function() {
+      var div = $('#systemBottom > .messages');
+      console.log(div[0]);
+      console.log(div.scrollTop(div[0].scrollHeight) + ' called function');
+
+    })();
+
   }
 
 
@@ -246,16 +254,17 @@ var domhandler = (function() {
 
 $(function(){
 
+
   // deactivate button when there is active country
   $('.activeCountry').on('click', '.deactivate', function(e) {
     Game.handleClick();
   })
 
-  $('.down-arrow').on('click', function(){
-    var targetNumber = parseInt($('div.targetCountry .myArmy').text());
+  $('.dec-arrow').on('click', function(){
+    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text());
         targetNumber -= 1;
      if (targetNumber >= 0) {
-      var activeNumber = parseInt($('div.activeCountry .myArmy').text());
+      var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
           activeNumber += 1;
       $('div.targetCountry .myArmy').text(targetNumber);
       $('div.activeCountry .myArmy').text(activeNumber);
@@ -271,10 +280,10 @@ $(function(){
      }
   });
 
-  $('.up-arrow').on('click', function(){
-    var targetNumber = parseInt($('div.targetCountry .myArmy').text());
+  $('.inc-arrow').on('click', function(){
+    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text());
         targetNumber += 1;
-    var activeNumber = parseInt($('div.activeCountry .myArmy').text());
+    var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
         activeNumber -= 1;
     if (activeNumber >= 0) {
       $('div.targetCountry .myArmy').text(targetNumber);
@@ -291,17 +300,17 @@ $(function(){
     }
   });
 
-  $('div.targetCountry > .myArmy').blur(function(){
+  $('div.targetCountry').find('.myArmy').blur(function(){
       var oldVal = parseInt($(this).attr('data-orig-value'));
       var val = parseInt($(this).html());
-      var changeNumber = parseInt($('div.activeCountry > .myArmy').text());
+      var changeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
       var newNum = val - oldVal;
           changeNumber -= newNum;
       if (changeNumber < 0) {
-          $('div.targetCountry > .myArmy').html(oldVal);
+          $('div.targetCountry').find('.myArmy').html(oldVal);
       }
       if (changeNumber >= 0 ) {
-          $('div.activeCountry > .myArmy').text(changeNumber);
+          $('div.targetCountry').find('.myArmy').text(changeNumber);
           var oldVal = $(this).attr('data-orig-value', val);
 
           // send move to server
