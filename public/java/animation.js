@@ -230,9 +230,16 @@ VFX.prototype.onDocumentMouseDown = function(e) {
 } 
 
 VFX.prototype.deactivate = function(name) {
-    var country = Countries[name];
-    TweenMax.to(country.material, 1, { opacity: 1 });
-    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+    // var country = Countries[name];
+    // TweenMax.to(country.material, 1, { opacity: 1 });
+    // TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+    Object.keys(Countries).forEach(function (key) { 
+        if(Countries[key].scale && Countries[key].material)
+        {
+            TweenMax.to(Countries[key].scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
+            TweenMax.to(Countries[key].material, 1, { opacity: 1 });    
+        }
+    });
 }
 
 VFX.prototype.activate = function(name) {
@@ -243,11 +250,17 @@ VFX.prototype.activate = function(name) {
 
 VFX.prototype.target = function(name) {
     if (this.targetCountry) {
-        this.deactivate(this.targetCountry);
+        this.targetDeactivate(this.targetCountry);
     }
 
     this.activate(name);
     this.targetCountry = name;
+}
+
+VFX.prototype.targetDeactivate = function(name) {
+    var country = Countries[name];
+    TweenMax.to(country.material, 1, { opacity: 1 });
+    TweenMax.to(country.scale, 1, { x : 1.0, y : 1.0, z : 1.0 });
 }
 
 VFX.prototype.moveUnits = function(previousCountry, newCountry) {
