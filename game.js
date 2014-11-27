@@ -65,6 +65,7 @@ function evaluateState() {
   while (i--) {
     var terr = territories[i];
     terr.lastOneStanding(terr.troops);
+    console.dir(terr);
   }
   return results;
 }

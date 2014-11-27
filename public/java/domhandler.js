@@ -44,7 +44,7 @@ var domhandler = (function() {
 
 
   function activate(country) {
-    $('div.activeCountry > .army').remove();
+    $('div.activeCountry > .army-enemy').remove();
 
     $('.army').removeClass('active');
     $('.army[country="'+country.name+'"]').addClass('active');
@@ -105,7 +105,7 @@ var domhandler = (function() {
   }
 
   function target(country) {
-    $('div.targetCountry > .army').remove();
+    $('div.targetCountry > .army-enemy').remove();
     $('#arrow-left').animate({opacity: '0'});
     $('#arrow-right').animate({opacity: '0'});
 
