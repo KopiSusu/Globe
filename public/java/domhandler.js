@@ -315,16 +315,17 @@ $(function(){
 
   $('div.targetCountry').find('.myArmy').blur(function(){
       var oldVal = parseInt($(this).attr('data-orig-value'));
-      var val = parseInt($(this).html());
-      var changeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
-      var newNum = val - oldVal;
-          changeNumber -= newNum;
-      if (changeNumber < 0) {
-          $('div.targetCountry').find('.myArmy').html(oldVal);
+      var newVal = parseInt($(this).html());
+      var standingArmy = parseInt($('div.activeCountry').find('.myArmy').text());
+      var toMove = newVal - oldVal;
+          standingArmy -= toMove;
+      if (standingArmy < 0) {
+          $(this).html(oldVal);
       }
-      if (changeNumber >= 0 ) {
-          $('div.targetCountry').find('.myArmy').text(changeNumber);
-          var oldVal = $(this).attr('data-orig-value', val);
+      if (standingArmy >= 0 ) {
+          $(this).html(newVal);
+          $(this).attr('data-orig-value', newVal);
+          $('div.activeCountry').find('.myArmy').text(standingArmy);
 
           // send move to server
           var from = $('div.activeCountry').attr('country');

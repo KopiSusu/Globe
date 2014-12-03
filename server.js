@@ -106,7 +106,6 @@ function endOfTurn() {
   }
 
   io.emit('game update', JSON.stringify(data));
-
   /* add queue of new players.
     do this after evaluating state as there 
     will be new empty/occupied territories */
