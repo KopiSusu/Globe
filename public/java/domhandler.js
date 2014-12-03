@@ -321,7 +321,6 @@ $(function(){
           standingArmy -= toMove;
       if (standingArmy < 0) {
           $(this).html(oldVal);
-      }
       if (standingArmy >= 0 ) {
           $(this).html(newVal);
           $(this).attr('data-orig-value', newVal);
@@ -334,7 +333,7 @@ $(function(){
           socket.emit('move', JSON.stringify({ player : player,
                                                 from : from,
                                                 to : to,
-                                                num : newNum }));
+                                                num : toMove }));
 
       }
   });

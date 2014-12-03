@@ -71,7 +71,7 @@ io.on('connection', function(socket) {
 }); // socket connection ends
 
 function start() {
-  http.listen(3000, function() {
+  http.listen(2000, function() {
 
     // commence!
     startTurn();
