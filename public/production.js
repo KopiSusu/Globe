@@ -60269,10 +60269,8 @@ VFX.prototype.renderState = function(data) {
           $('div.targetCountry').find('.army-enemy').remove();
 
           // updating country name
-          $('div.targetCountry')
-            .attr('country', country.name);
-          $('div.targetCountry .clickedCountry')
-            .text(country.name);
+          $('div.targetCountry').attr('country', country.name);
+          $('div.targetCountry .clickedCountry').text(country.name);
 
           // updating number of troops in country
           var num = country.troops[_player.id] || 0;
@@ -60284,8 +60282,7 @@ VFX.prototype.renderState = function(data) {
           $('div.targetCountry > .wrapper').animate({height: '88%'}, function() {
 
               // fade in arrows
-              $('.inc-arrow').animate({opacity: '1'});
-              $('.dec-arrow').animate({opacity: '1'});
+              $('.inc-arrow').add('.dec-arrow').animate({opacity: '1'});
 
               // update enemy troops in active country
               for (var id in country.troops) {
@@ -60446,13 +60443,14 @@ $(function(){
   });
 
   $('div.targetCountry').find('.myArmy').blur(function(){
-      var oldVal = parseInt($(this).attr('data-orig-value'));
-      var newVal = parseInt($(this).html());
-      var standingArmy = parseInt($('div.activeCountry').find('.myArmy').text());
+      var oldVal = parseInt($(this).attr('data-orig-value'), 10);
+      var newVal = parseInt($(this).html(), 10);
+      var standingArmy = parseInt($('div.activeCountry').find('.myArmy').text(), 10);
       var toMove = newVal - oldVal;
           standingArmy -= toMove;
       if (standingArmy < 0) {
           $(this).html(oldVal);
+      }
       if (standingArmy >= 0 ) {
           $(this).html(newVal);
           $(this).attr('data-orig-value', newVal);
@@ -60473,10 +60471,10 @@ $(function(){
   // prevent enter key on content editable
   $('.myArmy').on( 'keydown', function( e ) {
     if( e.which == 13 && e.shiftKey == false ) {
-        $(this).blur();
+        $(this).blur(); //$(this).trigger('blur');
         return false;
     }
-  } );
+  });
 
   // makes army divs click-able
   $('#scene').on('click', '.army', function(e) {

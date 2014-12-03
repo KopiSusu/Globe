@@ -165,24 +165,6 @@ VFX.prototype.run = function() {
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
     this.scene.children[3].rotation.y += 0.0002; // star field
     this.scene.children[5].rotation.y += 0.0003; // moon
-    // debugger
-
-
-    ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
-    ////// kinda like a screen saver. 
-    // this.scene.children[1].rotation.y += rotation;
-
-    // if (this.scene.children[1].rotation.y < -0.2) {
-    //     rotation = 0.0001;
-    // }
-
-    // if (this.scene.children[1].rotation.y > 0.2) {
-    //     rotation = -0.0001;
-    // }
-
-    // console.log('this is rotation = ' + rotation)
-    // console.log('this is this.scene.children[1].rotation.y = ' + this.scene.children[1].rotation.y)
-
 
     requestAnimationFrame(function() { 
         that.run(); 

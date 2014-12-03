@@ -206,28 +206,23 @@ body {
   background-color: yellow;
 }
 
-
-.dec-arrow {
-  margin: -15% 10%;
+.arrow {
   height: 0; 
   border-top: 15px solid transparent;
   border-bottom: 15px solid transparent;
-  border-right: 15px solid #E57C09;
   position: absolute;
   cursor: pointer;
   opacity: 0;
 }
 
+.dec-arrow {
+  margin: -15% 10%;
+  border-right: 15px solid #E57C09;
+}
+
 .inc-arrow {
   margin: -15% 90%;
-  height: 0; 
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
   border-left: 15px solid #E57C09;
-  position: absolute;
-  cursor: pointer;
-  opacity: 0;
-  /*border-radius: 50%;*/
 }
 
 .standingArmies > .wrapper {
