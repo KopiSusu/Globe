@@ -47,7 +47,7 @@ VFX.prototype.init = function () {
     // making cloud layer
     var geometryCloud   = new THREE.SphereGeometry(207, 50, 50)
     var materialCloud  = new THREE.MeshPhongMaterial({
-        map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
+        map     : THREE.ImageUtils.loadTexture('/images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
         wrapAround: true,
         opacity     : 0.6,

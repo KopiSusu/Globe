@@ -8,8 +8,13 @@ var io = require('socket.io')(http);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res){
-  res.sendFile('index.html');
+  //res.sendFile('index.html');
+  res.redirect('/main');
 });
+
+app.get('/main', function(req, res) {
+  res.sendFile('main.html', {root: __dirname + '/public'});
+})
 
 
 

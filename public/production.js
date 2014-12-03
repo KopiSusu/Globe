@@ -59877,7 +59877,7 @@ VFX.prototype.init = function () {
     // making cloud layer
     var geometryCloud   = new THREE.SphereGeometry(207, 50, 50)
     var materialCloud  = new THREE.MeshPhongMaterial({
-        map     : THREE.ImageUtils.loadTexture('images/fairclouds.jpg'),
+        map     : THREE.ImageUtils.loadTexture('/images/fairclouds.jpg'),
       side        : THREE.DoubleSide,
         wrapAround: true,
         opacity     : 0.6,
@@ -59995,24 +59995,6 @@ VFX.prototype.run = function() {
     this.scene.children[2].rotation.y += 0.0005; // cloud layer
     this.scene.children[3].rotation.y += 0.0002; // star field
     this.scene.children[5].rotation.y += 0.0003; // moon
-    // debugger
-
-
-    ////// this is some camera rotation, id like to add this if the user hasnt moveed in awhile, 
-    ////// kinda like a screen saver. 
-    // this.scene.children[1].rotation.y += rotation;
-
-    // if (this.scene.children[1].rotation.y < -0.2) {
-    //     rotation = 0.0001;
-    // }
-
-    // if (this.scene.children[1].rotation.y > 0.2) {
-    //     rotation = -0.0001;
-    // }
-
-    // console.log('this is rotation = ' + rotation)
-    // console.log('this is this.scene.children[1].rotation.y = ' + this.scene.children[1].rotation.y)
-
 
     requestAnimationFrame(function() { 
         that.run(); 
@@ -60288,6 +60270,7 @@ VFX.prototype.renderState = function(data) {
               for (var id in country.troops) {
                 if (id != _player.id) {
                   var num = country.troops[id];
+
                   $('<p>').text('P' + id + ' (' + num + ')')
                         .appendTo('<div>')
                         .addClass('army-enemy')
@@ -60377,7 +60360,7 @@ VFX.prototype.renderState = function(data) {
     else if (!num) {
       result = $('<div>').text(name);
     }
-    $('<div class="insideButton">').appendTo(result);
+    $('<div>').addClass('insideButton').appendTo(result);
     result.addClass('army').attr('country', name).appendTo(selector).fadeIn(1000);
   }
 
@@ -60389,24 +60372,21 @@ VFX.prototype.renderState = function(data) {
     deactivate : deactivate,
     target : target,
     update: update,
-  }
-
+  };
 
 })();
 
 $(function(){
-
-
   // deactivate button when there is active country
   $('.activeCountry').on('click', '.deactivate', function(e) {
     Game.handleClick();
   })
 
   $('.dec-arrow').on('click', function(){
-    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text());
+    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text(), 10);
         targetNumber -= 1;
      if (targetNumber >= 0) {
-      var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
+      var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text(), 10);
           activeNumber += 1;
       $('div.targetCountry .myArmy').text(targetNumber);
       $('div.activeCountry .myArmy').text(activeNumber);
@@ -60423,10 +60403,8 @@ $(function(){
   });
 
   $('.inc-arrow').on('click', function(){
-    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text());
-        targetNumber += 1;
-    var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text());
-        activeNumber -= 1;
+    var targetNumber = parseInt($('div.targetCountry').find('.myArmy').text(), 10) + 1;
+    var activeNumber = parseInt($('div.activeCountry').find('.myArmy').text(), 10) - 1;
     if (activeNumber >= 0) {
       $('div.targetCountry .myArmy').text(targetNumber);
       $('div.activeCountry .myArmy').text(activeNumber);
@@ -60647,11 +60625,6 @@ vfx.run();
 
 var socket = io.connect(window.SOCKET);
 
-socket.on('connect', function() {
-
-});
-
-
 // receive unique player from server when first connected
 socket.on('welcome', function(data) {
 
@@ -60660,9 +60633,6 @@ socket.on('welcome', function(data) {
   // set socket player
   socket.player = json.player;
   domhandler.player(socket.player);
-
-  // test code
-  //setTimeout(triggerMove, 2000);
 
 });
 
@@ -60697,22 +60667,3 @@ socket.on('game update', function(data) {
     var data = JSON.parse(data);
     domhandler.update(data);
 });
-
-
-// test code
-function triggerMove() {
-  if (socket.player.id == 1) {
-    socket.emit('move', JSON.stringify({ player : socket.player,
-                                          from : 'Russia',
-                                          to : 'Australia',
-                                          num : 10 }));
-  }
-  else {
-    socket.emit('move', JSON.stringify({
-      player: socket.player,
-      from: 'Brazil',
-      to: 'Australia',
-      num: 12
-    }));
-  }
-}
