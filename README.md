@@ -8,5 +8,5 @@ Click on the globe and drag to rotate globe.
 Globe takes a second to load.
 
 =============
-Currently hosted on http://attrition.xianny.com
+Currently hosted on http://attrition.xianny.com:20000
 
