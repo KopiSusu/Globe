@@ -76,8 +76,8 @@ io.on('connection', function(socket) {
 }); // socket connection ends
 
 function start() {
-  http.listen(20000, function() {
-    console.log("connected and listening on 2000");
+  http.listen(3000, function() {
+    console.log("connected and listening on 3000");
     // commence!
     startTurn();
 

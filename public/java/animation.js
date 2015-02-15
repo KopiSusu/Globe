@@ -228,7 +228,6 @@ VFX.prototype.deactivate = function(name) {
 
 VFX.prototype.activate = function(name) {
     var country = Countries[name];
-    TweenMax.to(country.material, 1, { opacity: 0.95 });
     TweenMax.to(country.scale, 1, { x : 1.05, y : 1.05, z : 1.05 });
 }
 
