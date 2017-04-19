@@ -52,7 +52,6 @@ $ npm -v
 
 * [expressjs](https://expressjs.com) - web framework
 * [three.js](https://threejs.org/) - 3D modelling library
-* [Grunt](https://gruntjs.com/) - JavaScript task runner
 
 ## Authors
 * [Xianny Ng](http://xianny.com)

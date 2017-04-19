@@ -2,7 +2,7 @@
  "myapp": {
   "production":{
     "port":8080,
-    "baseURL":"http://projects.xianny.com/attrition"
+    "baseURL": ""
     },
   "development":{
     "port":3000,
